@@ -35,22 +35,32 @@ function addMySubject() {
     const input = document.getElementById("mySubjectInput");
     if (!input) return;
 
-    const raw = input.value.split(",").map(s => normalizeSubject(s)).filter(Boolean);
+    const values = input.value
+        .split(",")
+        .map(s => normalizeSubject(s))
+        .filter(Boolean);
 
-    if (!raw.length) {
+    if (!values.length) {
         input.focus();
         return;
     }
 
-    raw.forEach(value => {
+    let changed = false;
+
+    values.forEach(value => {
         if (!mySubjects.includes(value)) {
             mySubjects.push(value);
+            changed = true;
         }
     });
 
     input.value = "";
     renderMySubjects();
     input.focus();
+
+    if (!changed) {
+        alert("Môn này đã có rồi");
+    }
 }
 
 function removeMySubject(subject) {
