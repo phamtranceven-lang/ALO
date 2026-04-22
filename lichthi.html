@@ -173,6 +173,10 @@
             background: var(--btn-my);
         }
 
+        .source-button {
+            background: #f59e0b;
+        }
+
         .source-info {
             font-size: 13px;
             color: #444;
@@ -384,6 +388,7 @@
             <div class="my-actions">
                 <button class="btn my-button" style="flex:0 0 auto;" onclick="useMySubjectsInSearch()">Dùng để tra cứu</button>
                 <button class="btn share-button" style="flex:0 0 auto;" onclick="reloadMySubjects()">Tải lại môn đã lưu</button>
+                <button class="btn source-button" style="flex:0 0 auto;" onclick="openSourcePage()">📁 Nguồn file</button>
             </div>
             <div id="mySummary" class="my-summary">Chưa có dữ liệu cá nhân.</div>
             <div id="missingSubjectsBox" class="missing-subjects"></div>
@@ -889,6 +894,10 @@
                 handleSearchInput();
                 showToast("📥 Đã load dữ liệu từ link");
             }
+        }
+
+        function openSourcePage() {
+            window.location.href = "nguon-lichthi.html";
         }
     </script>
 </body>
