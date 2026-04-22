@@ -102,7 +102,7 @@
     }
     h2{font-size:22px}
     .muted{color:var(--muted)}
-    .desc{margin-top:8px;line-height:1.65;max-width:720px}
+    .desc{margin-top:8px;line-height:1.65;max-width:820px}
     .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;}
     .stat{
       background:rgba(255,255,255,.05);
@@ -114,7 +114,7 @@
     }
     .stat strong{display:block;margin-top:8px;font-size:30px;line-height:1;}
     .search-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;margin-top:18px;}
-    .search{
+    .search,.file-picker{
       width:100%;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.1);
@@ -125,6 +125,7 @@
       font-size:14px;
     }
     .search::placeholder{color:#89a0c9}
+    .picker-row{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:14px;align-items:center}
     .btn{
       border:none;
       cursor:pointer;
@@ -160,6 +161,11 @@
       border:1px solid rgba(255,255,255,.08);
       font-weight:700;
       transition:.2s ease;
+    }
+    .tab.active.all{
+      background:rgba(56,189,248,.18);
+      border-color:rgba(56,189,248,.45);
+      box-shadow:0 0 20px rgba(56,189,248,.18)
     }
     .tab.active.listening{
       background:rgba(56,189,248,.18);
@@ -203,7 +209,7 @@
       transform:translateY(14px);
       animation:fadeIn .42s ease forwards;
     }
-    .file.listening:hover{
+    .file.all:hover,.file.listening:hover{
       border-color:rgba(56,189,248,.42);
       box-shadow:0 0 28px rgba(56,189,248,.18);
       transform:translateY(-3px) scale(1.01)
@@ -225,12 +231,7 @@
       font-size:25px;
       flex-shrink:0;
       border:1px solid rgba(255,255,255,.08);
-    }
-    .file.listening .file-icon{
       background:linear-gradient(135deg, rgba(56,189,248,.22), rgba(34,211,238,.18))
-    }
-    .file.speaking .file-icon{
-      background:linear-gradient(135deg, rgba(167,139,250,.22), rgba(129,140,248,.16))
     }
     .file-name{font-size:16px;font-weight:800;line-height:1.45;word-break:break-word;}
     .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;color:var(--muted);font-size:13px;}
@@ -246,6 +247,7 @@
     .tag.new{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.28);color:#d7ffea}
     .tag.hot{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.28);color:#fff0c2}
     .tag.pin{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.28);color:#dff6ff}
+    .tag.exam{background:rgba(167,139,250,.14);border-color:rgba(167,139,250,.28);color:#efe7ff}
     .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center;}
     .empty{
       border-radius:24px;
@@ -261,10 +263,9 @@
       padding:0 4px;
       border-radius:6px;
     }
-
     @media (max-width:1020px){
       .stats{grid-template-columns:repeat(2,1fr)}
-      .search-row{grid-template-columns:1fr}
+      .search-row,.picker-row{grid-template-columns:1fr}
     }
     @media (max-width:760px){
       .wrap{padding:16px}
@@ -286,25 +287,30 @@
           <div class="logo">⚡</div>
           <div>
             <h1>Kho tài liệu học nhóm</h1>
-            <p class="desc muted"></p>
+            <p class="desc muted">Đã nâng cấp để tra cứu trực tiếp từ file <b>data.json</b>. Bạn có thể giữ tài liệu mẫu cũ hoặc nạp dữ liệu lịch thi đã crawl để tìm nhanh hơn.</p>
           </div>
         </div>
 
         <div class="stats">
           <div class="stat"><span class="muted">Tổng tài liệu</span><strong id="totalStat">0</strong></div>
           <div class="stat"><span class="muted">Đang hiển thị</span><strong id="visibleStat">0</strong></div>
-          <div class="stat"><span class="muted">Danh mục</span><strong id="categoryStat">Listening</strong></div>
-          <div class="stat"><span class="muted">Chế độ</span><strong id="modeStat">VIP</strong></div>
+          <div class="stat"><span class="muted">Danh mục</span><strong id="categoryStat">All</strong></div>
+          <div class="stat"><span class="muted">Nguồn dữ liệu</span><strong id="modeStat">Mẫu</strong></div>
         </div>
 
         <div class="search-row">
-          <input id="searchInput" class="search" type="text" placeholder="Tìm theo tên tài liệu hoặc ghi chú..." />
+          <input id="searchInput" class="search" type="text" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." />
           <button class="btn secondary" id="sortBtn">A → Z</button>
           <button class="btn secondary" id="clearBtn">Xóa tìm kiếm</button>
         </div>
 
+        <div class="picker-row">
+          <input id="fileInput" class="file-picker" type="file" accept=".json,application/json" />
+          <button class="btn secondary" id="sampleBtn">Dùng dữ liệu mẫu</button>
+        </div>
+
         <div style="margin-top:12px;color:var(--muted);font-size:13px;">
-          Bấm <b>Tải về</b> để mở tài liệu trực tiếp.
+          Chọn <b>data.json</b> để nạp dữ liệu lịch thi đã crawl. Bấm <b>Tải về</b> để mở link trực tiếp.
         </div>
       </div>
     </div>
@@ -316,7 +322,8 @@
       </div>
 
       <div class="tabs">
-        <button class="tab active listening" data-tab="listening">🎧 Listening</button>
+        <button class="tab active all" data-tab="all">📚 Tất cả</button>
+        <button class="tab listening" data-tab="listening">🎧 Listening</button>
         <button class="tab speaking" data-tab="speaking">🎤 Speaking</button>
       </div>
 
@@ -325,25 +332,28 @@
   </div>
 
   <script>
-    let currentTab = "listening";
+    let currentTab = 'all';
     let sortAsc = true;
+    let currentMode = 'Mẫu';
 
-    const data = {
+    const sampleData = {
       listening: [
-        { name: "Lesson 05 và 06", url: "https://drive.google.com/file/d/1M-D0IfRzrtOPDpyxJvGrtPvmUqo9x6_Z/view", note: "Listening", badge: "" },
-        { name: "Lesson 07 và 08", url: "https://drive.google.com/file/d/1DJdtWFsteHNsbLGTXWaPf_bjHM6Br9Hd/view", note: "Listening", badge: "" },
-        { name: "Lesson 09 và 10", url: "https://drive.google.com/file/d/15tI6nM1fc9dLf73KrXyCyu5QAQWl6cz-/view", note: "Listening", badge: "" },
-        { name: "Lesson 11 và 12", url: "https://drive.google.com/file/d/1-pA5KYPdwxq0QTYX2KfKUkXqznGK5TI_/view", note: "Listening", badge: "" },
-        { name: "Lesson 13 và 14", url: "https://drive.google.com/file/d/1FTfxh4vXdkKqqRaSkO4noAg3t26FH88m/view", note: "Listening", badge: "" },
-        { name: "Lesson 15", url: "https://drive.google.com/file/d/18XsGReUsUVqrM-e6VnYL8ITFYDyQKQBP/view", note: "Listening", badge: "hot" }
+        { name: 'Lesson 05 và 06', url: 'https://drive.google.com/file/d/1M-D0IfRzrtOPDpyxJvGrtPvmUqo9x6_Z/view', note: 'Listening', badge: '' },
+        { name: 'Lesson 07 và 08', url: 'https://drive.google.com/file/d/1DJdtWFsteHNsbLGTXWaPf_bjHM6Br9Hd/view', note: 'Listening', badge: '' },
+        { name: 'Lesson 09 và 10', url: 'https://drive.google.com/file/d/15tI6nM1fc9dLf73KrXyCyu5QAQWl6cz-/view', note: 'Listening', badge: '' },
+        { name: 'Lesson 11 và 12', url: 'https://drive.google.com/file/d/1-pA5KYPdwxq0QTYX2KfKUkXqznGK5TI_/view', note: 'Listening', badge: '' },
+        { name: 'Lesson 13 và 14', url: 'https://drive.google.com/file/d/1FTfxh4vXdkKqqRaSkO4noAg3t26FH88m/view', note: 'Listening', badge: '' },
+        { name: 'Lesson 15', url: 'https://drive.google.com/file/d/18XsGReUsUVqrM-e6VnYL8ITFYDyQKQBP/view', note: 'Listening', badge: 'hot' }
       ],
       speaking: [
-        { name: "Lesson 01 và 02", url: "https://drive.google.com/file/d/1cas7HCNBtBsqtO8QMFOznhPRfCRMlerJ/view", note: "Speaking", badge: "new" },
-        { name: "Lesson 03 và 04", url: "https://drive.google.com/file/d/1t-0cuHoQkynhuJJ1C6da96OpSRc0PTgU/view", note: "Speaking", badge: "hot" },
-        { name: "Lesson 05 và 06", url: "https://drive.google.com/file/d/1KIdrAJJTgztBne1UNQ53fYRPRZaWE_4I/view", note: "Speaking", badge: "hot" },
-        { name: "Lesson 10 11 12", url: "https://drive.google.com/file/d/1FWxx5w1bBsut2aBKzwG9mrkMP3N-GHMh/view", note: "Speaking", badge: "new" }
+        { name: 'Lesson 01 và 02', url: 'https://drive.google.com/file/d/1cas7HCNBtBsqtO8QMFOznhPRfCRMlerJ/view', note: 'Speaking', badge: 'new' },
+        { name: 'Lesson 03 và 04', url: 'https://drive.google.com/file/d/1t-0cuHoQkynhuJJ1C6da96OpSRc0PTgU/view', note: 'Speaking', badge: 'hot' },
+        { name: 'Lesson 05 và 06', url: 'https://drive.google.com/file/d/1KIdrAJJTgztBne1UNQ53fYRPRZaWE_4I/view', note: 'Speaking', badge: 'hot' },
+        { name: 'Lesson 10 11 12', url: 'https://drive.google.com/file/d/1FWxx5w1bBsut2aBKzwG9mrkMP3N-GHMh/view', note: 'Speaking', badge: 'new' }
       ]
     };
+
+    let examItems = [];
 
     const modeStat = document.getElementById('modeStat');
     const totalStat = document.getElementById('totalStat');
@@ -352,6 +362,8 @@
     const searchInput = document.getElementById('searchInput');
     const sortBtn = document.getElementById('sortBtn');
     const clearBtn = document.getElementById('clearBtn');
+    const fileInput = document.getElementById('fileInput');
+    const sampleBtn = document.getElementById('sampleBtn');
     const fileList = document.getElementById('fileList');
     const tabs = [...document.querySelectorAll('.tab')];
 
@@ -359,35 +371,19 @@
       if(type === 'new') return 'NEW';
       if(type === 'hot') return 'HOT';
       if(type === 'pin') return 'IMPORTANT';
+      if(type === 'exam') return 'EXAM';
       return 'TAG';
     }
 
     function tabIcon(tab){
-      return tab === 'listening' ? '🎧' : '🎤';
+      if(tab === 'listening') return '🎧';
+      if(tab === 'speaking') return '🎤';
+      return '📄';
     }
 
     function categoryName(tab){
+      if(tab === 'all') return 'All';
       return tab.charAt(0).toUpperCase() + tab.slice(1);
-    }
-
-    function updateStats(visible){
-      const total = Object.values(data).reduce((n, arr) => n + arr.length, 0);
-      totalStat.textContent = total;
-      visibleStat.textContent = visible.length;
-      categoryStat.textContent = categoryName(currentTab);
-      modeStat.textContent = 'VIP';
-    }
-
-    function highlight(text, query){
-      const escaped = escapeHtml(text);
-      if(!query) return escaped;
-      const idx = escaped.toLowerCase().indexOf(query.toLowerCase());
-      if(idx === -1) return escaped;
-      return escaped.slice(0, idx) +
-        `<span class="hl">` +
-        escaped.slice(idx, idx + query.length) +
-        `</span>` +
-        escaped.slice(idx + query.length);
     }
 
     function escapeHtml(str){
@@ -400,9 +396,58 @@
       }[m]));
     }
 
+    function highlight(text, query){
+      const escaped = escapeHtml(text);
+      if(!query) return escaped;
+      const lower = escaped.toLowerCase();
+      const qLower = query.toLowerCase();
+      const idx = lower.indexOf(qLower);
+      if(idx === -1) return escaped;
+      return escaped.slice(0, idx) + '<span class="hl">' + escaped.slice(idx, idx + query.length) + '</span>' + escaped.slice(idx + query.length);
+    }
+
+    function triggerProtectedDownload(url, filename){
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename || '';
+      link.target = '_blank';
+      link.rel = 'noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function normalizeExamItem(item){
+      return {
+        name: item.title || item.examTitle || 'Không có tên',
+        url: item.link || item.examDetailsUrl || '',
+        note: item.date || item.uploadDate || '',
+        badge: 'exam',
+        type: 'all'
+      };
+    }
+
+    function getCurrentList(){
+      if(currentMode === 'JSON') {
+        return examItems;
+      }
+      if(currentTab === 'all') {
+        return [...sampleData.listening, ...sampleData.speaking].map(item => ({...item, type:'all'}));
+      }
+      return (sampleData[currentTab] || []).map(item => ({...item, type: currentTab}));
+    }
+
+    function updateStats(visible){
+      const total = getCurrentList().length;
+      totalStat.textContent = total;
+      visibleStat.textContent = visible.length;
+      categoryStat.textContent = currentMode === 'JSON' ? 'All' : categoryName(currentTab);
+      modeStat.textContent = currentMode;
+    }
+
     function render(){
       const q = searchInput.value.trim();
-      let list = [...(data[currentTab] || [])].filter(item =>
+      let list = getCurrentList().filter(item =>
         item.name.toLowerCase().includes(q.toLowerCase()) ||
         String(item.note || '').toLowerCase().includes(q.toLowerCase())
       );
@@ -415,14 +460,14 @@
       updateStats(list);
 
       if(!list.length){
-        fileList.innerHTML = `<div class="empty">Không có tài liệu nào trong mục <b>${categoryName(currentTab)}</b> khớp từ khóa tìm kiếm.</div>`;
+        fileList.innerHTML = `<div class="empty">Không có dữ liệu nào khớp từ khóa tìm kiếm.</div>`;
         return;
       }
 
       fileList.innerHTML = list.map((item, i) => `
-        <div class="file ${currentTab}" style="animation-delay:${i * .05}s">
+        <div class="file ${currentMode === 'JSON' ? 'all' : currentTab}" style="animation-delay:${i * .05}s">
           <div class="file-left">
-            <div class="file-icon">${tabIcon(currentTab)}</div>
+            <div class="file-icon">${tabIcon(currentMode === 'JSON' ? 'all' : currentTab)}</div>
             <div>
               <div class="file-name">${highlight(item.name, q)}</div>
               <div class="meta">
@@ -438,17 +483,6 @@
       `).join('');
     }
 
-    function triggerProtectedDownload(url, filename){
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename || '';
-      link.target = '_blank';
-      link.rel = 'noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
-
     fileList.addEventListener('click', (event) => {
       const btn = event.target.closest('.download-btn-protected');
       if(!btn) return;
@@ -459,6 +493,9 @@
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         currentTab = tab.dataset.tab;
+        if(currentMode === 'JSON') {
+          currentTab = 'all';
+        }
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         render();
@@ -478,6 +515,41 @@
       render();
     });
 
+    sampleBtn.addEventListener('click', () => {
+      currentMode = 'Mẫu';
+      currentTab = 'all';
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelector('[data-tab="all"]').classList.add('active');
+      render();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const json = JSON.parse(evt.target.result);
+          if(!Array.isArray(json)) {
+            alert('File JSON phải là một mảng dữ liệu.');
+            return;
+          }
+          examItems = json.map(normalizeExamItem).filter(item => item.name || item.note || item.url);
+          currentMode = 'JSON';
+          currentTab = 'all';
+          tabs.forEach(t => t.classList.remove('active'));
+          document.querySelector('[data-tab="all"]').classList.add('active');
+          render();
+        } catch (err) {
+          alert('File JSON không hợp lệ.');
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    });
+
+    currentMode = 'Mẫu';
+    currentTab = 'all';
     render();
   </script>
 </body>
