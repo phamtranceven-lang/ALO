@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <script src="guard.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Thi</title>
+    <style>
+        :root {
+            --p: #007bff;
+            --bg: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            margin: 10px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--p);
+            margin: 15px 0;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            padding: 0 20px 15px;
+        }
+
+        #search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+            background: #fff;
+        }
+
+        #search-box:focus {
+            border-color: var(--p);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+        }
+
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            border-top: 1px solid #eee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px 10px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid #eee;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            word-wrap: break-word;
+            font-size: 14px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .col-date {
+            width: 110px;
+            font-weight: bold;
+        }
+
+        .col-name {
+            width: auto;
+        }
+
+        .col-action {
+            width: 110px;
+        }
+
+        .btn-open {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .btn-open:hover {
+            opacity: 0.8;
+            transform: scale(0.95);
+        }
+
+        /* Highlight mã lớp được tìm thấy trong ngoặc */
+        .highlight-code {
+            color: red;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .new-tag {
+            background: #ff4d4f;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .status {
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+            padding: 8px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+            .col-date {
+                width: 90px;
+                font-size: 12px;
+            }
+
+            .col-action {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>DANH SÁCH THI</h1>
+        <div class="search-box">
+            <input type="text" id="search-box" placeholder="Môn (his362), Lớp (chi 151 as) hoặc Ngày (22/12)..."
+                autocomplete="off" autofocus>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-date">Ngày tải</th>
+                        <th class="col-name">Tên file danh sách</th>
+                        <th class="col-action">Trang tải</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body"></tbody>
+            </table>
+        </div>
+        <div id="status" class="status">Đang đồng bộ dữ liệu...</div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            API: 'https://api.codetabs.com/v1/proxy/?quest=https://tidtu-worker-examlist.ngtuonghy.workers.dev/api/v1/pdaotao/scraping/examlist',
+            BASE_URL: 'https://pdaotao.duytan.edu.vn/',
+            STORAGE_KEY: 'dtu_cache_ultra_final',
+            REFRESH_RATE: 60000 // Tự động cập nhật mỗi 1 phút
+        };
+
+        const COLORS = ['#28a745', '#e67e22', '#e74c3c', '#8e44ad', '#2980b9', '#16a085', '#d35400', '#2c3e50'];
+        const dateColorMap = {};
+        let allExams = [];
+
+        function normalize(str) {
+            return str.toLowerCase().replace(/[\s\-_/]/g, ''); // Xóa khoảng trắng, gạch ngang, gạch chéo
+        }
+
+        async function init() {
+            document.getElementById('search-box').focus(); // Tự động trỏ vào ô nhập
+            const cached = localStorage.getItem(CONFIG.STORAGE_KEY);
+            if (cached) {
+                allExams = JSON.parse(cached);
+                render(allExams);
+            }
+            fetchData();
+            setInterval(fetchData, CONFIG.REFRESH_RATE);
+        }
+
+        async function fetchData() {
+            try {
+                const res = await fetch(CONFIG.API);
+                const json = await res.json();
+                const data = json.response?.data || [];
+                if (data.length > 0) {
+                    allExams = data;
+                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
+                    render(allExams, document.getElementById('search-box').value);
+                }
+                document.getElementById('status').innerText = `Cập nhật lúc: ${new Date().toLocaleTimeString()}`;
+            } catch (e) { document.getElementById('status').innerText = "Chế độ Offline"; }
+        }
+
+        function getColor(dateStr) {
+            const date = dateStr.split(' ')[1] || dateStr;
+            if (!dateColorMap[date]) {
+                const index = Object.keys(dateColorMap).length % COLORS.length;
+                dateColorMap[date] = COLORS[index];
+            }
+            return dateColorMap[date];
+        }
+
+        function render(data, searchText = '') {
+            const body = document.getElementById('data-body');
+            const searchParts = searchText.trim().toLowerCase().split(' ');
+            const classCode = searchParts.length > 1 ? searchParts[searchParts.length - 1] : '';
+
+            body.innerHTML = data.map(item => {
+                const datePart = item.uploadDate.split(' ')[1] || item.uploadDate;
+                const color = getColor(datePart);
+                const url = CONFIG.BASE_URL + item.examDetailsUrl;
+
+                let displayTitle = item.examTitle;
+
+                // Đổi màu đỏ cho mã lớp bạn nhập (vd: as) nằm trong dấu ngoặc
+                if (classCode) {
+                    const regex = new RegExp(`(\\()(.*?)(${classCode})(.*?)(\\))`, 'gi');
+                    displayTitle = displayTitle.replace(regex, (match, p1, p2, p3, p4, p5) => {
+                        return `${p1}${p2}<span class="highlight-code">${p3}</span>${p4}${p5}`;
+                    });
+                }
+
+                return `
+            <tr>
+                <td class="col-date" style="color: ${color}">${datePart}</td>
+                <td class="col-name" style="text-align: center;">
+                    <strong>${displayTitle}</strong>
+                    ${item.isNew ? '<span class="new-tag">MỚI</span>' : ''}
+                </td>
+                <td class="col-action">
+                    <a href="${url}" target="_blank" class="btn-open" style="background: ${color}">MỞ TẢI</a>
+                </td>
+            </tr>
+        `;
+            }).join('');
+        }
+
+        document.getElementById('search-box').addEventListener('input', (e) => {
+            const fullText = e.target.value;
+            const searchParts = fullText.trim().toLowerCase().split(' ');
+
+            const filtered = allExams.filter(ex => {
+                const titleNorm = normalize(ex.examTitle);
+                const dateNorm = normalize(ex.uploadDate);
+
+                // Nếu chỉ nhập 1 từ (môn học hoặc ngày tháng)
+                if (searchParts.length === 1) {
+                    const kw = normalize(searchParts[0]);
+                    return titleNorm.includes(kw) || dateNorm.includes(kw);
+                }
+
+                // Nếu nhập nhiều từ (vd: chi 151 as) -> Lọc theo Tên + Lớp
+                const namePart = normalize(searchParts.slice(0, -1).join(''));
+                const codePart = normalize(searchParts[searchParts.length - 1]);
+
+                const hasName = titleNorm.includes(namePart);
+                const hasCode = ex.examTitle.toLowerCase().match(/\((.*?)\)/)?.[1].includes(codePart);
+
+                return hasName && hasCode;
+            });
+
+            render(filtered, fullText);
+        });
+
+        init();
+    </script>
+</body>
+
+</html>
