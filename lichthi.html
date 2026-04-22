@@ -13,46 +13,45 @@
         :root {
             --primary-color: #d90429;
             --bg-light: #f8f9fa;
-            --secondary-color: #c0392b;
             --btn-compact: #27ae60;
             --btn-upload: #2563eb;
             --btn-share: #6366f1;
+            --btn-my: #0f766e;
             --toast-bg: #333;
             --warn-bg: #fff3cd;
             --conflict-row: #ffcccc;
+            --soft-border: #dee2e6;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             background-color: var(--bg-light);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
         .container {
             width: 98%;
-            max-width: 1400px;
-            height: 96vh;
+            max-width: 1440px;
+            min-height: 96vh;
             background: #fff;
             padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
+            gap: 12px;
         }
 
         h1#dynamicTitle {
             color: var(--primary-color);
             text-align: center;
-            margin: 0 0 10px 0;
+            margin: 0;
             font-size: 1.4rem;
             text-transform: uppercase;
             font-weight: 800;
@@ -60,11 +59,12 @@
             padding-bottom: 8px;
         }
 
-        .search-container {
+        .search-container,
+        .my-subjects-panel {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .input-wrapper {
@@ -172,6 +172,10 @@
             background: var(--btn-share);
         }
 
+        .my-button {
+            background: var(--btn-my);
+        }
+
         #fileInput {
             display: none;
         }
@@ -181,9 +185,103 @@
             font-size: 13px;
             color: #444;
             margin-top: -4px;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             padding-left: 4px;
             word-break: break-word;
+        }
+
+        .my-subjects-panel {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+            margin: 0 0 8px 0;
+        }
+
+        .panel-desc {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0 0 10px 0;
+        }
+
+        .my-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .my-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .my-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e5e7eb;
+            color: #111827;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .my-tag button {
+            border: none;
+            background: #dc2626;
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .my-empty {
+            font-size: 13px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .my-summary,
+        .missing-subjects {
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+
+        .missing-subjects {
+            display: none;
+            background: #fff7ed;
+            border-color: #fed7aa;
+            color: #9a3412;
+        }
+
+        .section-block {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-head {
+            background: #f8fafc;
+            padding: 10px 12px;
+            font-weight: 800;
+            color: #111827;
+            border-bottom: 1px solid #eee;
         }
 
         .table-wrapper {
@@ -191,6 +289,11 @@
             overflow: auto;
             border: 1px solid #eee;
             border-radius: 8px;
+        }
+
+        .my-table-wrapper {
+            overflow: auto;
+            max-height: 320px;
         }
 
         table {
@@ -291,10 +394,45 @@
                 <button id="toggleBtn" class="btn" onclick="toggleViewMode()">🔄 Rút gọn</button>
                 <button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
                 <button class="btn share-button" onclick="generateShareLink()">🔗 Share</button>
+                <button class="btn my-button" onclick="useMySubjectsInSearch()">📚 Môn của tôi</button>
             </div>
         </div>
 
         <div id="fileNameDisplay" class="file-name">Chưa chọn file Excel</div>
+
+        <div class="my-subjects-panel">
+            <div class="panel-title">Môn đang học của tôi</div>
+            <div class="panel-desc">Danh sách này lấy từ localStorage đã lưu ở giaodien.html.</div>
+            <div id="mySubjectsBox" class="my-tags"></div>
+            <div class="my-actions">
+                <button class="btn my-button" style="flex:0 0 auto;" onclick="useMySubjectsInSearch()">Dùng để tra cứu</button>
+                <button class="btn share-button" style="flex:0 0 auto;" onclick="reloadMySubjects()">Tải lại môn đã lưu</button>
+            </div>
+            <div id="mySummary" class="my-summary">Chưa có dữ liệu cá nhân.</div>
+            <div id="missingSubjectsBox" class="missing-subjects"></div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-head">Lịch thi của tôi</div>
+            <div class="my-table-wrapper">
+                <table id="myExamTable">
+                    <thead>
+                        <tr>
+                            <th>Mã môn</th>
+                            <th>Môn thi</th>
+                            <th>Ngày</th>
+                            <th>Giờ</th>
+                            <th>Địa điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myExamTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:20px;">Chưa có dữ liệu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <div class="table-wrapper" id="tableWrapper">
             <div id="captureArea" style="background: white; padding: 10px;">
@@ -325,10 +463,12 @@
     <script>
         let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
         let currentFileName = "";
+        let savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('searchTermInput').focus();
             loadFromURL();
+            renderSavedSubjects();
         });
 
         function showToast(msg, showUndo = false) {
@@ -477,6 +617,7 @@
             }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
 
             searchData();
+            filterMyExamSchedule();
         }
 
         function searchData() {
@@ -622,6 +763,97 @@
 
             if (notFound.length > 0) {
                 tbody.innerHTML += `<tr><td colspan="${cols.length}" style="text-align:center; color:blue; padding:20px; font-weight:bold;">Không tìm thấy (${notFound.length}): ${notFound.join(', ')}</td></tr>`;
+            }
+        }
+
+        function renderSavedSubjects() {
+            const box = document.getElementById("mySubjectsBox");
+            const summary = document.getElementById("mySummary");
+
+            if (!savedSubjects.length) {
+                box.innerHTML = `<div class="my-empty">Chưa có môn nào được lưu từ giaodien.html</div>`;
+                summary.innerHTML = "Chưa có dữ liệu cá nhân.";
+                return;
+            }
+
+            box.innerHTML = savedSubjects.map(subject => `
+                <span class="my-tag">${subject}</span>
+            `).join("");
+
+            summary.innerHTML = `Đã lưu <b>${savedSubjects.length}</b> môn. Có thể bấm "Dùng để tra cứu" để tự điền ô tìm kiếm.`;
+        }
+
+        function reloadMySubjects() {
+            savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+            renderSavedSubjects();
+            filterMyExamSchedule();
+            showToast("📚 Đã tải lại môn đã lưu");
+        }
+
+        function useMySubjectsInSearch() {
+            if (!savedSubjects.length) {
+                showToast("⚠️ Chưa có môn nào đã lưu");
+                return;
+            }
+            document.getElementById("searchTermInput").value = savedSubjects.join(", ");
+            handleSearchInput();
+            filterMyExamSchedule();
+        }
+
+        function filterMyExamSchedule() {
+            const tbody = document.getElementById("myExamTableBody");
+            const missingBox = document.getElementById("missingSubjectsBox");
+
+            if (!savedSubjects.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa có môn đã lưu.</td></tr>`;
+                missingBox.style.display = "none";
+                return;
+            }
+
+            if (!EXAM_DATA.length || !HEADERS.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Hãy Add file Excel để lọc lịch thi của bạn.</td></tr>`;
+                missingBox.style.display = "none";
+                return;
+            }
+
+            const kMaMon = HEADERS.find(h => h.includes('Mã môn'));
+            const kMonThi = HEADERS.find(h => h.includes('Môn thi'));
+            const kNgay = HEADERS.find(h => h.includes('Ngày'));
+            const kGio = HEADERS.find(h => h.includes('Giờ'));
+            const kDiaDiem = HEADERS.find(h => h.includes('Địa điểm'));
+
+            const myData = EXAM_DATA.filter(row => savedSubjects.includes(normalize(row[kMaMon])));
+
+            if (!myData.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa tìm thấy lịch thi cho các môn đã lưu.</td></tr>`;
+            } else {
+                myData.sort((a, b) => {
+                    if (a[kNgay] !== b[kNgay]) return a[kNgay] - b[kNgay];
+                    return String(a[kGio]).localeCompare(String(b[kGio]));
+                });
+
+                tbody.innerHTML = myData.map(row => {
+                    const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay];
+                    return `
+                        <tr>
+                            <td>${row[kMaMon] || ''}</td>
+                            <td>${row[kMonThi] || ''}</td>
+                            <td>${ngay || ''}</td>
+                            <td>${row[kGio] || ''}</td>
+                            <td>${row[kDiaDiem] || ''}</td>
+                        </tr>
+                    `;
+                }).join("");
+            }
+
+            const foundSubjects = [...new Set(myData.map(row => normalize(row[kMaMon])))];
+            const missingSubjects = savedSubjects.filter(s => !foundSubjects.includes(s));
+
+            if (missingSubjects.length) {
+                missingBox.style.display = "block";
+                missingBox.innerHTML = `Chưa thấy lịch thi cho: <b>${missingSubjects.join(", ")}</b>`;
+            } else {
+                missingBox.style.display = "none";
             }
         }
 
