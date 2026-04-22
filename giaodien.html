@@ -1130,15 +1130,23 @@
             }
         }
 
-    function formatSubjectForLichThi(subject) {
-    return String(subject || "")
-        .trim()
-        .toUpperCase()
-        .replace(/\s+/g, '')
-        .replace(/^([A-Z\-]+)(\d+)([A-Z]*)$/i, function (_, prefix, number, suffix) {
-            return suffix ? `${prefix} ${number} ${suffix}` : `${prefix} ${number}`;
-        });
-}
+        function formatSubjectForLichThi(subject) {
+            return String(subject || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '')
+                .replace(/^([A-Z\-]+)(\d+)([A-Z]*)$/i, function (_, prefix, number, suffix) {
+                    return suffix ? `${prefix} ${number} ${suffix}` : `${prefix} ${number}`;
+                });
+        }
+
+        function formatSubjectForDanhSachThi(subject) {
+            return String(subject || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '')
+                .replace(/^([A-Z\-]+)(\d+)([A-Z]+)$/i, '$1$2');
+        }
 
         function openWithSubjects(page) {
             const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
@@ -1152,6 +1160,8 @@
 
             if (page === "lichthi.html") {
                 finalSubjects = subjects.map(formatSubjectForLichThi);
+            } else if (page === "danhsachthi.html") {
+                finalSubjects = subjects.map(formatSubjectForDanhSachThi);
             }
 
             const query = encodeURIComponent(finalSubjects.join(", "));
