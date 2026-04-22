@@ -10,6 +10,7 @@
         :root {
             --p: #007bff;
             --bg: #f0f2f5;
+            --share: #6366f1;
         }
 
         body {
@@ -61,6 +62,29 @@
         #search-box:focus {
             border-color: var(--p);
             box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+        }
+
+        .action-row {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .share-btn {
+            background: var(--share);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .share-btn:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
         }
 
         .table-wrapper {
@@ -174,6 +198,9 @@
         <div class="search-box">
             <input type="text" id="search-box" placeholder="Môn (his362), Lớp (chi 151 as) hoặc Ngày (22/12)..."
                 autocomplete="off" autofocus>
+            <div class="action-row">
+                <button id="share-btn" class="share-btn" onclick="shareSearch()">🔗 Share</button>
+            </div>
         </div>
 
         <div class="table-wrapper">
@@ -211,6 +238,13 @@
             const params = new URLSearchParams(window.location.search);
             const m = params.get("m");
             return m ? decodeURIComponent(m) : "";
+        }
+
+        function parseSearchTokens(text) {
+            return String(text || '')
+                .split(',')
+                .map(s => s.trim())
+                .filter(Boolean);
         }
 
         async function init() {
@@ -263,11 +297,24 @@
             return dateColorMap[date];
         }
 
+        function highlightMatches(title, tokens) {
+            let result = title;
+            tokens.forEach(token => {
+                const raw = token.trim();
+                if (!raw) return;
+
+                const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const flexible = escaped.replace(/\s+/g, '\\s*[-_/ ]?\\s*');
+                const regex = new RegExp(flexible, 'gi');
+
+                result = result.replace(regex, match => `<span class="highlight-code">${match}</span>`);
+            });
+            return result;
+        }
+
         function render(data, searchText = '') {
             const body = document.getElementById('data-body');
-            const trimmed = searchText.trim().toLowerCase();
-            const searchParts = trimmed ? trimmed.split(',').join(' ').split(/\s+/).filter(Boolean) : [];
-            const classCode = searchParts.length > 1 ? searchParts[searchParts.length - 1] : '';
+            const tokens = parseSearchTokens(searchText);
 
             body.innerHTML = data.map(item => {
                 const datePart = item.uploadDate.split(' ')[1] || item.uploadDate;
@@ -275,12 +322,8 @@
                 const url = CONFIG.BASE_URL + item.examDetailsUrl;
 
                 let displayTitle = item.examTitle;
-
-                if (classCode) {
-                    const regex = new RegExp(`(\\()(.*?)(${classCode})(.*?)(\\))`, 'gi');
-                    displayTitle = displayTitle.replace(regex, (match, p1, p2, p3, p4, p5) => {
-                        return `${p1}${p2}<span class="highlight-code">${p3}</span>${p4}${p5}`;
-                    });
+                if (tokens.length) {
+                    displayTitle = highlightMatches(displayTitle, tokens);
                 }
 
                 return `
@@ -299,39 +342,44 @@
         }
 
         function applySearch(fullText = '') {
-            const rawText = String(fullText || '').trim().toLowerCase();
+            const rawText = String(fullText || '').trim();
 
             if (!rawText) {
                 render(allExams, '');
                 return;
             }
 
-            const commaGroups = rawText.split(',').map(s => s.trim()).filter(Boolean);
+            const tokens = parseSearchTokens(rawText);
+            const normalizedTokens = tokens.map(normalize);
 
             const filtered = allExams.filter(ex => {
                 const titleNorm = normalize(ex.examTitle);
                 const dateNorm = normalize(ex.uploadDate);
 
-                return commaGroups.some(group => {
-                    const searchParts = group.split(/\s+/).filter(Boolean);
-
-                    if (searchParts.length === 1) {
-                        const kw = normalize(searchParts[0]);
-                        return titleNorm.includes(kw) || dateNorm.includes(kw);
-                    }
-
-                    const namePart = normalize(searchParts.slice(0, -1).join(''));
-                    const codePart = normalize(searchParts[searchParts.length - 1]);
-
-                    const hasName = titleNorm.includes(namePart);
-                    const bracketContent = ex.examTitle.toLowerCase().match(/\((.*?)\)/)?.[1] || '';
-                    const hasCode = normalize(bracketContent).includes(codePart);
-
-                    return hasName && hasCode;
+                return normalizedTokens.some(token => {
+                    return titleNorm.includes(token) || dateNorm.includes(token);
                 });
             });
 
             render(filtered, fullText);
+        }
+
+        function shareSearch() {
+            const input = document.getElementById('search-box').value.trim();
+
+            if (!input) {
+                alert("Chưa có từ khóa để share");
+                return;
+            }
+
+            const encoded = encodeURIComponent(input);
+            const url = `${window.location.origin}${window.location.pathname}?m=${encoded}`;
+
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Đã copy link share");
+            }).catch(() => {
+                alert(url);
+            });
         }
 
         document.getElementById('search-box').addEventListener('input', (e) => {
