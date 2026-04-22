@@ -8,19 +8,22 @@
     <link rel="icon" href="https://duytan.edu.vn/images/icon.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         :root {
             --primary-color: #d90429;
             --bg-light: #f8f9fa;
             --secondary-color: #c0392b;
             --btn-compact: #27ae60;
-            --btn-full: #e67e22;
             --btn-upload: #2563eb;
+            --btn-share: #6366f1;
             --toast-bg: #333;
             --warn-bg: #fff3cd;
-            --warn-border: #ffeeba;
-            --warn-text: #856404;
             --conflict-row: #ffcccc;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -44,7 +47,6 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            box-sizing: border-box;
         }
 
         h1#dynamicTitle {
@@ -98,7 +100,6 @@
             border: 1px solid #ccc;
             font-size: 15px;
             outline: none;
-            box-sizing: border-box;
         }
 
         .btn-group {
@@ -165,6 +166,10 @@
 
         .upload-button {
             background: var(--btn-upload);
+        }
+
+        .share-button {
+            background: var(--btn-share);
         }
 
         #fileInput {
@@ -259,13 +264,6 @@
         .table-wrapper.capturing .export-footer {
             display: block;
         }
-
-        .disclaimer {
-            margin-top: 10px;
-            font-size: 11px;
-            color: #666;
-            text-align: center;
-        }
     </style>
 </head>
 
@@ -292,6 +290,7 @@
                 <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFileUpload(event)">
                 <button id="toggleBtn" class="btn" onclick="toggleViewMode()">🔄 Rút gọn</button>
                 <button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
+                <button class="btn share-button" onclick="generateShareLink()">🔗 Share</button>
             </div>
         </div>
 
@@ -329,6 +328,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('searchTermInput').focus();
+            loadFromURL();
         });
 
         function showToast(msg, showUndo = false) {
@@ -398,6 +398,7 @@
 
             const uniqueValues = [];
             let hasDuplicate = false;
+
             rawValues.forEach(v => {
                 const normV = normalize(v);
                 if (normV && uniqueValues.map(uv => normalize(uv)).includes(normV)) {
@@ -448,7 +449,8 @@
             rows.slice(0, 15).forEach(row => {
                 if (row) {
                     row.forEach(c => {
-                        if (String(c).toUpperCase().includes("LỊCH THI") || String(c).toUpperCase().includes("LỊCH THI")) {
+                        const text = String(c).toUpperCase();
+                        if (text.includes("LỊCH THI") || text.includes("LỊCH THI")) {
                             document.getElementById('dynamicTitle').innerText = c;
                         }
                     });
@@ -593,7 +595,6 @@
                         const myQuery = queries.map(q => parseQuery(q)).find(pq => pq.maMon === rowMaMon);
                         if (myQuery && myQuery.khoi && String(val).includes(myQuery.khoi)) {
                             td.innerHTML = String(val).replace(new RegExp(`\\b${myQuery.khoi}\\b`, 'g'), `<mark>${myQuery.khoi}</mark>`);
-                            td.classList.add('highlight-khoithi');
                         } else {
                             td.textContent = val;
                         }
@@ -658,6 +659,35 @@
                     navigator.clipboard.write([item]).then(() => showToast("✅ Đã chụp ảnh!"));
                 });
             });
+        }
+
+        function generateShareLink() {
+            const input = document.getElementById("searchTermInput").value.trim();
+
+            if (!input) {
+                showToast("⚠️ Chưa nhập môn");
+                return;
+            }
+
+            const encoded = encodeURIComponent(input);
+            const url = `${window.location.origin}${window.location.pathname}?m=${encoded}`;
+
+            navigator.clipboard.writeText(url).then(() => {
+                showToast("🔗 Đã copy link chia sẻ");
+            });
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const m = params.get("m");
+
+            if (m) {
+                const decoded = decodeURIComponent(m);
+                const input = document.getElementById("searchTermInput");
+                input.value = decoded;
+                handleSearchInput();
+                showToast("📥 Đã load dữ liệu từ link");
+            }
         }
     </script>
 </body>
