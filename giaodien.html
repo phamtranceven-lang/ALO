@@ -1130,13 +1130,15 @@
             }
         }
 
-        function formatSubjectForLichThi(subject) {
-            return String(subject || "")
-                .trim()
-                .toUpperCase()
-                .replace(/^([A-Z\-]+)(\d+)$/i, '$1 $2')
-                .replace(/\s+/g, ' ');
-        }
+    function formatSubjectForLichThi(subject) {
+    return String(subject || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '')
+        .replace(/^([A-Z\-]+)(\d+)([A-Z]*)$/i, function (_, prefix, number, suffix) {
+            return suffix ? `${prefix} ${number} ${suffix}` : `${prefix} ${number}`;
+        });
+}
 
         function openWithSubjects(page) {
             const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
