@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -130,7 +129,6 @@
             transform: scale(0.95);
         }
 
-        /* Highlight mã lớp được tìm thấy trong ngoặc */
         .highlight-code {
             color: red;
             font-weight: bold;
@@ -198,7 +196,7 @@
             API: 'https://api.codetabs.com/v1/proxy/?quest=https://tidtu-worker-examlist.ngtuonghy.workers.dev/api/v1/pdaotao/scraping/examlist',
             BASE_URL: 'https://pdaotao.duytan.edu.vn/',
             STORAGE_KEY: 'dtu_cache_ultra_final',
-            REFRESH_RATE: 60000 // Tự động cập nhật mỗi 1 phút
+            REFRESH_RATE: 60000
         };
 
         const COLORS = ['#28a745', '#e67e22', '#e74c3c', '#8e44ad', '#2980b9', '#16a085', '#d35400', '#2c3e50'];
@@ -206,17 +204,37 @@
         let allExams = [];
 
         function normalize(str) {
-            return str.toLowerCase().replace(/[\s\-_/]/g, ''); // Xóa khoảng trắng, gạch ngang, gạch chéo
+            return String(str || '').toLowerCase().replace(/[\s\-_/]/g, '');
+        }
+
+        function getSearchValueFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const m = params.get("m");
+            return m ? decodeURIComponent(m) : "";
         }
 
         async function init() {
-            document.getElementById('search-box').focus(); // Tự động trỏ vào ô nhập
+            const input = document.getElementById('search-box');
+            const searchFromURL = getSearchValueFromURL();
+
+            if (searchFromURL) {
+                input.value = searchFromURL;
+            }
+
+            input.focus();
+
             const cached = localStorage.getItem(CONFIG.STORAGE_KEY);
             if (cached) {
                 allExams = JSON.parse(cached);
-                render(allExams);
+                applySearch(input.value);
             }
-            fetchData();
+
+            await fetchData();
+
+            if (searchFromURL) {
+                applySearch(searchFromURL);
+            }
+
             setInterval(fetchData, CONFIG.REFRESH_RATE);
         }
 
@@ -228,10 +246,12 @@
                 if (data.length > 0) {
                     allExams = data;
                     localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
-                    render(allExams, document.getElementById('search-box').value);
+                    applySearch(document.getElementById('search-box').value);
                 }
                 document.getElementById('status').innerText = `Cập nhật lúc: ${new Date().toLocaleTimeString()}`;
-            } catch (e) { document.getElementById('status').innerText = "Chế độ Offline"; }
+            } catch (e) {
+                document.getElementById('status').innerText = "Chế độ Offline";
+            }
         }
 
         function getColor(dateStr) {
@@ -245,7 +265,8 @@
 
         function render(data, searchText = '') {
             const body = document.getElementById('data-body');
-            const searchParts = searchText.trim().toLowerCase().split(' ');
+            const trimmed = searchText.trim().toLowerCase();
+            const searchParts = trimmed ? trimmed.split(',').join(' ').split(/\s+/).filter(Boolean) : [];
             const classCode = searchParts.length > 1 ? searchParts[searchParts.length - 1] : '';
 
             body.innerHTML = data.map(item => {
@@ -255,7 +276,6 @@
 
                 let displayTitle = item.examTitle;
 
-                // Đổi màu đỏ cho mã lớp bạn nhập (vd: as) nằm trong dấu ngoặc
                 if (classCode) {
                     const regex = new RegExp(`(\\()(.*?)(${classCode})(.*?)(\\))`, 'gi');
                     displayTitle = displayTitle.replace(regex, (match, p1, p2, p3, p4, p5) => {
@@ -264,45 +284,58 @@
                 }
 
                 return `
-            <tr>
-                <td class="col-date" style="color: ${color}">${datePart}</td>
-                <td class="col-name" style="text-align: center;">
-                    <strong>${displayTitle}</strong>
-                    ${item.isNew ? '<span class="new-tag">MỚI</span>' : ''}
-                </td>
-                <td class="col-action">
-                    <a href="${url}" target="_blank" class="btn-open" style="background: ${color}">MỞ TẢI</a>
-                </td>
-            </tr>
-        `;
+                    <tr>
+                        <td class="col-date" style="color: ${color}">${datePart}</td>
+                        <td class="col-name" style="text-align: center;">
+                            <strong>${displayTitle}</strong>
+                            ${item.isNew ? '<span class="new-tag">MỚI</span>' : ''}
+                        </td>
+                        <td class="col-action">
+                            <a href="${url}" target="_blank" class="btn-open" style="background: ${color}">MỞ TẢI</a>
+                        </td>
+                    </tr>
+                `;
             }).join('');
         }
 
-        document.getElementById('search-box').addEventListener('input', (e) => {
-            const fullText = e.target.value;
-            const searchParts = fullText.trim().toLowerCase().split(' ');
+        function applySearch(fullText = '') {
+            const rawText = String(fullText || '').trim().toLowerCase();
+
+            if (!rawText) {
+                render(allExams, '');
+                return;
+            }
+
+            const commaGroups = rawText.split(',').map(s => s.trim()).filter(Boolean);
 
             const filtered = allExams.filter(ex => {
                 const titleNorm = normalize(ex.examTitle);
                 const dateNorm = normalize(ex.uploadDate);
 
-                // Nếu chỉ nhập 1 từ (môn học hoặc ngày tháng)
-                if (searchParts.length === 1) {
-                    const kw = normalize(searchParts[0]);
-                    return titleNorm.includes(kw) || dateNorm.includes(kw);
-                }
+                return commaGroups.some(group => {
+                    const searchParts = group.split(/\s+/).filter(Boolean);
 
-                // Nếu nhập nhiều từ (vd: chi 151 as) -> Lọc theo Tên + Lớp
-                const namePart = normalize(searchParts.slice(0, -1).join(''));
-                const codePart = normalize(searchParts[searchParts.length - 1]);
+                    if (searchParts.length === 1) {
+                        const kw = normalize(searchParts[0]);
+                        return titleNorm.includes(kw) || dateNorm.includes(kw);
+                    }
 
-                const hasName = titleNorm.includes(namePart);
-                const hasCode = ex.examTitle.toLowerCase().match(/\((.*?)\)/)?.[1].includes(codePart);
+                    const namePart = normalize(searchParts.slice(0, -1).join(''));
+                    const codePart = normalize(searchParts[searchParts.length - 1]);
 
-                return hasName && hasCode;
+                    const hasName = titleNorm.includes(namePart);
+                    const bracketContent = ex.examTitle.toLowerCase().match(/\((.*?)\)/)?.[1] || '';
+                    const hasCode = normalize(bracketContent).includes(codePart);
+
+                    return hasName && hasCode;
+                });
             });
 
             render(filtered, fullText);
+        }
+
+        document.getElementById('search-box').addEventListener('input', (e) => {
+            applySearch(e.target.value);
         });
 
         init();
