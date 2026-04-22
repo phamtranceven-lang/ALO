@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -59,11 +58,9 @@
             padding-bottom: 8px;
         }
 
-        /* --- TỐI ƯU CHO DI ĐỘNG --- */
         .search-container {
             display: flex;
             flex-wrap: wrap;
-            /* Cho phép xuống dòng trên điện thoại */
             gap: 10px;
             margin-bottom: 15px;
         }
@@ -74,7 +71,6 @@
             display: flex;
             align-items: center;
             min-width: 280px;
-            /* Đảm bảo ô nhập không quá nhỏ */
         }
 
         .input-count-prefix {
@@ -109,20 +105,16 @@
             display: flex;
             gap: 8px;
             width: 100%;
-            /* Trên điện thoại các nút sẽ chiếm hết chiều ngang */
         }
 
         @media (min-width: 768px) {
             .btn-group {
                 width: auto;
             }
-
-            /* Trên máy tính thì thu gọn lại */
         }
 
         .btn {
             flex: 1;
-            /* Nút dàn đều trên điện thoại */
             padding: 0 15px;
             height: 44px;
             border: none;
@@ -135,8 +127,6 @@
             align-items: center;
             justify-content: center;
         }
-
-        /* -------------------------- */
 
         .clear-btn {
             position: absolute;
@@ -255,6 +245,12 @@
             color: #666;
             text-align: center;
         }
+
+        #sourceInfo {
+            font-size: 13px;
+            color: #666;
+            margin: 2px 0 12px 2px;
+        }
     </style>
 </head>
 
@@ -263,6 +259,7 @@
         <span id="toastMsg">Thông báo</span>
         <span id="undoLink" onclick="undoClear()" style="display:none;">HOÀN TÁC</span>
     </div>
+
     <div class="container">
         <h1 id="dynamicTitle">HỆ THỐNG TRA CỨU...</h1>
 
@@ -280,6 +277,8 @@
             </div>
         </div>
 
+        <p id="sourceInfo">Đang tải nguồn file...</p>
+
         <div class="table-wrapper" id="tableWrapper">
             <div id="captureArea" style="background: white; padding: 10px;">
                 <div class="export-header">
@@ -304,10 +303,37 @@
     </div>
 
     <script>
-        const EXAM_FILE_URL = 'https://raw.githubusercontent.com/adminweba/crack/main/LI%CC%A3CH%20THI%20KTHP.xlsx';
+        const params = new URLSearchParams(window.location.search);
+
+        const EXAM_FILE_URL =
+            params.get("src") ||
+            "https://raw.githubusercontent.com/adminweba/crack/main/LI%CC%A3CH%20THI%20KTHP.xlsx";
+
         let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
 
-        document.addEventListener('DOMContentLoaded', () => { loadAndProcessFile(EXAM_FILE_URL); document.getElementById('searchTermInput').focus(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const mon = params.get("m");
+            const srcText = params.get("src");
+
+            if (mon) {
+                document.getElementById("searchTermInput").value = decodeURIComponent(mon);
+            }
+
+            if (srcText) {
+                try {
+                    const url = new URL(srcText);
+                    const name = decodeURIComponent(url.pathname.split('/').pop() || "Không rõ tên file");
+                    document.getElementById("sourceInfo").innerText = "Nguồn hiện tại: " + name;
+                } catch {
+                    document.getElementById("sourceInfo").innerText = "Nguồn hiện tại: Link đã chọn";
+                }
+            } else {
+                document.getElementById("sourceInfo").innerText = "Nguồn hiện tại: Link mặc định";
+            }
+
+            loadAndProcessFile(EXAM_FILE_URL);
+            document.getElementById('searchTermInput').focus();
+        });
 
         async function loadAndProcessFile(url) {
             try {
@@ -316,532 +342,42 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                rows.slice(0, 10).forEach(row => { if (row) row.forEach(c => { if (String(c).includes("LỊCH THI")) document.getElementById('dynamicTitle').innerText = c; }); });
-                let hIndex = -1;
-                for (let i = 0; i < 30; i++) { if (rows[i] && rows[i].some(c => String(c).includes("Ngày"))) { hIndex = i; HEADERS = rows[i].map(h => String(h || '').trim()); break; } }
-                EXAM_DATA = XLSX.utils.sheet_to_json(worksheet, { header: HEADERS, range: hIndex + 1, defval: "" }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
-                searchData();
-            } catch (e) { console.error(e); }
-        }
 
-        function showToast(msg, showUndo = false) {
-            const t = document.getElementById("toast"), m = document.getElementById("toastMsg"), u = document.getElementById("undoLink");
-            m.innerText = msg; u.style.display = showUndo ? "inline" : "none"; t.className = "show";
-            if (window.toastTimer) clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => { t.className = ""; }, 4000);
-        }
-
-        function clearSearch() {
-            const input = document.getElementById('searchTermInput');
-            if (input.value.trim() === "") return;
-            lastSearchValue = input.value; input.value = "";
-            showToast("Đã xóa", true); handleSearchInput(); input.focus();
-        }
-
-        function undoClear() {
-            const input = document.getElementById('searchTermInput');
-            input.value = lastSearchValue; document.getElementById("toast").className = "";
-            handleSearchInput(); input.focus();
-        }
-
-        function handlePaste(e) {
-            const clipboardData = e.clipboardData || window.clipboardData;
-            const pastedData = clipboardData.getData('Text');
-            if (pastedData.includes('\n')) {
-                e.preventDefault();
-                const formattedData = pastedData.replace(/\r?\n/g, ', ');
-                document.getElementById('searchTermInput').value = formattedData;
-                handleSearchInput();
-            }
-        }
-
-        function normalize(s) { return String(s || '').trim().toUpperCase().replace(/\s+/g, ' '); }
-
-        function parseQuery(q) {
-            const raw = normalize(q), parts = raw.split(' ');
-            if (parts.length === 1) return { maMon: parts[0], khoi: '', isPartial: true };
-            const lastPart = parts[parts.length - 1];
-            if (!(/\d/.test(lastPart)) && parts.length >= 2) { const khoi = parts.pop(); return { maMon: parts.join(' '), khoi: khoi, isPartial: false }; }
-            return { maMon: raw, khoi: '', isPartial: false };
-        }
-
-        function handleSearchInput() {
-            const input = document.getElementById('searchTermInput'), clearBtn = document.getElementById('clearBtn'), countDisplay = document.getElementById('inputMonCount');
-            clearBtn.style.display = input.value.length > 0 ? "flex" : "none";
-            const rawValues = input.value.split(',').map(v => v.trim()).filter(Boolean);
-            countDisplay.innerText = rawValues.length;
-            const uniqueValues = [];
-            let hasDuplicate = false;
-            rawValues.forEach(v => {
-                const normV = normalize(v);
-                if (normV && uniqueValues.map(uv => normalize(uv)).includes(normV)) { hasDuplicate = true; } else if (normV) { uniqueValues.push(v); }
-            });
-            if (hasDuplicate) {
-                input.value = uniqueValues.join(', ') + (input.value.endsWith(',') ? ', ' : '');
-                showToast("⚠️ Đã lọc trùng!"); countDisplay.innerText = uniqueValues.length;
-            }
-            searchData();
-        }
-
-        function searchData() {
-            const inputVal = document.getElementById('searchTermInput').value, queries = inputVal.split(',').map(q => q.trim()).filter(Boolean);
-            const kMaMon = HEADERS.find(h => h.includes('Mã môn')), kKhoi = HEADERS.find(h => h.includes('Khối thi')), kNgay = HEADERS.find(h => h.includes('Ngày')), kGio = HEADERS.find(h => h.includes('Giờ'));
-            let filtered = [];
-            let notFound = [];
-            if (queries.length === 0) { filtered = [...EXAM_DATA]; } else {
-                queries.forEach(q => {
-                    const { maMon, khoi, isPartial } = parseQuery(q);
-                    const matches = EXAM_DATA.filter(row => {
-                        const rowMaMon = normalize(row[kMaMon]), rowKhoiRaw = normalize(row[kKhoi]);
-                        if (isPartial) return rowMaMon.startsWith(maMon);
-                        if (rowMaMon !== maMon) return false;
-                        if (khoi) { const inBracket = rowKhoiRaw.match(/\((.*?)\)/); return inBracket && inBracket[1].split('-').map(s => s.trim()).includes(khoi); }
-                        return true;
+                rows.slice(0, 10).forEach(row => {
+                    if (row) row.forEach(c => {
+                        if (String(c).includes("LỊCH THI") || String(c).includes("LỊCH THI")) {
+                            document.getElementById('dynamicTitle').innerText = c;
+                        }
                     });
-                    if (matches.length > 0) filtered.push(...matches); else if (q.length > 3) notFound.push(q.toUpperCase());
                 });
-            }
-            filtered = Array.from(new Set(filtered));
-            filtered.sort((a, b) => { if (a[kNgay] !== b[kNgay]) return a[kNgay] - b[kNgay]; return String(a[kGio]).localeCompare(String(b[kGio])); });
-            document.getElementById('resultStats').innerText = filtered.length;
-            renderTable(filtered, queries, notFound, queries.length > 0);
-        }
 
-        function renderTable(data, queries, notFound, isSearching) {
-            const tbody = document.querySelector('#resultTable tbody'), conflictDiv = document.getElementById('conflictWarning'), thead = document.querySelector('#resultTable thead');
-            thead.innerHTML = ''; tbody.innerHTML = ''; conflictDiv.style.display = 'none';
-            const kMaMon = HEADERS.find(h => h.includes('Mã môn')), kKhoi = HEADERS.find(h => h.includes('Khối thi')), kNgay = HEADERS.find(h => h.includes('Ngày')), kGio = HEADERS.find(h => h.includes('Giờ')), kMonThi = HEADERS.find(h => h.includes('Môn thi'));
-            const compactTargets = ['STT', 'Ngày', 'Giờ', 'Khối thi', 'Địa điểm'];
-            let cols = isCompactView ? HEADERS.filter(h => compactTargets.some(target => normalize(h).includes(normalize(target)))) : HEADERS;
-            const trH = document.createElement('tr');
-            cols.forEach(c => { const th = document.createElement('th'); th.textContent = c; trH.appendChild(th); });
-            thead.appendChild(trH);
-            let counts = {}, scheduleMap = {};
-            if (isSearching) {
-                data.forEach(row => {
-                    const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay], gio = row[kGio], key = `${ngay} | ${gio}`;
-                    counts[key] = (counts[key] || 0) + 1;
-                    if (!scheduleMap[key]) scheduleMap[key] = []; scheduleMap[key].push(`[${row[kMaMon]}] ${row[kMonThi] || ''}`);
-                });
-            }
-            data.forEach(row => {
-                const tr = document.createElement('tr'), ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay], gio = row[kGio], key = `${ngay} | ${gio}`;
-                if (isSearching && counts[key] > 1) tr.style.backgroundColor = 'var(--conflict-row)';
-                const rowMaMon = normalize(row[kMaMon]);
-                cols.forEach(c => {
-                    const td = document.createElement('td'); let val = row[c];
-                    if (c.includes('Ngày') && typeof val === 'number') val = excelDate(val);
-                    if (c === kKhoi) {
-                        const myQuery = queries.map(q => parseQuery(q)).find(pq => pq.maMon === rowMaMon);
-                        if (myQuery && myQuery.khoi && String(val).includes(myQuery.khoi)) { td.innerHTML = String(val).replace(new RegExp(`\\b${myQuery.khoi}\\b`, 'g'), `<mark>${myQuery.khoi}</mark>`); td.classList.add('highlight-khoithi'); } else { td.textContent = val; }
-                    } else { td.textContent = val; }
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            if (isSearching) {
-                let conflictKeys = Object.keys(counts).filter(k => counts[k] > 1);
-                if (conflictKeys.length > 0) {
-                    let warnContent = `<strong style="color:red;">⚠️ PHÁT HIỆN TRÙNG LỊCH THI:</strong><br>`;
-                    conflictKeys.forEach(k => { warnContent += `• <b>${k}</b>: Trùng giữa ${scheduleMap[k].join(' và ')}<br>`; });
-                    conflictDiv.innerHTML = warnContent; conflictDiv.style.display = 'block';
+                let hIndex = -1;
+                for (let i = 0; i < 30; i++) {
+                    if (rows[i] && rows[i].some(c => String(c).includes("Ngày"))) {
+                        hIndex = i;
+                        HEADERS = rows[i].map(h => String(h || '').trim());
+                        break;
+                    }
                 }
-            }
-            if (notFound.length > 0) { tbody.innerHTML += `<tr><td colspan="${cols.length}" style="text-align:center; color:blue; padding:20px; font-weight:bold;">Không tìm thấy (${notFound.length}): ${notFound.join(', ')}</td></tr>`; }
-        }
 
-        function excelDate(s) { const d = new Date((s - 25569) * 86400 * 1000); return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`; }
-        function toggleViewMode() { isCompactView = !isCompactView; document.getElementById('toggleBtn').innerText = isCompactView ? "🔄 Đầy đủ" : "🔄 Rút gọn"; searchData(); }
-        function doCapture() {
-            const wrapper = document.getElementById('tableWrapper'); const now = new Date();
-            document.getElementById('exportTitleText').innerText = document.getElementById('dynamicTitle').innerText;
-            document.getElementById('exportTimeText').innerText = `Tra cứu lúc: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} - ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-            wrapper.classList.add('capturing'); document.getElementById('tableWrapper').scrollTop = 0;
-            html2canvas(document.getElementById('captureArea'), { scale: 2, useCORS: true }).then(canvas => {
-                wrapper.classList.remove('capturing'); canvas.toBlob(blob => { const item = new ClipboardItem({ "image/png": blob }); navigator.clipboard.write([item]).then(() => showToast("✅ Đã chụp ảnh!")); });
-            });
-        }
-    </script>
-</body>
+                EXAM_DATA = XLSX.utils.sheet_to_json(worksheet, {
+                    header: HEADERS,
+                    range: hIndex + 1,
+                    defval: ""
+                }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
 
-</html>            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            min-width: 280px;
-        }
-
-        .input-count-prefix {
-            background: #eee;
-            color: var(--primary-color);
-            font-weight: 800;
-            height: 44px;
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ccc;
-            border-right: none;
-            border-radius: 8px 0 0 8px;
-            font-size: 16px;
-            min-width: 35px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            height: 44px;
-            padding: 0 10px;
-            padding-right: 85px;
-            border-radius: 0 8px 8px 0;
-            border: 1px solid #ccc;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        @media (min-width: 768px) {
-            .btn-group {
-                width: auto;
+                searchData();
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#resultTable tbody').innerHTML =
+                    `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không tải được dữ liệu...</td></tr>`;
             }
         }
-
-        .btn {
-            flex: 1;
-            padding: 0 15px;
-            height: 44px;
-            border: none;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 110px;
-        }
-
-        .clear-btn {
-            position: absolute;
-            right: 40px;
-            background: #eee;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-        }
-
-        #resultStats {
-            position: absolute;
-            right: 12px;
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 14px;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        #toggleBtn { background: var(--btn-compact); }
-        .copy-button { background: #a8aef4; }
-        .share-button { background: var(--btn-share); }
-        .my-button { background: var(--btn-my); }
-        .source-button { background: var(--btn-source); }
-
-        .source-info {
-            font-size: 13px;
-            color: #444;
-            margin-top: -4px;
-            margin-bottom: 4px;
-            padding-left: 4px;
-            word-break: break-word;
-        }
-
-        .my-subjects-panel {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 12px;
-            flex-direction: column;
-        }
-
-        .panel-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: #111827;
-            margin: 0 0 8px 0;
-        }
-
-        .panel-desc {
-            font-size: 13px;
-            color: #6b7280;
-            margin: 0 0 10px 0;
-        }
-
-        .my-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .my-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .my-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #e5e7eb;
-            color: #111827;
-            padding: 7px 10px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .my-empty {
-            font-size: 13px;
-            color: #6b7280;
-            font-style: italic;
-        }
-
-        .my-summary,
-        .missing-subjects {
-            font-size: 13px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-        }
-
-        .missing-subjects {
-            display: none;
-            background: #fff7ed;
-            border-color: #fed7aa;
-            color: #9a3412;
-        }
-
-        .section-block {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .section-head {
-            background: #f8fafc;
-            padding: 10px 12px;
-            font-weight: 800;
-            color: #111827;
-            border-bottom: 1px solid #eee;
-        }
-
-        .table-wrapper {
-            flex: 1;
-            overflow: auto;
-            border: 1px solid #eee;
-            border-radius: 8px;
-        }
-
-        .my-table-wrapper {
-            overflow: auto;
-            max-height: 320px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        th, td {
-            border-bottom: 1px solid #dee2e6;
-            border-right: 1px solid #dee2e6;
-            padding: 10px 8px;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        thead th {
-            background-color: var(--primary-color);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            font-size: 11px;
-        }
-
-        .conflict-warning {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #fff3cd;
-            border-radius: 8px;
-            font-size: 13px;
-            display: none;
-        }
-
-        #toast {
-            visibility: hidden;
-            min-width: 280px;
-            background-color: var(--toast-bg);
-            color: #fff;
-            padding: 12px;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 9999;
-        }
-
-        #undoLink {
-            color: #ffeb3b;
-            text-decoration: underline;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        #toast.show { visibility: visible; }
-
-        .export-header,
-        .export-footer {
-            display: none;
-            text-align: center;
-        }
-
-        .table-wrapper.capturing .export-header,
-        .table-wrapper.capturing .export-footer {
-            display: block;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="toast">
-        <span id="toastMsg">Thông báo</span>
-        <span id="undoLink" onclick="undoClear()" style="display:none;">HOÀN TÁC</span>
-    </div>
-
-    <div class="container">
-        <h1 id="dynamicTitle">HỆ THỐNG TRA CỨU LỊCH THI KTHP</h1>
-
-        <div class="search-container">
-            <div class="input-wrapper">
-                <div id="inputMonCount" class="input-count-prefix">0</div>
-                <input type="text" id="searchTermInput" placeholder="Nhập mã môn..." oninput="handleSearchInput()"
-                    onpaste="handlePaste(event)" autocomplete="off" />
-                <button id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
-                <div id="resultStats">0</div>
-            </div>
-
-            <div class="btn-group">
-                <button id="toggleBtn" class="btn" onclick="toggleViewMode()">🔄 Rút gọn</button>
-                <button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
-                <button class="btn share-button" onclick="generateShareLink()">🔗 Share</button>
-                <button class="btn my-button" onclick="useMySubjectsInSearch()">📚 Môn của tôi</button>
-            </div>
-        </div>
-
-        <div id="sourceInfo" class="source-info">Đang kiểm tra nguồn dữ liệu...</div>
-
-        <div class="my-subjects-panel">
-            <div class="panel-title">Môn đang học của tôi</div>
-            <div class="panel-desc">Danh sách này lấy từ localStorage đã lưu ở giaodien.html.</div>
-            <div id="mySubjectsBox" class="my-tags"></div>
-            <div class="my-actions">
-                <button class="btn my-button" style="flex:0 0 auto;" onclick="useMySubjectsInSearch()">Dùng để tra cứu</button>
-                <button class="btn share-button" style="flex:0 0 auto;" onclick="reloadMySubjects()">Tải lại môn đã lưu</button>
-            </div>
-            <div id="mySummary" class="my-summary">Chưa có dữ liệu cá nhân.</div>
-            <div id="missingSubjectsBox" class="missing-subjects"></div>
-        </div>
-
-        <div class="section-block">
-            <div class="section-head">Lịch thi của tôi</div>
-            <div class="my-table-wrapper">
-                <table id="myExamTable">
-                    <thead>
-                        <tr>
-                            <th>Mã môn</th>
-                            <th>Môn thi</th>
-                            <th>Ngày</th>
-                            <th>Giờ</th>
-                            <th>Địa điểm</th>
-                        </tr>
-                    </thead>
-                    <tbody id="myExamTableBody">
-                        <tr>
-                            <td colspan="5" style="text-align:center; padding:20px;">Chưa có dữ liệu.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="table-wrapper" id="tableWrapper">
-            <div id="captureArea" style="background: white; padding: 10px;">
-                <div class="export-header">
-                    <h2 id="exportTitleText" style="color:var(--primary-color); margin:0;"></h2>
-                    <p id="exportTimeText" style="font-style:italic; color:#555; margin:5px 0 15px 0;"></p>
-                </div>
-
-                <table id="resultTable">
-                    <thead></thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="100%" style="text-align:center; padding:30px;">Đang tải dữ liệu...</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div id="conflictWarning" class="conflict-warning"></div>
-
-                <div id="exportFooter" class="export-footer"
-                    style="margin-top:15px; font-size:12px; color:red; border-top:1px solid #eee; padding-top:10px; font-weight:bold;">
-                    * Nội dung chỉ mang tính chất THAM KHẢO / LT: Phòng lý thuyết; PM: Phòng máy *
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const EXAM_FILE_URL = "https://phamtranceven-lang.github.io/ALO/639124806022510476.xlsx";
-
-        let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
-        let savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('searchTermInput').focus();
-            loadFromURL();
-            renderSavedSubjects();
-            await loadAndProcessFile(EXAM_FILE_URL);
-        });
 
         function showToast(msg, showUndo = false) {
-            const t = document.getElementById("toast");
-            const m = document.getElementById("toastMsg");
-            const u = document.getElementById("undoLink");
+            const t = document.getElementById("toast"),
+                m = document.getElementById("toastMsg"),
+                u = document.getElementById("undoLink");
             m.innerText = msg;
             u.style.display = showUndo ? "inline" : "none";
             t.className = "show";
@@ -879,85 +415,24 @@
         }
 
         function normalize(s) {
-            return String(s || '')
-                .trim()
-                .toUpperCase()
-                .replace(/[\s\-_\/]+/g, '');
+            return String(s || '').trim().toUpperCase().replace(/\s+/g, ' ');
         }
 
         function parseQuery(q) {
-            const rawOriginal = String(q || '').trim().toUpperCase();
-            const raw = normalize(q);
-
-            const partsOriginal = rawOriginal.split(/\s+/).filter(Boolean);
-            const lastPartOriginal = partsOriginal[partsOriginal.length - 1] || '';
-
-            if (partsOriginal.length >= 2 && !/\d/.test(lastPartOriginal)) {
-                const khoi = normalize(lastPartOriginal);
-                const maMon = normalize(partsOriginal.slice(0, -1).join(' '));
-                return { maMon, khoi, isPartial: false };
+            const raw = normalize(q), parts = raw.split(' ');
+            if (parts.length === 1) return { maMon: parts[0], khoi: '', isPartial: true };
+            const lastPart = parts[parts.length - 1];
+            if (!(/\d/.test(lastPart)) && parts.length >= 2) {
+                const khoi = parts.pop();
+                return { maMon: parts.join(' '), khoi: khoi, isPartial: false };
             }
-
-            return { maMon: raw, khoi: '', isPartial: true };
-        }
-
-        async function loadAndProcessFile(url) {
-            const sourceInfo = document.getElementById("sourceInfo");
-
-            try {
-                sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b> - đang tải...`;
-
-                const response = await fetch(url);
-                const data = await response.arrayBuffer();
-
-                const workbook = XLSX.read(data, { type: 'array' });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                let title = "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
-                rows.slice(0, 15).forEach(row => {
-                    if (row) {
-                        row.forEach(cell => {
-                            const text = String(cell || "");
-                            if (text.includes("LỊCH THI") || text.includes("LỊCH THI")) {
-                                title = text;
-                            }
-                        });
-                    }
-                });
-
-                document.getElementById("dynamicTitle").innerText = title;
-
-                let hIndex = -1;
-                for (let i = 0; i < 30; i++) {
-                    if (rows[i] && rows[i].some(c => String(c).includes("Ngày"))) {
-                        hIndex = i;
-                        HEADERS = rows[i].map(h => String(h || '').trim());
-                        break;
-                    }
-                }
-
-                EXAM_DATA = XLSX.utils.sheet_to_json(worksheet, {
-                    header: HEADERS,
-                    range: hIndex + 1,
-                    defval: ""
-                }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
-
-                sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b>`;
-                searchData();
-                filterMyExamSchedule();
-            } catch (err) {
-                console.error(err);
-                sourceInfo.innerHTML = `Không tải được link nguồn. Kiểm tra lại URL Excel.`;
-                document.querySelector('#resultTable tbody').innerHTML =
-                    `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không tải được dữ liệu từ link nguồn.</td></tr>`;
-            }
+            return { maMon: raw, khoi: '', isPartial: false };
         }
 
         function handleSearchInput() {
-            const input = document.getElementById('searchTermInput');
-            const clearBtn = document.getElementById('clearBtn');
-            const countDisplay = document.getElementById('inputMonCount');
+            const input = document.getElementById('searchTermInput'),
+                clearBtn = document.getElementById('clearBtn'),
+                countDisplay = document.getElementById('inputMonCount');
 
             clearBtn.style.display = input.value.length > 0 ? "flex" : "none";
 
@@ -981,28 +456,17 @@
                 showToast("⚠️ Đã lọc trùng!");
                 countDisplay.innerText = uniqueValues.length;
             }
-
             searchData();
         }
 
         function searchData() {
-            const tbody = document.querySelector('#resultTable tbody');
+            const inputVal = document.getElementById('searchTermInput').value,
+                queries = inputVal.split(',').map(q => q.trim()).filter(Boolean);
 
-            if (!EXAM_DATA.length || !HEADERS.length) {
-                document.getElementById('resultStats').innerText = 0;
-                tbody.innerHTML = `<tr><td colspan="100%" style="text-align:center; padding:30px;">Chưa có dữ liệu lịch thi.</td></tr>`;
-                document.querySelector('#resultTable thead').innerHTML = '';
-                document.getElementById('conflictWarning').style.display = 'none';
-                return;
-            }
-
-            const inputVal = document.getElementById('searchTermInput').value;
-            const queries = inputVal.split(',').map(q => q.trim()).filter(Boolean);
-
-            const kMaMon = HEADERS.find(h => h.includes('Mã môn'));
-            const kKhoi = HEADERS.find(h => h.includes('Khối thi'));
-            const kNgay = HEADERS.find(h => h.includes('Ngày'));
-            const kGio = HEADERS.find(h => h.includes('Giờ'));
+            const kMaMon = HEADERS.find(h => h.includes('Mã môn')),
+                kKhoi = HEADERS.find(h => h.includes('Khối thi')),
+                kNgay = HEADERS.find(h => h.includes('Ngày')),
+                kGio = HEADERS.find(h => h.includes('Giờ'));
 
             let filtered = [];
             let notFound = [];
@@ -1013,10 +477,10 @@
                 queries.forEach(q => {
                     const { maMon, khoi, isPartial } = parseQuery(q);
                     const matches = EXAM_DATA.filter(row => {
-                        const rowMaMon = normalize(row[kMaMon]);
-                        const rowKhoiRaw = normalize(row[kKhoi]);
+                        const rowMaMon = normalize(row[kMaMon]),
+                            rowKhoiRaw = normalize(row[kKhoi]);
 
-                        if (isPartial) return rowMaMon.includes(maMon);
+                        if (isPartial) return rowMaMon.startsWith(maMon);
                         if (rowMaMon !== maMon) return false;
 
                         if (khoi) {
@@ -1027,7 +491,7 @@
                     });
 
                     if (matches.length > 0) filtered.push(...matches);
-                    else if (q.length > 1) notFound.push(q.toUpperCase());
+                    else if (q.length > 3) notFound.push(q.toUpperCase());
                 });
             }
 
@@ -1042,19 +506,19 @@
         }
 
         function renderTable(data, queries, notFound, isSearching) {
-            const tbody = document.querySelector('#resultTable tbody');
-            const conflictDiv = document.getElementById('conflictWarning');
-            const thead = document.querySelector('#resultTable thead');
+            const tbody = document.querySelector('#resultTable tbody'),
+                conflictDiv = document.getElementById('conflictWarning'),
+                thead = document.querySelector('#resultTable thead');
 
             thead.innerHTML = '';
             tbody.innerHTML = '';
             conflictDiv.style.display = 'none';
 
-            const kMaMon = HEADERS.find(h => h.includes('Mã môn'));
-            const kKhoi = HEADERS.find(h => h.includes('Khối thi'));
-            const kNgay = HEADERS.find(h => h.includes('Ngày'));
-            const kGio = HEADERS.find(h => h.includes('Giờ'));
-            const kMonThi = HEADERS.find(h => h.includes('Môn thi'));
+            const kMaMon = HEADERS.find(h => h.includes('Mã môn')),
+                kKhoi = HEADERS.find(h => h.includes('Khối thi')),
+                kNgay = HEADERS.find(h => h.includes('Ngày')),
+                kGio = HEADERS.find(h => h.includes('Giờ')),
+                kMonThi = HEADERS.find(h => h.includes('Môn thi'));
 
             const compactTargets = ['STT', 'Ngày', 'Giờ', 'Khối thi', 'Địa điểm'];
             let cols = isCompactView
@@ -1072,9 +536,9 @@
             let counts = {}, scheduleMap = {};
             if (isSearching) {
                 data.forEach(row => {
-                    const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay];
-                    const gio = row[kGio];
-                    const key = `${ngay} | ${gio}`;
+                    const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay],
+                        gio = row[kGio],
+                        key = `${ngay} | ${gio}`;
                     counts[key] = (counts[key] || 0) + 1;
                     if (!scheduleMap[key]) scheduleMap[key] = [];
                     scheduleMap[key].push(`[${row[kMaMon]}] ${row[kMonThi] || ''}`);
@@ -1082,10 +546,10 @@
             }
 
             data.forEach(row => {
-                const tr = document.createElement('tr');
-                const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay];
-                const gio = row[kGio];
-                const key = `${ngay} | ${gio}`;
+                const tr = document.createElement('tr'),
+                    ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay],
+                    gio = row[kGio],
+                    key = `${ngay} | ${gio}`;
 
                 if (isSearching && counts[key] > 1) tr.style.backgroundColor = 'var(--conflict-row)';
 
@@ -1101,16 +565,15 @@
                         const myQuery = queries.map(q => parseQuery(q)).find(pq => pq.maMon === rowMaMon);
                         if (myQuery && myQuery.khoi && String(val).includes(myQuery.khoi)) {
                             td.innerHTML = String(val).replace(new RegExp(`\\b${myQuery.khoi}\\b`, 'g'), `<mark>${myQuery.khoi}</mark>`);
+                            td.classList.add('highlight-khoithi');
                         } else {
                             td.textContent = val;
                         }
                     } else {
                         td.textContent = val;
                     }
-
                     tr.appendChild(td);
                 });
-
                 tbody.appendChild(tr);
             });
 
@@ -1131,97 +594,6 @@
             }
         }
 
-        function renderSavedSubjects() {
-            const box = document.getElementById("mySubjectsBox");
-            const summary = document.getElementById("mySummary");
-
-            if (!savedSubjects.length) {
-                box.innerHTML = `<div class="my-empty">Chưa có môn nào được lưu từ giaodien.html</div>`;
-                summary.innerHTML = "Chưa có dữ liệu cá nhân.";
-                return;
-            }
-
-            box.innerHTML = savedSubjects.map(subject => `
-                <span class="my-tag">${subject}</span>
-            `).join("");
-
-            summary.innerHTML = `Đã lưu <b>${savedSubjects.length}</b> môn. Có thể bấm "Dùng để tra cứu" để tự điền ô tìm kiếm.`;
-        }
-
-        function reloadMySubjects() {
-            savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
-            renderSavedSubjects();
-            filterMyExamSchedule();
-            showToast("📚 Đã tải lại môn đã lưu");
-        }
-
-        function useMySubjectsInSearch() {
-            if (!savedSubjects.length) {
-                showToast("⚠️ Chưa có môn nào đã lưu");
-                return;
-            }
-            document.getElementById("searchTermInput").value = savedSubjects.join(", ");
-            handleSearchInput();
-            filterMyExamSchedule();
-        }
-
-        function filterMyExamSchedule() {
-            const tbody = document.getElementById("myExamTableBody");
-            const missingBox = document.getElementById("missingSubjectsBox");
-
-            if (!savedSubjects.length) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa có môn đã lưu.</td></tr>`;
-                missingBox.style.display = "none";
-                return;
-            }
-
-            if (!EXAM_DATA.length || !HEADERS.length) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa có dữ liệu nguồn lịch thi.</td></tr>`;
-                missingBox.style.display = "none";
-                return;
-            }
-
-            const kMaMon = HEADERS.find(h => h.includes('Mã môn'));
-            const kMonThi = HEADERS.find(h => h.includes('Môn thi'));
-            const kNgay = HEADERS.find(h => h.includes('Ngày'));
-            const kGio = HEADERS.find(h => h.includes('Giờ'));
-            const kDiaDiem = HEADERS.find(h => h.includes('Địa điểm'));
-
-            const myData = EXAM_DATA.filter(row => savedSubjects.some(s => normalize(s) === normalize(row[kMaMon])));
-
-            if (!myData.length) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa tìm thấy lịch thi cho các môn đã lưu.</td></tr>`;
-            } else {
-                myData.sort((a, b) => {
-                    if (a[kNgay] !== b[kNgay]) return a[kNgay] - b[kNgay];
-                    return String(a[kGio]).localeCompare(String(b[kGio]));
-                });
-
-                tbody.innerHTML = myData.map(row => {
-                    const ngay = typeof row[kNgay] === 'number' ? excelDate(row[kNgay]) : row[kNgay];
-                    return `
-                        <tr>
-                            <td>${row[kMaMon] || ''}</td>
-                            <td>${row[kMonThi] || ''}</td>
-                            <td>${ngay || ''}</td>
-                            <td>${row[kGio] || ''}</td>
-                            <td>${row[kDiaDiem] || ''}</td>
-                        </tr>
-                    `;
-                }).join("");
-            }
-
-            const foundSubjects = [...new Set(myData.map(row => normalize(row[kMaMon])))];
-            const missingSubjects = savedSubjects.filter(s => !foundSubjects.includes(normalize(s)));
-
-            if (missingSubjects.length) {
-                missingBox.style.display = "block";
-                missingBox.innerHTML = `Chưa thấy lịch thi cho: <b>${missingSubjects.join(", ")}</b>`;
-            } else {
-                missingBox.style.display = "none";
-            }
-        }
-
         function excelDate(s) {
             const d = new Date((s - 25569) * 86400 * 1000);
             return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
@@ -1234,21 +606,13 @@
         }
 
         function doCapture() {
-            if (!EXAM_DATA.length) {
-                showToast("⚠️ Chưa có dữ liệu để chụp");
-                return;
-            }
-
             const wrapper = document.getElementById('tableWrapper');
             const now = new Date();
-
             document.getElementById('exportTitleText').innerText = document.getElementById('dynamicTitle').innerText;
             document.getElementById('exportTimeText').innerText =
                 `Tra cứu lúc: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} - ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-
             wrapper.classList.add('capturing');
             document.getElementById('tableWrapper').scrollTop = 0;
-
             html2canvas(document.getElementById('captureArea'), { scale: 2, useCORS: true }).then(canvas => {
                 wrapper.classList.remove('capturing');
                 canvas.toBlob(blob => {
@@ -1256,35 +620,6 @@
                     navigator.clipboard.write([item]).then(() => showToast("✅ Đã chụp ảnh!"));
                 });
             });
-        }
-
-        function generateShareLink() {
-            const input = document.getElementById("searchTermInput").value.trim();
-
-            if (!input) {
-                showToast("⚠️ Chưa nhập môn");
-                return;
-            }
-
-            const encoded = encodeURIComponent(input);
-            const url = `${window.location.origin}${window.location.pathname}?m=${encoded}`;
-
-            navigator.clipboard.writeText(url).then(() => {
-                showToast("🔗 Đã copy link chia sẻ");
-            });
-        }
-
-        function loadFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            const m = params.get("m");
-
-            if (m) {
-                const decoded = decodeURIComponent(m);
-                const input = document.getElementById("searchTermInput");
-                input.value = decoded;
-                handleSearchInput();
-                showToast("📥 Đã load dữ liệu từ link");
-            }
         }
     </script>
 </body>
