@@ -566,7 +566,6 @@
             border: none !important;
         }
 
-        /* ===== KHO TAI LIEU ===== */
         .study-section {
             width: 100%;
             max-width: 1200px;
@@ -1131,7 +1130,32 @@
             }
         }
 
-        /* ===== KHO TAI LIEU SCRIPT ===== */
+        function formatSubjectForLichThi(subject) {
+            return String(subject || "")
+                .trim()
+                .toUpperCase()
+                .replace(/^([A-Z\-]+)(\d+)$/i, '$1 $2')
+                .replace(/\s+/g, ' ');
+        }
+
+        function openWithSubjects(page) {
+            const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+
+            if (!subjects.length) {
+                alert("Chưa có môn nào");
+                return;
+            }
+
+            let finalSubjects = subjects;
+
+            if (page === "lichthi.html") {
+                finalSubjects = subjects.map(formatSubjectForLichThi);
+            }
+
+            const query = encodeURIComponent(finalSubjects.join(", "));
+            window.location.href = `${page}?m=${query}`;
+        }
+
         let studyCurrentTab = 'all';
         let studySortAsc = true;
         let studyCurrentMode = 'Mẫu';
