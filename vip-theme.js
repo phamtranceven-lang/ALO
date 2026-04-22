@@ -25,16 +25,4 @@
         dot.style.transform = `scale(${0.6 + Math.random()})`;
         particleLayer.appendChild(dot);
     }
-
-    // cursor glow
-    if (window.innerWidth > 768) {
-        const cursor = document.createElement("div");
-        cursor.className = "vip-cursor";
-        document.body.appendChild(cursor);
-
-        window.addEventListener("mousemove", (e) => {
-            cursor.style.left = e.clientX + "px";
-            cursor.style.top = e.clientY + "px";
-        });
-    }
 })();
