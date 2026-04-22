@@ -2,26 +2,25 @@
 <html lang="vi">
 
 <head>
+    <script src="guard.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lịch thi KTHP</title>
     <link rel="icon" href="https://duytan.edu.vn/images/icon.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="exam-source.js"></script>
 
     <style>
         :root {
             --primary-color: #d90429;
             --bg-light: #f8f9fa;
             --btn-compact: #27ae60;
-            --btn-upload: #2563eb;
             --btn-share: #6366f1;
             --btn-my: #0f766e;
+            --btn-source: #f59e0b;
             --toast-bg: #333;
             --warn-bg: #fff3cd;
             --conflict-row: #ffcccc;
-            --soft-border: #dee2e6;
         }
 
         * { box-sizing: border-box; }
@@ -157,25 +156,11 @@
             z-index: 5;
         }
 
-        #toggleBtn {
-            background: var(--btn-compact);
-        }
-
-        .copy-button {
-            background: #a8aef4;
-        }
-
-        .share-button {
-            background: var(--btn-share);
-        }
-
-        .my-button {
-            background: var(--btn-my);
-        }
-
-        .source-button {
-            background: #f59e0b;
-        }
+        #toggleBtn { background: var(--btn-compact); }
+        .copy-button { background: #a8aef4; }
+        .share-button { background: var(--btn-share); }
+        .my-button { background: var(--btn-my); }
+        .source-button { background: var(--btn-source); }
 
         .source-info {
             font-size: 13px;
@@ -285,8 +270,7 @@
             border-spacing: 0;
         }
 
-        th,
-        td {
+        th, td {
             border-bottom: 1px solid #dee2e6;
             border-right: 1px solid #dee2e6;
             padding: 10px 8px;
@@ -306,7 +290,7 @@
         .conflict-warning {
             margin-top: 10px;
             padding: 10px;
-            background-color: var(--warn-bg);
+            background-color: #fff3cd;
             border-radius: 8px;
             font-size: 13px;
             display: none;
@@ -336,9 +320,7 @@
             margin-left: 10px;
         }
 
-        #toast.show {
-            visibility: visible;
-        }
+        #toast.show { visibility: visible; }
 
         .export-header,
         .export-footer {
@@ -388,7 +370,6 @@
             <div class="my-actions">
                 <button class="btn my-button" style="flex:0 0 auto;" onclick="useMySubjectsInSearch()">Dùng để tra cứu</button>
                 <button class="btn share-button" style="flex:0 0 auto;" onclick="reloadMySubjects()">Tải lại môn đã lưu</button>
-                <button class="btn source-button" style="flex:0 0 auto;" onclick="openSourcePage()">📁 Nguồn file</button>
             </div>
             <div id="mySummary" class="my-summary">Chưa có dữ liệu cá nhân.</div>
             <div id="missingSubjectsBox" class="missing-subjects"></div>
@@ -427,7 +408,7 @@
                     <thead></thead>
                     <tbody>
                         <tr>
-                            <td colspan="100%" style="text-align:center; padding:30px;">Đang tải nguồn dữ liệu...</td>
+                            <td colspan="100%" style="text-align:center; padding:30px;">Đang tải dữ liệu...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -443,6 +424,8 @@
     </div>
 
     <script>
+        const EXAM_FILE_URL = "https://phamtranceven-lang.github.io/ALO/639124806022510476.xlsx";
+
         let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
         let savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
 
@@ -450,7 +433,7 @@
             document.getElementById('searchTermInput').focus();
             loadFromURL();
             renderSavedSubjects();
-            await loadSourceAutomatically();
+            await loadAndProcessFile(EXAM_FILE_URL);
         });
 
         function showToast(msg, showUndo = false) {
@@ -494,72 +477,78 @@
         }
 
         function normalize(s) {
-            return String(s || '').trim().toUpperCase().replace(/\s+/g, ' ');
+            return String(s || '')
+                .trim()
+                .toUpperCase()
+                .replace(/[\s\-_\/]+/g, '');
         }
 
         function parseQuery(q) {
-            const raw = normalize(q), parts = raw.split(' ');
-            if (parts.length === 1) return { maMon: parts[0], khoi: '', isPartial: true };
-            const lastPart = parts[parts.length - 1];
-            if (!(/\d/.test(lastPart)) && parts.length >= 2) {
-                const khoi = parts.pop();
-                return { maMon: parts.join(' '), khoi: khoi, isPartial: false };
+            const rawOriginal = String(q || '').trim().toUpperCase();
+            const raw = normalize(q);
+
+            const partsOriginal = rawOriginal.split(/\s+/).filter(Boolean);
+            const lastPartOriginal = partsOriginal[partsOriginal.length - 1] || '';
+
+            if (partsOriginal.length >= 2 && !/\d/.test(lastPartOriginal)) {
+                const khoi = normalize(lastPartOriginal);
+                const maMon = normalize(partsOriginal.slice(0, -1).join(' '));
+                return { maMon, khoi, isPartial: false };
             }
-            return { maMon: raw, khoi: '', isPartial: false };
+
+            return { maMon: raw, khoi: '', isPartial: true };
         }
 
-        async function loadSourceAutomatically() {
-            const mode = getExamSourceMode();
+        async function loadAndProcessFile(url) {
             const sourceInfo = document.getElementById("sourceInfo");
 
-            if (!mode) {
-                sourceInfo.innerHTML = `Chưa có nguồn dữ liệu. Hãy vào <b>nguon-lichthi.html</b> để cấu hình.`;
-                document.querySelector('#resultTable tbody').innerHTML =
-                    `<tr><td colspan="100%" style="text-align:center; padding:30px;">Chưa có nguồn dữ liệu. Hãy cấu hình ở nguon-lichthi.html</td></tr>`;
-                return;
-            }
-
-            if (mode === "upload") {
-                const payload = getExamSourceData();
-                const fileName = getExamSourceName();
-                if (!payload || !payload.headers || !payload.data) {
-                    sourceInfo.innerHTML = `Nguồn upload bị lỗi hoặc đã mất dữ liệu.`;
-                    return;
-                }
-                document.getElementById("dynamicTitle").innerText = payload.title || "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
-                HEADERS = payload.headers;
-                EXAM_DATA = payload.data;
-                sourceInfo.innerHTML = `Nguồn hiện tại: <b>File đã lưu</b> - ${fileName || "Không rõ tên file"}`;
-                searchData();
-                filterMyExamSchedule();
-                return;
-            }
-
-            if (mode === "url") {
-                const url = getExamSourceUrl();
-                if (!url) {
-                    sourceInfo.innerHTML = `Nguồn URL đang trống.`;
-                    return;
-                }
-
+            try {
                 sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b> - đang tải...`;
 
-                try {
-                    const response = await fetch(url);
-                    const data = await response.arrayBuffer();
-                    const payload = normalizeExcelRowsToSourcePayload(data);
-                    document.getElementById("dynamicTitle").innerText = payload.title || "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
-                    HEADERS = payload.headers;
-                    EXAM_DATA = payload.data;
-                    sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b> - tải thành công`;
-                    searchData();
-                    filterMyExamSchedule();
-                } catch (err) {
-                    console.error(err);
-                    sourceInfo.innerHTML = `Không tải được link nguồn. Kiểm tra lại URL Excel.`;
-                    document.querySelector('#resultTable tbody').innerHTML =
-                        `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không tải được dữ liệu từ link nguồn.</td></tr>`;
+                const response = await fetch(url);
+                const data = await response.arrayBuffer();
+
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                let title = "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
+                rows.slice(0, 15).forEach(row => {
+                    if (row) {
+                        row.forEach(cell => {
+                            const text = String(cell || "");
+                            if (text.includes("LỊCH THI") || text.includes("LỊCH THI")) {
+                                title = text;
+                            }
+                        });
+                    }
+                });
+
+                document.getElementById("dynamicTitle").innerText = title;
+
+                let hIndex = -1;
+                for (let i = 0; i < 30; i++) {
+                    if (rows[i] && rows[i].some(c => String(c).includes("Ngày"))) {
+                        hIndex = i;
+                        HEADERS = rows[i].map(h => String(h || '').trim());
+                        break;
+                    }
                 }
+
+                EXAM_DATA = XLSX.utils.sheet_to_json(worksheet, {
+                    header: HEADERS,
+                    range: hIndex + 1,
+                    defval: ""
+                }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
+
+                sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b>`;
+                searchData();
+                filterMyExamSchedule();
+            } catch (err) {
+                console.error(err);
+                sourceInfo.innerHTML = `Không tải được link nguồn. Kiểm tra lại URL Excel.`;
+                document.querySelector('#resultTable tbody').innerHTML =
+                    `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không tải được dữ liệu từ link nguồn.</td></tr>`;
             }
         }
 
@@ -625,7 +614,7 @@
                         const rowMaMon = normalize(row[kMaMon]);
                         const rowKhoiRaw = normalize(row[kKhoi]);
 
-                        if (isPartial) return rowMaMon.startsWith(maMon);
+                        if (isPartial) return rowMaMon.includes(maMon);
                         if (rowMaMon !== maMon) return false;
 
                         if (khoi) {
@@ -636,7 +625,7 @@
                     });
 
                     if (matches.length > 0) filtered.push(...matches);
-                    else if (q.length > 3) notFound.push(q.toUpperCase());
+                    else if (q.length > 1) notFound.push(q.toUpperCase());
                 });
             }
 
@@ -796,7 +785,7 @@
             const kGio = HEADERS.find(h => h.includes('Giờ'));
             const kDiaDiem = HEADERS.find(h => h.includes('Địa điểm'));
 
-            const myData = EXAM_DATA.filter(row => savedSubjects.includes(normalize(row[kMaMon])));
+            const myData = EXAM_DATA.filter(row => savedSubjects.some(s => normalize(s) === normalize(row[kMaMon])));
 
             if (!myData.length) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa tìm thấy lịch thi cho các môn đã lưu.</td></tr>`;
@@ -821,7 +810,7 @@
             }
 
             const foundSubjects = [...new Set(myData.map(row => normalize(row[kMaMon])))];
-            const missingSubjects = savedSubjects.filter(s => !foundSubjects.includes(s));
+            const missingSubjects = savedSubjects.filter(s => !foundSubjects.includes(normalize(s)));
 
             if (missingSubjects.length) {
                 missingBox.style.display = "block";
@@ -894,10 +883,6 @@
                 handleSearchInput();
                 showToast("📥 Đã load dữ liệu từ link");
             }
-        }
-
-        function openSourcePage() {
-            window.location.href = "nguon-lichthi.html";
         }
     </script>
 </body>
