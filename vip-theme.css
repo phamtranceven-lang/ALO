@@ -1,17 +1,33 @@
 :root {
     --bg-1: #030712;
     --bg-2: #07111f;
-    --panel: rgba(10, 18, 32, 0.82);
-    --panel-2: rgba(16, 28, 48, 0.88);
     --text-main: #eef8ff;
-    --text-soft: #9ecbff;
-    --line-soft: rgba(255,255,255,0.08);
-    --glow-cyan: #00d5ff;
-    --glow-blue: #2962ff;
-    --glow-purple: #a855f7;
-    --glow-pink: #ff4ecd;
-    --glow-green: #00ff85;
-    --rainbow: linear-gradient(
+}
+
+/* reset */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    color: var(--text-main);
+}
+
+/* ===== VIỀN 7 MÀU ===== */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    padding: 2px;
+    border-radius: 20px;
+
+    background: linear-gradient(
         130deg,
         #ff004c,
         #ff7a00,
@@ -22,286 +38,29 @@
         #b300ff,
         #ff004c
     );
-}
 
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    min-height: 100%;
-}
-
-body {
-    position: relative;
-    background:
-        radial-gradient(circle at 10% 10%, rgba(0,255,200,0.10), transparent 22%),
-        radial-gradient(circle at 90% 20%, rgba(0,140,255,0.12), transparent 26%),
-        radial-gradient(circle at 50% 100%, rgba(168,85,247,0.10), transparent 30%),
-        linear-gradient(180deg, var(--bg-2), var(--bg-1));
-    color: var(--text-main);
-    overflow-x: hidden;
-}
-
-/* viền full trang */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    padding: 2px;
-    border-radius: 20px;
-    background: var(--rainbow);
     background-size: 300% 300%;
-    animation: vipBorderRun 7s linear infinite;
+    animation: borderRun 8s linear infinite;
+
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
+
     pointer-events: none;
     z-index: 9999;
 }
 
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    box-shadow:
-        inset 0 0 40px rgba(0,213,255,0.06),
-        inset 0 0 90px rgba(168,85,247,0.05);
-    z-index: 9998;
-}
-
-/* nền hạt */
-.vip-particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.vip-particles span {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.45);
-    box-shadow: 0 0 12px rgba(0,213,255,0.6);
-    animation: vipFloat linear infinite;
-    opacity: 0.55;
-}
-
-/* card / panel */
-.vip-card,
-.container,
-.box,
-.card,
-.app {
-    position: relative;
-    border-radius: 18px;
-    background: var(--panel);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow:
-        0 10px 35px rgba(0,0,0,0.35),
-        inset 0 0 0 1px rgba(255,255,255,0.03);
-    overflow: hidden;
-}
-
-.vip-card::before,
-.container::before,
-.box::before,
-.card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: 18px;
-    background: linear-gradient(120deg, #00d5ff, #2962ff, #a855f7, #ff4ecd);
-    background-size: 220% 220%;
-    animation: vipBorderRun 5s linear infinite;
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-}
-
-.vip-card:hover,
-.container:hover,
-.box:hover,
-.card:hover {
-    box-shadow:
-        0 0 18px rgba(0,213,255,0.16),
-        0 0 36px rgba(168,85,247,0.12),
-        0 16px 40px rgba(0,0,0,0.45);
-}
-
-/* tiêu đề */
-h1, h2, h3 {
-    color: #f2fbff;
-    text-shadow:
-        0 0 10px rgba(0,213,255,0.18),
-        0 0 20px rgba(168,85,247,0.10);
-}
-
-/* text phụ */
-.vip-soft,
-small,
-.muted {
-    color: var(--text-soft);
-}
-
-/* button */
-button,
-.btn,
-a.btn {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
-    transition:
-        transform .18s ease,
-        box-shadow .18s ease,
-        background .18s ease,
-        border-color .18s ease;
-}
-
-button:hover,
-.btn:hover,
-a.btn:hover {
-    transform: translateY(-1px);
-    box-shadow:
-        0 0 14px rgba(0,213,255,0.18),
-        0 0 24px rgba(168,85,247,0.10);
-    border-color: rgba(0,213,255,0.32);
-}
-
-button::after,
-.btn::after,
-a.btn::after {
-    content: "";
-    position: absolute;
-    inset: auto;
-    width: 120px;
-    height: 120px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(255,255,255,0.24), transparent 65%);
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-}
-
-button:active::after,
-.btn:active::after,
-a.btn:active::after {
-    left: calc(50% - 60px);
-    top: calc(50% - 60px);
-    transform: scale(2);
-    opacity: 1;
-    transition: .35s;
-}
-
-/* input */
-input,
-select,
-textarea {
-    background: rgba(255,255,255,0.05);
-    color: var(--text-main);
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: rgba(0,213,255,0.45);
-    box-shadow:
-        0 0 0 3px rgba(0,213,255,0.10),
-        0 0 20px rgba(0,213,255,0.08);
-}
-
-/* bảng */
-table {
-    background: transparent;
-}
-
-thead th {
-    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.08);
-}
-
-tbody tr:hover {
-    background: rgba(0,213,255,0.05);
-}
-
-/* link */
-a {
-    transition: color .18s ease, text-shadow .18s ease;
-}
-
-a:hover {
-    text-shadow: 0 0 10px rgba(0,213,255,0.18);
-}
-
-/* cursor glow */
-.vip-cursor {
-    position: fixed;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9997;
-    background: radial-gradient(circle, rgba(0,213,255,0.55), rgba(168,85,247,0.15), transparent 70%);
-    transform: translate(-50%, -50%);
-    filter: blur(2px);
-    mix-blend-mode: screen;
-}
-
 /* animation */
-@keyframes vipBorderRun {
+@keyframes borderRun {
     0% { background-position: 0% 50%; }
     100% { background-position: 300% 50%; }
 }
 
-@keyframes vipFloat {
-    from {
-        transform: translateY(100vh) scale(.8);
-        opacity: 0;
-    }
-    10% {
-        opacity: .55;
-    }
-    to {
-        transform: translateY(-10vh) scale(1.25);
-        opacity: 0;
-    }
-}
-
-/* mobile */
-@media (max-width: 768px) {
-    body::before {
-        border-radius: 0;
-    }
-
-    .vip-card,
-    .container,
-    .box,
-    .card,
-    .app {
-        border-radius: 14px;
-    }
-
-    .vip-card::before,
-    .container::before,
-    .box::before,
-    .card::before {
-        border-radius: 14px;
-    }
-
-    .vip-cursor {
-        display: none;
-    }
+/* ===== OPTIONAL: nền nhẹ cho container ===== */
+.container,
+.app {
+    background: rgba(255,255,255,0.02);
+    border-radius: 16px;
 }
