@@ -6,15 +6,12 @@
 <title>ALO</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
     margin: 0;
-    width: 100%;
     height: 100%;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
 }
 
 body {
@@ -23,10 +20,9 @@ body {
     overflow: hidden;
 }
 
+/* MENU */
 .sidebar {
     width: 260px;
-    min-width: 260px;
-    height: 100vh;
     background: #d9534f;
     color: #fff;
     overflow-y: auto;
@@ -42,8 +38,6 @@ body {
     font-weight: bold;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    user-select: none;
 }
 
 .menu-parent:hover {
@@ -64,16 +58,16 @@ body {
     padding: 12px 20px;
     color: #fff;
     text-decoration: none;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .submenu a:hover {
     background: #b93f3b;
 }
 
+/* CONTENT */
 .content {
     flex: 1;
-    height: 100vh;
     background: #111;
 }
 
@@ -91,66 +85,73 @@ iframe {
 
 <div class="sidebar">
 
+    <!-- THÔNG TIN -->
     <div class="menu-item">
-        <div class="menu-parent">Thông Tin <span>▼</span></div>
+        <div class="menu-parent">Thông Tin ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/giaodien.html" target="frame">Trang chính</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/anhsinhvien.html" target="frame">Ảnh sinh viên</a>
+            <a href="giaodien.html" target="frame">Trang chính</a>
+            <a href="anhsinhvien.html" target="frame">Ảnh sinh viên</a>
         </div>
     </div>
 
+    <!-- TÍNH ĐIỂM -->
     <div class="menu-item">
-        <div class="menu-parent">Tính Điểm <span>▼</span></div>
+        <div class="menu-parent">Tính Điểm ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhdiemhocphan.html" target="frame">Tính điểm học phần</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhdiemtichluy.html" target="frame">Tính điểm tích lũy</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/dudoangpa.html" target="frame">Dự đoán GPA</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhdiemgpadukien.html" target="frame">Tính điểm GPA dự kiến</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhdiemGDTC.html" target="frame">Tính điểm GDTC</a>
+            <a href="tinhdiemhocphan.html" target="frame">Tính điểm học phần</a>
+            <a href="tinhdiemtichluy.html" target="frame">Tính điểm tích lũy</a>
+            <a href="dudoangpa.html" target="frame">Dự đoán GPA</a>
+            <a href="tinhdiemgpadukien.html" target="frame">GPA dự kiến</a>
+            <a href="tinhdiemGDTC.html" target="frame">GDTC</a>
         </div>
     </div>
 
+    <!-- THI -->
     <div class="menu-item">
-        <div class="menu-parent">Thi KTHP <span>▼</span></div>
+        <div class="menu-parent">Thi KTHP ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/danhsachthi.html" target="frame">Danh sách thi</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/phongthi.html" target="frame">Phòng thi</a>
+            <a href="danhsachthi.html" target="frame">Danh sách thi</a>
+            <a href="phongthi.html" target="frame">Phòng thi</a>
         </div>
     </div>
 
+    <!-- KIỂM TRA -->
     <div class="menu-item">
-        <div class="menu-parent">Kiểm tra <span>▼</span></div>
+        <div class="menu-parent">Kiểm tra ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/dinhdangcauhoilearning.html" target="frame">Định dạng câu hỏi</a>
+            <a href="dinhdangcauhoilearning.html" target="frame">Định dạng câu hỏi</a>
         </div>
     </div>
 
+    <!-- ĐĂNG KÝ -->
     <div class="menu-item">
-        <div class="menu-parent">Đăng ký tín chỉ <span>▼</span></div>
+        <div class="menu-parent">Đăng ký tín chỉ ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/thoikhoabieu1.html" target="frame">Sắp TKB nhanh</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/thoikhoabieu2.html" target="frame">Sắp TKB</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tongtinchi.html" target="frame">Tổng tín chỉ</a>
+            <a href="thoikhoabieu1.html" target="frame">Sắp TKB nhanh</a>
+            <a href="thoikhoabieu2.html" target="frame">Sắp TKB</a>
+            <a href="tongtinchi.html" target="frame">Tổng tín chỉ</a>
         </div>
     </div>
 
+    <!-- TIỆN ÍCH -->
     <div class="menu-item">
-        <div class="menu-parent">Tiện ích <span>▼</span></div>
+        <div class="menu-parent">Tiện ích ▼</div>
         <div class="submenu">
-            <a href="https://phamtranceven-lang.github.io/ALO/danhsachmonhoc.html" target="frame">Môn học</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/doitenfilenhanh.html" target="frame">Đổi tên file</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/hocphi4nam.html" target="frame">Học phí 4 năm</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/huongdanhocphi.html" target="frame">Hướng dẫn học phí</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/phantramtinrot.html" target="frame">Tín rớt</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhhocphidtu.html" target="frame">Tính học phí</a>
-            <a href="https://phamtranceven-lang.github.io/ALO/tinhphantramtien.html" target="frame">% tiền</a>
+            <a href="danhsachmonhoc.html" target="frame">Môn học</a>
+            <a href="doitenfilenhanh.html" target="frame">Đổi tên file</a>
+            <a href="hocphi4nam.html" target="frame">Học phí 4 năm</a>
+            <a href="huongdanhocphi.html" target="frame">Hướng dẫn học phí</a>
+            <a href="phantramtinrot.html" target="frame">Tín rớt</a>
+            <a href="tinhhocphidtu.html" target="frame">Tính học phí</a>
+            <a href="tinhphantramtien.html" target="frame">% tiền</a>
         </div>
     </div>
 
 </div>
 
+<!-- CONTENT -->
 <div class="content">
-    <iframe name="frame" src="https://phamtranceven-lang.github.io/ALO/giaodien.html"></iframe>
+    <iframe name="frame" src="giaodien.html"></iframe>
 </div>
 
 <script>
