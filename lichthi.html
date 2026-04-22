@@ -8,6 +8,7 @@
     <link rel="icon" href="https://duytan.edu.vn/images/icon.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="exam-source.js"></script>
 
     <style>
         :root {
@@ -164,10 +165,6 @@
             background: #a8aef4;
         }
 
-        .upload-button {
-            background: var(--btn-upload);
-        }
-
         .share-button {
             background: var(--btn-share);
         }
@@ -176,12 +173,7 @@
             background: var(--btn-my);
         }
 
-        #fileInput {
-            display: none;
-        }
-
-        .file-name {
-            width: 100%;
+        .source-info {
             font-size: 13px;
             color: #444;
             margin-top: -4px;
@@ -233,19 +225,6 @@
             border-radius: 999px;
             font-size: 13px;
             font-weight: 700;
-        }
-
-        .my-tag button {
-            border: none;
-            background: #dc2626;
-            color: #fff;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 11px;
-            padding: 0;
-            line-height: 1;
         }
 
         .my-empty {
@@ -389,8 +368,6 @@
             </div>
 
             <div class="btn-group">
-                <label for="fileInput" class="btn upload-button">📁 Add file</label>
-                <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFileUpload(event)">
                 <button id="toggleBtn" class="btn" onclick="toggleViewMode()">🔄 Rút gọn</button>
                 <button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
                 <button class="btn share-button" onclick="generateShareLink()">🔗 Share</button>
@@ -398,7 +375,7 @@
             </div>
         </div>
 
-        <div id="fileNameDisplay" class="file-name">Chưa chọn file Excel</div>
+        <div id="sourceInfo" class="source-info">Đang kiểm tra nguồn dữ liệu...</div>
 
         <div class="my-subjects-panel">
             <div class="panel-title">Môn đang học của tôi</div>
@@ -445,7 +422,7 @@
                     <thead></thead>
                     <tbody>
                         <tr>
-                            <td colspan="100%" style="text-align:center; padding:30px;">Hãy bấm "Add file" để chọn file Excel.</td>
+                            <td colspan="100%" style="text-align:center; padding:30px;">Đang tải nguồn dữ liệu...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -462,13 +439,13 @@
 
     <script>
         let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
-        let currentFileName = "";
         let savedSubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('searchTermInput').focus();
             loadFromURL();
             renderSavedSubjects();
+            await loadSourceAutomatically();
         });
 
         function showToast(msg, showUndo = false) {
@@ -526,6 +503,61 @@
             return { maMon: raw, khoi: '', isPartial: false };
         }
 
+        async function loadSourceAutomatically() {
+            const mode = getExamSourceMode();
+            const sourceInfo = document.getElementById("sourceInfo");
+
+            if (!mode) {
+                sourceInfo.innerHTML = `Chưa có nguồn dữ liệu. Hãy vào <b>nguon-lichthi.html</b> để cấu hình.`;
+                document.querySelector('#resultTable tbody').innerHTML =
+                    `<tr><td colspan="100%" style="text-align:center; padding:30px;">Chưa có nguồn dữ liệu. Hãy cấu hình ở nguon-lichthi.html</td></tr>`;
+                return;
+            }
+
+            if (mode === "upload") {
+                const payload = getExamSourceData();
+                const fileName = getExamSourceName();
+                if (!payload || !payload.headers || !payload.data) {
+                    sourceInfo.innerHTML = `Nguồn upload bị lỗi hoặc đã mất dữ liệu.`;
+                    return;
+                }
+                document.getElementById("dynamicTitle").innerText = payload.title || "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
+                HEADERS = payload.headers;
+                EXAM_DATA = payload.data;
+                sourceInfo.innerHTML = `Nguồn hiện tại: <b>File đã lưu</b> - ${fileName || "Không rõ tên file"}`;
+                searchData();
+                filterMyExamSchedule();
+                return;
+            }
+
+            if (mode === "url") {
+                const url = getExamSourceUrl();
+                if (!url) {
+                    sourceInfo.innerHTML = `Nguồn URL đang trống.`;
+                    return;
+                }
+
+                sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b> - đang tải...`;
+
+                try {
+                    const response = await fetch(url);
+                    const data = await response.arrayBuffer();
+                    const payload = normalizeExcelRowsToSourcePayload(data);
+                    document.getElementById("dynamicTitle").innerText = payload.title || "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
+                    HEADERS = payload.headers;
+                    EXAM_DATA = payload.data;
+                    sourceInfo.innerHTML = `Nguồn hiện tại: <b>Link cố định</b> - tải thành công`;
+                    searchData();
+                    filterMyExamSchedule();
+                } catch (err) {
+                    console.error(err);
+                    sourceInfo.innerHTML = `Không tải được link nguồn. Kiểm tra lại URL Excel.`;
+                    document.querySelector('#resultTable tbody').innerHTML =
+                        `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không tải được dữ liệu từ link nguồn.</td></tr>`;
+                }
+            }
+        }
+
         function handleSearchInput() {
             const input = document.getElementById('searchTermInput');
             const clearBtn = document.getElementById('clearBtn');
@@ -557,75 +589,12 @@
             searchData();
         }
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            currentFileName = file.name;
-            document.getElementById('fileNameDisplay').innerText = `Đã chọn: ${currentFileName}`;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    processWorkbook(e.target.result);
-                    showToast("✅ Đã tải file thành công");
-                } catch (err) {
-                    console.error(err);
-                    showToast("❌ File không hợp lệ hoặc lỗi đọc dữ liệu");
-                    document.querySelector('#resultTable tbody').innerHTML =
-                        `<tr><td colspan="100%" style="text-align:center; padding:30px;">Không đọc được file Excel.</td></tr>`;
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function processWorkbook(arrayBuffer) {
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-            document.getElementById('dynamicTitle').innerText = "HỆ THỐNG TRA CỨU LỊCH THI KTHP";
-
-            rows.slice(0, 15).forEach(row => {
-                if (row) {
-                    row.forEach(c => {
-                        const text = String(c).toUpperCase();
-                        if (text.includes("LỊCH THI") || text.includes("LỊCH THI")) {
-                            document.getElementById('dynamicTitle').innerText = c;
-                        }
-                    });
-                }
-            });
-
-            let hIndex = -1;
-            for (let i = 0; i < 30; i++) {
-                if (rows[i] && rows[i].some(c => String(c).includes("Ngày"))) {
-                    hIndex = i;
-                    HEADERS = rows[i].map(h => String(h || '').trim());
-                    break;
-                }
-            }
-
-            if (hIndex === -1) {
-                throw new Error("Không tìm thấy dòng tiêu đề.");
-            }
-
-            EXAM_DATA = XLSX.utils.sheet_to_json(worksheet, {
-                header: HEADERS,
-                range: hIndex + 1,
-                defval: ""
-            }).filter(r => r[HEADERS[0]] && !isNaN(parseInt(r[HEADERS[0]])));
-
-            searchData();
-            filterMyExamSchedule();
-        }
-
         function searchData() {
             const tbody = document.querySelector('#resultTable tbody');
 
             if (!EXAM_DATA.length || !HEADERS.length) {
                 document.getElementById('resultStats').innerText = 0;
-                tbody.innerHTML = `<tr><td colspan="100%" style="text-align:center; padding:30px;">Hãy bấm "Add file" để chọn file Excel.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="100%" style="text-align:center; padding:30px;">Chưa có dữ liệu lịch thi.</td></tr>`;
                 document.querySelector('#resultTable thead').innerHTML = '';
                 document.getElementById('conflictWarning').style.display = 'none';
                 return;
@@ -811,7 +780,7 @@
             }
 
             if (!EXAM_DATA.length || !HEADERS.length) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Hãy Add file Excel để lọc lịch thi của bạn.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Chưa có dữ liệu nguồn lịch thi.</td></tr>`;
                 missingBox.style.display = "none";
                 return;
             }
