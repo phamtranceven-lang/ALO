@@ -45,22 +45,15 @@ function addMySubject() {
         return;
     }
 
-    let changed = false;
-
     values.forEach(value => {
         if (!mySubjects.includes(value)) {
             mySubjects.push(value);
-            changed = true;
         }
     });
 
     input.value = "";
     renderMySubjects();
     input.focus();
-
-    if (!changed) {
-        alert("Môn này đã có rồi");
-    }
 }
 
 function removeMySubject(subject) {
@@ -71,14 +64,10 @@ function removeMySubject(subject) {
 
 function saveMySubjects(silent = false) {
     localStorage.setItem("mySubjects", JSON.stringify(mySubjects));
-    if (!silent) {
-        alert("Đã lưu môn đang học");
-    }
 }
 
 function clearMySubjects() {
     if (!mySubjects.length) return;
-    if (!confirm("Xóa toàn bộ môn đang học?")) return;
     mySubjects = [];
     renderMySubjects();
     saveMySubjects(true);
@@ -86,7 +75,6 @@ function clearMySubjects() {
 
 function openWithSubjects(page) {
     if (!mySubjects.length) {
-        alert("Chưa có môn nào");
         return;
     }
 
