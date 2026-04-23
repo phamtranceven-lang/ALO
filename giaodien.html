@@ -78,7 +78,7 @@
         .main-container {
             flex: 1;
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -86,14 +86,7 @@
         }
 
         .header-wrapper {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            max-width: 1000px;
-            gap: 40px;
-            margin-bottom: 20px;
-            padding: 0 10px;
-            flex-shrink: 0;
+            display: none;
         }
 
         .logo-area {
@@ -428,110 +421,184 @@
             font-style: italic;
         }
 
-
-        .mini-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 16px;
+        
+        .dashboard-wrap{
+            width:100%;
+            max-width:none;
+            margin:22px 0 30px;
+            padding:0;
         }
 
-        .mini-card {
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 16px;
-            padding: 14px;
-            min-height: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 10px 24px rgba(0,0,0,.14);
+        .dashboard-titlebar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:14px;
+            padding:0 6px;
         }
 
-        .mini-card:hover {
-            border-color: rgba(56,189,248,.35);
-            box-shadow: 0 14px 34px rgba(0,0,0,.22);
+        .dashboard-titlebar h2{
+            margin:0;
+            color:var(--text);
+            font-size:24px;
+            font-weight:800;
         }
 
-        .mini-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
+        .dashboard-titlebar .hint{
+            color:var(--muted);
+            font-size:13px;
         }
 
-        .mini-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--blue);
+        .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
         }
 
-        .mini-subtitle {
-            font-size: 12px;
-            color: var(--muted);
-            line-height: 1.5;
-            margin-top: -2px;
+        .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
         }
 
-        .mini-content {
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
+        .dashboard-panel-head{
+            padding:18px 18px 14px;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            background:rgba(255,255,255,.02);
         }
 
-        .mini-empty {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.6;
-            padding: 18px 8px;
-            opacity: .9;
+        .dashboard-panel-title{
+            margin:0;
+            color:var(--blue);
+            font-size:22px;
+            font-weight:800;
         }
 
-        .mini-frame-wrap {
-            flex: 1;
-            min-height: 280px;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,.08);
-            background: rgba(5,10,25,.65);
+        .dashboard-panel-sub{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:13px;
+            line-height:1.5;
         }
 
-        .mini-frame {
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            border: none;
-            background: transparent;
+        .dashboard-panel-body{
+            flex:1;
+            min-height:0;
+            padding:14px;
+            background:rgba(255,255,255,.015);
         }
 
-        .mini-actions {
-            margin-top: auto;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .dashboard-frame-wrap{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border-radius:16px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(5,10,25,.65);
         }
 
-        .mini-btn {
-            flex: 1;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            color: white;
-            min-width: 140px;
+        .dashboard-frame{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border:none;
+            background:transparent;
         }
 
-        .mini-btn.lichthi {
-            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
         }
 
-        .mini-btn.danhsachthi {
-            background: linear-gradient(135deg, #10b981, #059669);
+        .dashboard-panel-actions{
+            padding:14px;
+            border-top:1px solid rgba(255,255,255,.07);
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
         }
 
+        .dashboard-btn{
+            flex:1;
+            min-width:180px;
+            border:none;
+            border-radius:14px;
+            padding:14px 16px;
+            font-size:14px;
+            font-weight:800;
+            color:#fff;
+            cursor:pointer;
+        }
+
+        .dashboard-btn.left{
+            background:linear-gradient(135deg,#0ea5e9,#2563eb);
+        }
+
+        .dashboard-btn.right{
+            background:linear-gradient(135deg,#10b981,#059669);
+        }
+
+        @media (max-width:1100px){
+            .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
+        }
+
+            .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+            .dashboard-frame-wrap,
+            .dashboard-frame,
+            .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
+        }
+
+            .dashboard-titlebar{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+        }
 
         @media (min-width: 600px) {
             .result-item {
@@ -1107,17 +1174,6 @@
 
     <div class="main-container">
 
-        <div class="header-wrapper">
-            <div class="logo-area">
-                <img src="https://files02.duytan.edu.vn/svruploads/dtu-duytan/upload/images/logoDT-70.png" alt="Logo Đại Học Duy Tân">
-            </div>
-
-            <div class="time-container">
-                <div id="clock">00:00:00</div>
-                <div id="date">Đang tải...</div>
-            </div>
-        </div>
-
         <div class="search-section-wrapper">
             <div class="search-box">
 
@@ -1146,39 +1202,47 @@
 
             <div class="my-row">
                 <input id="mySubjectInput" type="text" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy">
-                <button type="button" onclick="addMySubject(); renderMiniSubjectPanels();">Thêm</button>
-                <button type="button" class="secondary" onclick="saveMySubjects(); renderMiniSubjectPanels();">Lưu</button>
-                <button type="button" class="secondary" onclick="clearMySubjects(); renderMiniSubjectPanels();">Xóa hết</button>
+                <button type="button" onclick="addMySubject(); renderLivePanels();">Thêm</button>
+                <button type="button" class="secondary" onclick="saveMySubjects(); renderLivePanels();">Lưu</button>
+                <button type="button" class="secondary" onclick="clearMySubjects(); renderLivePanels();">Xóa hết</button>
             </div>
 
             <div id="mySubjectsList" class="my-tags"></div>
 
-            <div class="mini-grid">
-                <div class="mini-card">
-                    <div class="mini-head">
-                        <div>
-                            <div class="mini-title">📅 Lịch thi</div>
-                            <div class="mini-subtitle">Khung bên trái hiển thị lịch thi theo các môn đang lưu.</div>
-                        </div>
-                    </div>
-                    <div class="mini-content" id="mini-lichthi"></div>
-                    <div class="mini-actions">
-                        <button type="button" class="mini-btn lichthi" onclick="openWithSubjects('lichthi.html')">Mở toàn bộ lịch thi</button>
-                    </div>
-                </div>
+            <div class="my-row" style="margin-top:14px;">
+                <button type="button" class="green" onclick="openWithSubjects('lichthi.html')">📅 Xem lịch thi</button>
+                <button type="button" class="green" onclick="openWithSubjects('danhsachthi.html')">📝 Xem danh sách thi</button>
+            </div>
+        </div>
 
-                <div class="mini-card">
-                    <div class="mini-head">
-                        <div>
-                            <div class="mini-title">📝 Danh sách thi</div>
-                            <div class="mini-subtitle">Khung bên phải hiển thị danh sách thi theo các môn đang lưu.</div>
-                        </div>
+        <div class="dashboard-wrap">
+            <div class="dashboard-titlebar">
+                <h2>⚡ Dashboard tra cứu nhanh</h2>
+                <div class="hint">Bên trái hiện Lịch thi, bên phải hiện Danh sách thi theo các môn đang lưu.</div>
+            </div>
+
+            <div class="dashboard-grid">
+                <section class="dashboard-panel">
+                    <div class="dashboard-panel-head">
+                        <h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+                        <div class="dashboard-panel-sub">Khung trái hiển thị trực tiếp lịch thi ngay trong trang này.</div>
                     </div>
-                    <div class="mini-content" id="mini-danhsach"></div>
-                    <div class="mini-actions">
-                        <button type="button" class="mini-btn danhsachthi" onclick="openWithSubjects('danhsachthi.html')">Mở toàn bộ danh sách thi</button>
+                    <div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+                    <div class="dashboard-panel-actions">
+                        <button type="button" class="dashboard-btn left" onclick="openWithSubjects('lichthi.html')">Mở toàn bộ lịch thi</button>
                     </div>
-                </div>
+                </section>
+
+                <section class="dashboard-panel">
+                    <div class="dashboard-panel-head">
+                        <h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+                        <div class="dashboard-panel-sub">Khung phải hiển thị trực tiếp danh sách thi ngay trong trang này.</div>
+                    </div>
+                    <div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+                    <div class="dashboard-panel-actions">
+                        <button type="button" class="dashboard-btn right" onclick="openWithSubjects('danhsachthi.html')">Mở toàn bộ danh sách thi</button>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -1304,38 +1368,28 @@
         }
 
 
-        function getSavedSubjectsSafe() {
+        function getLiveSubjects() {
             try {
                 const stored = JSON.parse(localStorage.getItem("mySubjects") || "[]");
-                const fromStorage = Array.isArray(stored)
-                    ? stored.map(s => String(s || "").trim()).filter(Boolean)
-                    : [];
+                const fromStorage = Array.isArray(stored) ? stored.map(s => String(s || '').trim()).filter(Boolean) : [];
 
-                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")]
-                    .map(tag => {
-                        const clone = tag.cloneNode(true);
-                        const btn = clone.querySelector("button");
-                        if (btn) btn.remove();
-                        return clone.textContent.trim();
-                    })
-                    .filter(Boolean);
+                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")].map(tag => {
+                    const clone = tag.cloneNode(true);
+                    const btn = clone.querySelector("button");
+                    if (btn) btn.remove();
+                    return clone.textContent.trim();
+                }).filter(Boolean);
 
                 const input = document.getElementById("mySubjectInput");
-                const fromInput = input
-                    ? String(input.value || "")
-                        .split(",")
-                        .map(s => s.trim())
-                        .filter(Boolean)
-                    : [];
+                const fromInput = input ? String(input.value || '').split(',').map(s => s.trim()).filter(Boolean) : [];
 
-                const merged = [...fromStorage, ...tags, ...fromInput];
-                return [...new Set(merged)];
+                return [...new Set([...fromStorage, ...tags, ...fromInput])];
             } catch (e) {
                 return [];
             }
         }
 
-        function buildSubjectsQuery(page, subjects) {
+        function buildLiveQuery(page, subjects) {
             let finalSubjects = subjects;
             if (page === "lichthi.html") {
                 finalSubjects = subjects.map(formatSubjectForLichThi);
@@ -1345,67 +1399,57 @@
             return encodeURIComponent(finalSubjects.join(", "));
         }
 
-        function renderMiniSubjectPanels() {
-            const lichBox = document.getElementById("mini-lichthi");
-            const dsBox = document.getElementById("mini-danhsach");
-            if (!lichBox || !dsBox) return;
+        function renderLivePanels() {
+            const left = document.getElementById("live-lichthi-panel");
+            const right = document.getElementById("live-danhsach-panel");
+            if (!left || !right) return;
 
-            const subjects = getSavedSubjectsSafe();
+            const subjects = getLiveSubjects();
 
             if (!subjects.length) {
-                lichBox.innerHTML = `
-                    <div class="mini-empty">
-                        Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để bên trái hiện lịch thi ngay tại trang này.
-                    </div>
-                `;
-                dsBox.innerHTML = `
-                    <div class="mini-empty">
-                        Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để bên phải hiện danh sách thi ngay tại trang này.
-                    </div>
-                `;
+                left.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Lịch thi ngay tại đây.</div>';
+                right.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Danh sách thi ngay tại đây.</div>';
                 return;
             }
 
-            const lichQuery = buildSubjectsQuery("lichthi.html", subjects);
-            const dsQuery = buildSubjectsQuery("danhsachthi.html", subjects);
+            const leftQuery = buildLiveQuery("lichthi.html", subjects);
+            const rightQuery = buildLiveQuery("danhsachthi.html", subjects);
 
-            lichBox.innerHTML = `
-                <div class="mini-frame-wrap">
-                    <iframe class="mini-frame" src="lichthi.html?m=${lichQuery}" loading="lazy"></iframe>
+            left.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="lichthi.html?m=${leftQuery}" loading="lazy"></iframe>
                 </div>
             `;
 
-            dsBox.innerHTML = `
-                <div class="mini-frame-wrap">
-                    <iframe class="mini-frame" src="danhsachthi.html?m=${dsQuery}" loading="lazy"></iframe>
+            right.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="danhsachthi.html?m=${rightQuery}" loading="lazy"></iframe>
                 </div>
             `;
         }
 
-        function hookMiniPanels() {
-            ['addMySubject', 'saveMySubjects', 'clearMySubjects'].forEach(fnName => {
+        function hookLivePanels() {
+            ['addMySubject','saveMySubjects','clearMySubjects'].forEach(fnName => {
                 const oldFn = window[fnName];
-                if (typeof oldFn === 'function' && !oldFn.__miniHooked) {
+                if (typeof oldFn === 'function' && !oldFn.__liveHooked) {
                     const wrapped = function(...args) {
                         const result = oldFn.apply(this, args);
-                        setTimeout(renderMiniSubjectPanels, 50);
+                        setTimeout(renderLivePanels, 60);
                         return result;
                     };
-                    wrapped.__miniHooked = true;
+                    wrapped.__liveHooked = true;
                     window[fnName] = wrapped;
                 }
             });
 
             const input = document.getElementById('mySubjectInput');
-            if (input && !input.__miniEnterHooked) {
-                input.addEventListener('input', () => setTimeout(renderMiniSubjectPanels, 50));
-                input.__miniEnterHooked = true;
+            if (input && !input.__liveInputHooked) {
+                input.addEventListener('input', () => setTimeout(renderLivePanels, 60));
+                input.__liveInputHooked = true;
             }
 
-            window.addEventListener('storage', renderMiniSubjectPanels);
-            renderMiniSubjectPanels();
+            window.addEventListener('storage', renderLivePanels);
+            renderLivePanels();
         }
 
 
@@ -1648,7 +1692,7 @@
         studyCurrentMode = 'Mẫu';
         studyCurrentTab = 'all';
         studyRender();
-        hookMiniPanels();
+        hookLivePanels();
     </script>
  <script src="vien-7mau-tuyet.js"></script>
 </body>
