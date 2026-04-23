@@ -1450,7 +1450,7 @@
         }
 
         function hookLivePanels() {
-            ['addMySubject', 'saveMySubjects', 'clearMySubjects'].forEach(fnName => {
+            ['addMySubject','saveMySubjects','clearMySubjects'].forEach(fnName => {
                 const oldFn = window[fnName];
                 if (typeof oldFn === 'function' && !oldFn.__liveHooked) {
                     const wrapped = function(...args) {
@@ -1738,15 +1738,15 @@
         studyRender();
         hookLivePanels();
 
-        window.addEventListener('load', () => {
-            renderLivePanels();
-            setTimeout(renderLivePanels, 200);
-            setTimeout(renderLivePanels, 600);
-            setTimeout(renderLivePanels, 1200);
-        });
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(renderLivePanels, 100);
             setTimeout(renderLivePanels, 400);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(renderLivePanels, 100);
+            setTimeout(renderLivePanels, 400);
+            setTimeout(renderLivePanels, 1000);
         });
     </script>
  <script src="vien-7mau-tuyet.js"></script>
