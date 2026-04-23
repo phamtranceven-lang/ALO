@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <script src="guard.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Danh Sách Thi</title>
@@ -10,7 +9,6 @@
             --p: #3b82f6;
             --bg: #0f172a;
             --card: #111827;
-            --card-2: #1f2937;
             --text: #f8fafc;
             --muted: #94a3b8;
             --line: rgba(255,255,255,0.08);
@@ -285,6 +283,7 @@
             text-align: center;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            word-break: break-word;
         }
 
         .status.error {
@@ -365,7 +364,7 @@
     <div class="hero">
         <div class="hero-inner">
             <h1>DANH SÁCH THI</h1>
-            <div class="sub">Bản xịn: sort chuẩn, gom theo ngày, cache offline, cập nhật nhanh.</div>
+            <div class="sub">Bản debug: bỏ guard.js, hiện lỗi API thật, sort theo ngày, gom theo ngày.</div>
 
             <div class="search-box">
                 <input
@@ -523,7 +522,7 @@
             updateStats(data);
 
             if (!data.length) {
-                body.innerHTML = `<div class="empty-state">Không có dữ liệu phù hợp.</div>`;
+                body.innerHTML = `<div class="empty-state">Không có dữ liệu phù hợp hoặc chưa tải được API.</div>`;
                 return;
             }
 
@@ -596,26 +595,42 @@
             render(filtered, rawText);
         }
 
-        async function fetchData(showToast = false) {
+        async function fetchData() {
             try {
                 setStatus("Đang tải dữ liệu từ API...");
-                const res = await fetch(CONFIG.API, { cache: "no-store" });
-                const json = await res.json();
+                const res = await fetch(CONFIG.API, {
+                    method: "GET",
+                    cache: "no-store"
+                });
+
+                const raw = await res.text();
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status} - ${raw.slice(0, 200)}`);
+                }
+
+                let json;
+                try {
+                    json = JSON.parse(raw);
+                } catch (err) {
+                    throw new Error("API không trả JSON hợp lệ: " + raw.slice(0, 300));
+                }
+
                 const data = json.response?.data || [];
 
-                if (Array.isArray(data) && data.length > 0) {
-                    allExams = data.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
-                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(allExams));
-                    applySearch(document.getElementById("search-box").value);
-
-                    const maxPage = allExams.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
-                    setStatus(`Online • ${allExams.length} dòng • quét tới trang ${maxPage} • cập nhật lúc ${new Date().toLocaleTimeString("vi-VN")}`);
-                } else {
-                    setStatus("API không trả dữ liệu.", true);
+                if (!Array.isArray(data)) {
+                    throw new Error("json.response.data không phải mảng");
                 }
+
+                allExams = data.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+                localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(allExams));
+                applySearch(document.getElementById("search-box").value);
+
+                const maxPage = allExams.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
+                setStatus(`Online • ${allExams.length} dòng • quét tới trang ${maxPage} • cập nhật lúc ${new Date().toLocaleTimeString("vi-VN")}`);
             } catch (e) {
-                console.error(e);
-                setStatus("Chế độ Offline • đang dùng cache cũ", true);
+                console.error("FETCH ERROR:", e);
+                setStatus("Lỗi tải API: " + e.message, true);
             }
         }
 
@@ -637,7 +652,10 @@
 
         function clearCache() {
             localStorage.removeItem(CONFIG.STORAGE_KEY);
+            allExams = [];
+            applySearch("");
             alert("Đã xóa cache");
+            setStatus("Đã xóa cache cục bộ");
         }
 
         function toggleTodayOnly() {
@@ -678,16 +696,14 @@
                 }
             }
 
-            await fetchData();
-
             document.getElementById("share-btn").addEventListener("click", shareSearch);
-            document.getElementById("refresh-btn").addEventListener("click", () => fetchData(true));
+            document.getElementById("refresh-btn").addEventListener("click", fetchData);
             document.getElementById("clear-cache-btn").addEventListener("click", clearCache);
             document.getElementById("today-btn").addEventListener("click", toggleTodayOnly);
-
             input.addEventListener("input", e => applySearch(e.target.value));
 
             setupFab();
+            await fetchData();
             setInterval(fetchData, CONFIG.REFRESH_RATE);
         }
 
