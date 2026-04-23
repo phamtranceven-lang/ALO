@@ -317,6 +317,12 @@
             display: block;
         }
 
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #facc15; }
+            50% { text-shadow: 0 0 15px #facc15; }
+            100% { text-shadow: 0 0 5px #facc15; }
+        }
+
         @media (max-width: 800px) {
             .item {
                 grid-template-columns: 1fr;
@@ -418,16 +424,40 @@
     <div class="hero">
         <div class="hero-inner">
             <h1>DANH SÁCH THI</h1>
+
             <div class="sub" style="
-    font-weight:700;
-    color:#f87171;
-    background:rgba(239,68,68,0.1);
-    padding:10px;
-    border-radius:10px;
-    border:1px solid rgba(239,68,68,0.3);
-">
-    ⚠️ Danh sách thi có thể sát ngày mới có. Tốt nhất là tra từng ngày và nếu còn 10 tiếng cuối trước khi thi mà không tìm được thì liên hệ ZALO 0589363333 TÌM DÙM CHO
-</div>
+                font-weight:700;
+                color:#f87171;
+                background:rgba(239,68,68,0.1);
+                padding:12px;
+                border-radius:12px;
+                border:1px solid rgba(239,68,68,0.3);
+            ">
+                ⚠️ Danh sách thi có thể sát ngày mới có. Tốt nhất là tra từng ngày và nếu còn 10 tiếng cuối trước khi thi mà không tìm được thì liên hệ
+
+                <a href="https://zalo.me/0589363333" target="_blank"
+                style="color:#22d3ee; font-weight:900; text-decoration:none; margin-left:4px; margin-right:4px;">
+                ZALO
+                </a>
+
+                <span onclick="copyPhone()"
+                style="cursor:pointer; color:#facc15; font-weight:900; font-size:16px; margin:0 4px; animation: glow 1.5s infinite;">
+                0589363333
+                </span>
+
+                <button onclick="openZalo()" style="
+                    margin-left:10px;
+                    padding:6px 10px;
+                    border:none;
+                    border-radius:8px;
+                    background:#ef4444;
+                    color:white;
+                    font-weight:700;
+                    cursor:pointer;
+                ">
+                🔥 CẦN TÌM GẤP
+                </button>
+            </div>
 
             <div class="search-box">
                 <input
@@ -473,10 +503,20 @@
         let allExams = [];
         let showingTodayOnly = false;
 
+        function copyPhone() {
+            navigator.clipboard.writeText("0589363333")
+                .then(() => alert("Đã copy số Zalo"))
+                .catch(() => alert("0589363333"));
+        }
+
+        function openZalo() {
+            window.open("https://zalo.me/0589363333", "_blank");
+        }
+
         function normalize(str) {
             return String(str || "")
                 .toLowerCase()
-                .replace(/[\s\\-_/()]/g, "");
+                .replace(/[\s\-_/()]/g, "");
         }
 
         function escapeHtml(str) {
@@ -758,6 +798,7 @@
 
         init();
     </script>
+
     <script src="vien-7mau-tuyet.js"></script>
 </body>
 </html>
