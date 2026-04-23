@@ -428,6 +428,122 @@
             font-style: italic;
         }
 
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .mini-card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 16px;
+            padding: 14px;
+            min-height: 190px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 10px 24px rgba(0,0,0,.14);
+        }
+
+        .mini-card:hover {
+            border-color: rgba(56,189,248,.35);
+            box-shadow: 0 14px 34px rgba(0,0,0,.22);
+        }
+
+        .mini-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mini-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .mini-subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-top: -2px;
+        }
+
+        .mini-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 72px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .mini-empty {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 10px 0;
+            opacity: .9;
+        }
+
+        .mini-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.06);
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .mini-chip .mini-chip-badge {
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(56,189,248,.16);
+            color: #dff6ff;
+            border: 1px solid rgba(56,189,248,.22);
+        }
+
+        .mini-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mini-btn {
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            color: white;
+            min-width: 140px;
+        }
+
+        .mini-btn.lichthi {
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        }
+
+        .mini-btn.danhsachthi {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
         @media (min-width: 600px) {
             .result-item {
                 flex-direction: row;
@@ -1048,9 +1164,32 @@
 
             <div id="mySubjectsList" class="my-tags"></div>
 
-            <div class="my-row" style="margin-top:14px;">
-                <button type="button" class="green" onclick="openWithSubjects('lichthi.html')">📅 Xem lịch thi</button>
-                <button type="button" class="green" onclick="openWithSubjects('danhsachthi.html')">📝 Xem danh sách thi</button>
+            <div class="mini-grid">
+                <div class="mini-card">
+                    <div class="mini-head">
+                        <div>
+                            <div class="mini-title">📅 Lịch thi</div>
+                            <div class="mini-subtitle">Khung xem nhanh các môn đã lưu để mở lịch thi ngay.</div>
+                        </div>
+                    </div>
+                    <div class="mini-content" id="mini-lichthi"></div>
+                    <div class="mini-actions">
+                        <button type="button" class="mini-btn lichthi" onclick="openWithSubjects('lichthi.html')">Mở lịch thi</button>
+                    </div>
+                </div>
+
+                <div class="mini-card">
+                    <div class="mini-head">
+                        <div>
+                            <div class="mini-title">📝 Danh sách thi</div>
+                            <div class="mini-subtitle">Khung xem nhanh các môn đã lưu để mở danh sách thi ngay.</div>
+                        </div>
+                    </div>
+                    <div class="mini-content" id="mini-danhsach"></div>
+                    <div class="mini-actions">
+                        <button type="button" class="mini-btn danhsachthi" onclick="openWithSubjects('danhsachthi.html')">Mở danh sách thi</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1173,6 +1312,76 @@
                 .toUpperCase()
                 .replace(/\s+/g, '')
                 .replace(/^([A-Z\-]+)(\d+)([A-Z]+)$/i, '$1$2');
+        }
+
+
+        function getSavedSubjectsSafe() {
+            try {
+                const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+                return Array.isArray(subjects)
+                    ? subjects.map(s => String(s || '').trim()).filter(Boolean)
+                    : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function renderMiniSubjectPanels() {
+            const lichBox = document.getElementById("mini-lichthi");
+            const dsBox = document.getElementById("mini-danhsach");
+            if (!lichBox || !dsBox) return;
+
+            const subjects = getSavedSubjectsSafe();
+
+            if (!subjects.length) {
+                lichBox.innerHTML = `
+                    <div class="mini-empty">
+                        Chưa có môn nào được lưu.<br>
+                        Thêm môn ở ô phía trên để khung lịch thi tự cập nhật.
+                    </div>
+                `;
+                dsBox.innerHTML = `
+                    <div class="mini-empty">
+                        Chưa có môn nào được lưu.<br>
+                        Thêm môn ở ô phía trên để khung danh sách thi tự cập nhật.
+                    </div>
+                `;
+                return;
+            }
+
+            const build = (badgeText) => subjects.map(subject => `
+                <div class="mini-chip">
+                    <span>${studyEscapeHtml(subject)}</span>
+                    <span class="mini-chip-badge">${badgeText}</span>
+                </div>
+            `).join("");
+
+            lichBox.innerHTML = build("Lịch thi");
+            dsBox.innerHTML = build("Danh sách");
+        }
+
+        function hookMiniPanels() {
+            ['addMySubject', 'saveMySubjects', 'clearMySubjects'].forEach(fnName => {
+                const oldFn = window[fnName];
+                if (typeof oldFn === 'function' && !oldFn.__miniHooked) {
+                    const wrapped = function(...args) {
+                        const result = oldFn.apply(this, args);
+                        setTimeout(renderMiniSubjectPanels, 0);
+                        return result;
+                    };
+                    wrapped.__miniHooked = true;
+                    window[fnName] = wrapped;
+                }
+            });
+
+            const input = document.getElementById('mySubjectInput');
+            if (input && !input.__miniEnterHooked) {
+                input.addEventListener('keydown', () => setTimeout(renderMiniSubjectPanels, 0));
+                input.__miniEnterHooked = true;
+            }
+
+            window.addEventListener('storage', renderMiniSubjectPanels);
+            renderMiniSubjectPanels();
         }
 
         function openWithSubjects(page) {
@@ -1414,6 +1623,7 @@
         studyCurrentMode = 'Mẫu';
         studyCurrentTab = 'all';
         studyRender();
+        hookMiniPanels();
     </script>
  <script src="vien-7mau-tuyet.js"></script>
 </body>
