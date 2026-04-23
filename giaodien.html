@@ -1348,6 +1348,16 @@
         }
 
 
+        const LIVE_PANEL_INPUT_DEBOUNCE = 6000;
+        let livePanelInputTimer = null;
+
+        function scheduleLivePanelsFromTyping() {
+            clearTimeout(livePanelInputTimer);
+            livePanelInputTimer = setTimeout(() => {
+                renderLivePanels();
+            }, LIVE_PANEL_INPUT_DEBOUNCE);
+        }
+
         function getLiveSubjects() {
             try {
                 const stored = JSON.parse(localStorage.getItem("mySubjects") || "[]");
@@ -1484,6 +1494,7 @@
                 const oldFn = window[fnName];
                 if (typeof oldFn === 'function' && !oldFn.__liveHooked) {
                     const wrapped = function(...args) {
+                        clearTimeout(livePanelInputTimer);
                         const result = oldFn.apply(this, args);
                         setTimeout(renderLivePanels, 60);
                         return result;
@@ -1495,7 +1506,9 @@
 
             const input = document.getElementById('mySubjectInput');
             if (input && !input.__liveInputHooked) {
-                input.addEventListener('input', () => setTimeout(renderLivePanels, 60));
+                input.addEventListener('input', () => {
+                    scheduleLivePanelsFromTyping();
+                });
                 input.__liveInputHooked = true;
             }
 
