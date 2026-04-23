@@ -1,237 +1,448 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <script src="guard.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Danh Sách Thi</title>
     <style>
         :root {
-            --p: #007bff;
-            --bg: #f0f2f5;
+            --p: #3b82f6;
+            --bg: #0f172a;
+            --card: #111827;
+            --card-2: #1f2937;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --line: rgba(255,255,255,0.08);
             --share: #6366f1;
+            --refresh: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --cyan: #22d3ee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #0b1220, #0f172a);
+            color: var(--text);
+            font-family: "Segoe UI", Tahoma, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: var(--bg);
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1000px;
-            margin: 10px auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .hero {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(14px);
+            background: rgba(15, 23, 42, 0.88);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
         }
 
         h1 {
-            text-align: center;
-            color: var(--p);
-            margin: 15px 0;
-            font-size: 1.4rem;
+            margin: 0 0 10px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #e2e8f0;
             text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 14px;
         }
 
         .search-box {
-            padding: 0 20px 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
         }
 
         #search-box {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
             outline: none;
             font-size: 16px;
-            text-align: center;
-            background: #fff;
+            background: rgba(255,255,255,0.04);
+            color: white;
+        }
+
+        #search-box::placeholder {
+            color: #94a3b8;
         }
 
         #search-box:focus {
-            border-color: var(--p);
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.1);
+            border-color: rgba(59,130,246,0.6);
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
         }
 
         .action-row {
-            margin-top: 10px;
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .share-btn {
-            background: var(--share);
-            color: white;
+        .btn {
             border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
+            border-radius: 12px;
+            padding: 11px 15px;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
+            color: white;
         }
 
-        .share-btn:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
         }
 
-        .table-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            border-top: 1px solid #eee;
+        .share-btn { background: var(--share); }
+        .refresh-btn { background: var(--refresh); }
+        .clear-btn { background: var(--danger); }
+        .today-btn { background: var(--warning); color: #111827; }
+
+        .stats {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
+        .stat-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 14px;
         }
 
-        thead {
+        .stat-label {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .content {
+            padding-top: 16px;
+            padding-bottom: 90px;
+        }
+
+        .day-group {
+            margin-bottom: 18px;
+        }
+
+        .day-title {
             position: sticky;
-            top: 0;
+            top: 176px;
             z-index: 10;
-            background: #f8f9fa;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: rgba(34, 211, 238, 0.12);
+            border: 1px solid rgba(34, 211, 238, 0.18);
+            color: #7dd3fc;
+            font-weight: 800;
+            margin-bottom: 10px;
         }
 
-        th {
-            padding: 15px 10px;
-            text-align: center;
-            font-size: 13px;
-            color: #666;
-            border-bottom: 2px solid #eee;
+        .list {
+            display: grid;
+            gap: 10px;
         }
 
-        td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #f0f0f0;
-            word-wrap: break-word;
-            font-size: 14px;
-            text-align: center;
-            vertical-align: middle;
+        .item {
+            display: grid;
+            grid-template-columns: 150px 1fr 130px;
+            gap: 12px;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
         }
 
-        .col-date {
-            width: 110px;
-            font-weight: bold;
+        .item-date {
+            font-weight: 800;
+            color: #60a5fa;
+            font-size: 18px;
         }
 
-        .col-name {
-            width: auto;
+        .item-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.4;
         }
 
-        .col-action {
-            width: 110px;
+        .item-meta {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .item-action {
+            text-align: right;
         }
 
         .btn-open {
-            color: white;
-            padding: 10px;
+            display: inline-block;
             text-decoration: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            display: block;
-            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 800;
             transition: 0.2s;
         }
 
         .btn-open:hover {
-            opacity: 0.8;
-            transform: scale(0.95);
+            opacity: 0.9;
+            transform: scale(0.98);
         }
 
-        .highlight-code {
-            color: red;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-
-        .new-tag {
-            background: #ff4d4f;
+        .badge-new {
+            display: inline-block;
+            margin-left: 8px;
+            background: #ef4444;
             color: white;
-            padding: 2px 5px;
-            border-radius: 3px;
             font-size: 10px;
-            margin-left: 5px;
+            font-weight: 800;
+            padding: 4px 7px;
+            border-radius: 999px;
             vertical-align: middle;
         }
 
-        .status {
-            font-size: 11px;
-            color: #999;
-            text-align: center;
-            padding: 8px;
-            background: white;
-            border-top: 1px solid #eee;
+        .badge-page {
+            display: inline-block;
+            margin-left: 8px;
+            background: rgba(255,255,255,0.08);
+            color: #cbd5e1;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 7px;
+            border-radius: 999px;
+            vertical-align: middle;
         }
 
-        @media (max-width: 600px) {
-            .col-date {
-                width: 90px;
-                font-size: 12px;
+        .highlight-code {
+            color: #facc15;
+            text-decoration: underline;
+            font-weight: 900;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            background: rgba(255,255,255,0.04);
+            border: 1px dashed rgba(255,255,255,0.12);
+            padding: 30px 16px;
+            border-radius: 18px;
+        }
+
+        .status {
+            position: fixed;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            z-index: 50;
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid var(--line);
+            color: #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 13px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .status.error {
+            color: #fecaca;
+            border-color: rgba(239,68,68,0.35);
+        }
+
+        .fab-top {
+            position: fixed;
+            right: 18px;
+            bottom: 72px;
+            z-index: 60;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--cyan);
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(34,211,238,0.35);
+            display: none;
+        }
+
+        .fab-top.show {
+            display: block;
+        }
+
+        @media (max-width: 800px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .col-action {
-                width: 90px;
+            .item {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .item-action {
+                text-align: left;
+            }
+
+            .day-title {
+                top: 210px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .container,
+            .hero-inner {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .item-date {
+                font-size: 16px;
+            }
+
+            .item-title {
+                font-size: 16px;
+            }
+
+            .day-title {
+                top: 255px;
             }
         }
     </style>
 </head>
-
 <body>
+    <div class="hero">
+        <div class="hero-inner">
+            <h1>DANH SÁCH THI</h1>
+            <div class="sub">Bản xịn: sort chuẩn, gom theo ngày, cache offline, cập nhật nhanh.</div>
 
-    <div class="container">
-        <h1>DANH SÁCH THI</h1>
-        <div class="search-box">
-            <input type="text" id="search-box" placeholder="Môn (his362), Lớp (chi 151 as) hoặc Ngày (22/12)..."
-                autocomplete="off" autofocus>
-            <div class="action-row">
-                <button id="share-btn" class="share-btn" onclick="shareSearch()">🔗 Share</button>
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="search-box"
+                    placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03"
+                    autocomplete="off"
+                    autofocus
+                />
+
+                <div class="action-row">
+                    <button class="btn share-btn" id="share-btn">🔗 Share</button>
+                    <button class="btn refresh-btn" id="refresh-btn">🔄 Cập nhật ngay</button>
+                    <button class="btn today-btn" id="today-btn">📅 Chỉ xem hôm nay</button>
+                    <button class="btn clear-btn" id="clear-cache-btn">🗑️ Xóa cache</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Tổng danh sách</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Kết quả đang xem</div>
+                    <div class="stat-value" id="stat-visible">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Số ngày có lịch</div>
+                    <div class="stat-value" id="stat-days">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Trang xa nhất quét được</div>
+                    <div class="stat-value" id="stat-page">0</div>
+                </div>
             </div>
         </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="col-date">Ngày tải</th>
-                        <th class="col-name">Tên file danh sách</th>
-                        <th class="col-action">Trang tải</th>
-                    </tr>
-                </thead>
-                <tbody id="data-body"></tbody>
-            </table>
-        </div>
-        <div id="status" class="status">Đang đồng bộ dữ liệu...</div>
     </div>
+
+    <div class="container content">
+        <div id="data-body"></div>
+    </div>
+
+    <button id="fab-top" class="fab-top">↑</button>
+    <div id="status" class="status">Đang khởi tạo dữ liệu...</div>
 
     <script>
         const CONFIG = {
-            API: 'https://dtu.tapcube2007.workers.dev',
-            BASE_URL: 'https://pdaotao.duytan.edu.vn/',
-            STORAGE_KEY: 'dtu_cache_ultra_final',
-            REFRESH_RATE: 60000
+            API: "https://dtu.tapcube2007.workers.dev",
+            BASE_URL: "https://pdaotao.duytan.edu.vn/",
+            STORAGE_KEY: "dtu_cache_ultra_xin",
+            REFRESH_RATE: 300000
         };
 
-        const COLORS = ['#28a745', '#e67e22', '#e74c3c', '#8e44ad', '#2980b9', '#16a085', '#d35400', '#2c3e50'];
-        const dateColorMap = {};
         let allExams = [];
+        let showingTodayOnly = false;
 
         function normalize(str) {
-            return String(str || '').toLowerCase().replace(/[\s\-_/]/g, '');
+            return String(str || "")
+                .toLowerCase()
+                .replace(/[\s\-_/()]/g, "");
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function parseSearchTokens(text) {
+            return String(text || "")
+                .split(",")
+                .map(s => s.trim())
+                .filter(Boolean);
         }
 
         function getSearchValueFromURL() {
@@ -240,132 +451,176 @@
             return m ? decodeURIComponent(m) : "";
         }
 
-        function parseSearchTokens(text) {
-            return String(text || '')
-                .split(',')
-                .map(s => s.trim())
-                .filter(Boolean);
+        function setStatus(text, isError = false) {
+            const el = document.getElementById("status");
+            el.textContent = text;
+            el.classList.toggle("error", isError);
         }
 
-        async function init() {
-            const input = document.getElementById('search-box');
-            const searchFromURL = getSearchValueFromURL();
-
-            if (searchFromURL) {
-                input.value = searchFromURL;
-            }
-
-            input.focus();
-
-            const cached = localStorage.getItem(CONFIG.STORAGE_KEY);
-            if (cached) {
-                allExams = JSON.parse(cached);
-                applySearch(input.value);
-            }
-
-            await fetchData();
-
-            if (searchFromURL) {
-                applySearch(searchFromURL);
-            }
-
-            setInterval(fetchData, CONFIG.REFRESH_RATE);
+        function parseUploadDate(str) {
+            if (!str) return new Date(0);
+            const [time, date] = String(str).trim().split(" ");
+            if (!time || !date) return new Date(0);
+            const [d, m, y] = date.split("/");
+            return new Date(`${y}-${m}-${d}T${time}:00`);
         }
 
-        async function fetchData() {
-            try {
-                const res = await fetch(CONFIG.API);
-                const json = await res.json();
-                const data = json.response?.data || [];
-                if (data.length > 0) {
-                    allExams = data;
-                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
-                    applySearch(document.getElementById('search-box').value);
-                }
-                document.getElementById('status').innerText = `Cập nhật lúc: ${new Date().toLocaleTimeString()}`;
-            } catch (e) {
-                document.getElementById('status').innerText = "Chế độ Offline";
-            }
+        function getDateOnly(str) {
+            const parts = String(str || "").split(" ");
+            return parts[1] || str || "";
         }
 
-        function getColor(dateStr) {
-            const date = dateStr.split(' ')[1] || dateStr;
-            if (!dateColorMap[date]) {
-                const index = Object.keys(dateColorMap).length % COLORS.length;
-                dateColorMap[date] = COLORS[index];
-            }
-            return dateColorMap[date];
+        function isTodayVN(dateStr) {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, "0");
+            const mm = String(today.getMonth() + 1).padStart(2, "0");
+            const yyyy = today.getFullYear();
+            return dateStr === `${dd}/${mm}/${yyyy}`;
         }
 
         function highlightMatches(title, tokens) {
-            let result = title;
+            let result = escapeHtml(title);
+
             tokens.forEach(token => {
                 const raw = token.trim();
                 if (!raw) return;
 
-                const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const flexible = escaped.replace(/\s+/g, '\\s*[-_/ ]?\\s*');
-                const regex = new RegExp(flexible, 'gi');
+                const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                const flexible = escaped.replace(/\s+/g, "\\s*[-_/ ]?\\s*");
+                const regex = new RegExp(flexible, "gi");
 
                 result = result.replace(regex, match => `<span class="highlight-code">${match}</span>`);
             });
+
             return result;
         }
 
-        function render(data, searchText = '') {
-            const body = document.getElementById('data-body');
-            const tokens = parseSearchTokens(searchText);
+        function updateStats(visibleData) {
+            document.getElementById("stat-total").textContent = allExams.length;
+            document.getElementById("stat-visible").textContent = visibleData.length;
 
-            body.innerHTML = data.map(item => {
-                const datePart = item.uploadDate.split(' ')[1] || item.uploadDate;
-                const color = getColor(datePart);
-                const url = CONFIG.BASE_URL + item.examDetailsUrl;
+            const uniqueDays = new Set(visibleData.map(i => getDateOnly(i.uploadDate)));
+            document.getElementById("stat-days").textContent = uniqueDays.size;
 
-                let displayTitle = item.examTitle;
-                if (tokens.length) {
-                    displayTitle = highlightMatches(displayTitle, tokens);
-                }
-
-                return `
-                    <tr>
-                        <td class="col-date" style="color: ${color}">${datePart}</td>
-                        <td class="col-name" style="text-align: center;">
-                            <strong>${displayTitle}</strong>
-                            ${item.isNew ? '<span class="new-tag">MỚI</span>' : ''}
-                        </td>
-                        <td class="col-action">
-                            <a href="${url}" target="_blank" class="btn-open" style="background: ${color}">MỞ TẢI</a>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            const maxPage = visibleData.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
+            document.getElementById("stat-page").textContent = maxPage;
         }
 
-        function applySearch(fullText = '') {
-            const rawText = String(fullText || '').trim();
+        function groupByDate(data) {
+            const groups = {};
+            data.forEach(item => {
+                const day = getDateOnly(item.uploadDate);
+                if (!groups[day]) groups[day] = [];
+                groups[day].push(item);
+            });
+            return groups;
+        }
 
-            if (!rawText) {
-                render(allExams, '');
+        function render(data, searchText = "") {
+            const body = document.getElementById("data-body");
+            const tokens = parseSearchTokens(searchText);
+
+            updateStats(data);
+
+            if (!data.length) {
+                body.innerHTML = `<div class="empty-state">Không có dữ liệu phù hợp.</div>`;
                 return;
             }
 
+            const groups = groupByDate(data);
+            const orderedDates = Object.keys(groups).sort((a, b) => {
+                const da = parseUploadDate(`00:00 ${a}`);
+                const db = parseUploadDate(`00:00 ${b}`);
+                return db - da;
+            });
+
+            body.innerHTML = orderedDates.map(day => {
+                const items = groups[day].map(item => {
+                    const displayTitle = tokens.length
+                        ? highlightMatches(item.examTitle || "", tokens)
+                        : escapeHtml(item.examTitle || "");
+
+                    const fullUrl = CONFIG.BASE_URL + String(item.examDetailsUrl || "").replace(/^\/+/, "");
+
+                    return `
+                        <div class="item">
+                            <div class="item-date">${escapeHtml(day)}</div>
+
+                            <div>
+                                <div class="item-title">
+                                    ${displayTitle}
+                                    ${item.isNew ? '<span class="badge-new">MỚI</span>' : ''}
+                                    ${item.page ? `<span class="badge-page">trang ${item.page}</span>` : ''}
+                                </div>
+                                <div class="item-meta">Giờ đăng: ${escapeHtml(String(item.uploadDate || "").split(" ")[0] || "--:--")}</div>
+                            </div>
+
+                            <div class="item-action">
+                                <a href="${fullUrl}" target="_blank" class="btn-open">MỞ TẢI</a>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+
+                return `
+                    <div class="day-group">
+                        <div class="day-title">📅 ${escapeHtml(day)}</div>
+                        <div class="list">${items}</div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function applySearch(fullText = "") {
+            const rawText = String(fullText || "").trim();
             const tokens = parseSearchTokens(rawText);
             const normalizedTokens = tokens.map(normalize);
 
-            const filtered = allExams.filter(ex => {
-                const titleNorm = normalize(ex.examTitle);
-                const dateNorm = normalize(ex.uploadDate);
+            let filtered = [...allExams];
 
-                return normalizedTokens.some(token => {
-                    return titleNorm.includes(token) || dateNorm.includes(token);
+            if (showingTodayOnly) {
+                filtered = filtered.filter(item => isTodayVN(getDateOnly(item.uploadDate)));
+            }
+
+            if (normalizedTokens.length) {
+                filtered = filtered.filter(ex => {
+                    const titleNorm = normalize(ex.examTitle);
+                    const dateNorm = normalize(ex.uploadDate);
+                    return normalizedTokens.some(token =>
+                        titleNorm.includes(token) || dateNorm.includes(token)
+                    );
                 });
-            });
+            }
 
-            render(filtered, fullText);
+            filtered.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+            render(filtered, rawText);
+        }
+
+        async function fetchData(showToast = false) {
+            try {
+                setStatus("Đang tải dữ liệu từ API...");
+                const res = await fetch(CONFIG.API, { cache: "no-store" });
+                const json = await res.json();
+                const data = json.response?.data || [];
+
+                if (Array.isArray(data) && data.length > 0) {
+                    allExams = data.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(allExams));
+                    applySearch(document.getElementById("search-box").value);
+
+                    const maxPage = allExams.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
+                    setStatus(`Online • ${allExams.length} dòng • quét tới trang ${maxPage} • cập nhật lúc ${new Date().toLocaleTimeString("vi-VN")}`);
+                } else {
+                    setStatus("API không trả dữ liệu.", true);
+                }
+            } catch (e) {
+                console.error(e);
+                setStatus("Chế độ Offline • đang dùng cache cũ", true);
+            }
         }
 
         function shareSearch() {
-            const input = document.getElementById('search-box').value.trim();
+            const input = document.getElementById("search-box").value.trim();
 
             if (!input) {
                 alert("Chưa có từ khóa để share");
@@ -375,19 +630,68 @@
             const encoded = encodeURIComponent(input);
             const url = `${window.location.origin}${window.location.pathname}?m=${encoded}`;
 
-            navigator.clipboard.writeText(url).then(() => {
-                alert("Đã copy link share");
-            }).catch(() => {
-                alert(url);
+            navigator.clipboard.writeText(url)
+                .then(() => alert("Đã copy link share"))
+                .catch(() => alert(url));
+        }
+
+        function clearCache() {
+            localStorage.removeItem(CONFIG.STORAGE_KEY);
+            alert("Đã xóa cache");
+        }
+
+        function toggleTodayOnly() {
+            showingTodayOnly = !showingTodayOnly;
+            document.getElementById("today-btn").textContent = showingTodayOnly
+                ? "📅 Đang lọc hôm nay"
+                : "📅 Chỉ xem hôm nay";
+            applySearch(document.getElementById("search-box").value);
+        }
+
+        function setupFab() {
+            const fab = document.getElementById("fab-top");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 300) fab.classList.add("show");
+                else fab.classList.remove("show");
+            });
+            fab.addEventListener("click", () => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
             });
         }
 
-        document.getElementById('search-box').addEventListener('input', (e) => {
-            applySearch(e.target.value);
-        });
+        async function init() {
+            const input = document.getElementById("search-box");
+            const searchFromURL = getSearchValueFromURL();
+
+            if (searchFromURL) {
+                input.value = searchFromURL;
+            }
+
+            const cached = localStorage.getItem(CONFIG.STORAGE_KEY);
+            if (cached) {
+                try {
+                    allExams = JSON.parse(cached).sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+                    applySearch(input.value);
+                    setStatus("Đã tải cache cục bộ...");
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            await fetchData();
+
+            document.getElementById("share-btn").addEventListener("click", shareSearch);
+            document.getElementById("refresh-btn").addEventListener("click", () => fetchData(true));
+            document.getElementById("clear-cache-btn").addEventListener("click", clearCache);
+            document.getElementById("today-btn").addEventListener("click", toggleTodayOnly);
+
+            input.addEventListener("input", e => applySearch(e.target.value));
+
+            setupFab();
+            setInterval(fetchData, CONFIG.REFRESH_RATE);
+        }
 
         init();
     </script>
 </body>
-
 </html>
