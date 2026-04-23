@@ -441,7 +441,7 @@
             border: 1px solid rgba(255,255,255,.08);
             border-radius: 16px;
             padding: 14px;
-            min-height: 190px;
+            min-height: 420px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -474,47 +474,35 @@
         }
 
         .mini-content {
+            flex: 1;
+            min-height: 0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            min-height: 72px;
-            max-height: 140px;
-            overflow-y: auto;
-            padding-right: 4px;
         }
 
         .mini-empty {
             color: var(--muted);
             font-size: 13px;
             line-height: 1.6;
-            padding: 10px 0;
+            padding: 18px 8px;
             opacity: .9;
         }
 
-        .mini-chip {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.06);
-            color: var(--text);
-            font-size: 13px;
-            font-weight: 700;
-            word-break: break-word;
+        .mini-frame-wrap {
+            flex: 1;
+            min-height: 280px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(5,10,25,.65);
         }
 
-        .mini-chip .mini-chip-badge {
-            flex-shrink: 0;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(56,189,248,.16);
-            color: #dff6ff;
-            border: 1px solid rgba(56,189,248,.22);
+        .mini-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            border: none;
+            background: transparent;
         }
 
         .mini-actions {
@@ -543,6 +531,7 @@
         .mini-btn.danhsachthi {
             background: linear-gradient(135deg, #10b981, #059669);
         }
+
 
         @media (min-width: 600px) {
             .result-item {
@@ -1157,9 +1146,9 @@
 
             <div class="my-row">
                 <input id="mySubjectInput" type="text" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy">
-                <button type="button" onclick="addMySubject()">Thêm</button>
-                <button type="button" class="secondary" onclick="saveMySubjects()">Lưu</button>
-                <button type="button" class="secondary" onclick="clearMySubjects()">Xóa hết</button>
+                <button type="button" onclick="addMySubject(); renderMiniSubjectPanels();">Thêm</button>
+                <button type="button" class="secondary" onclick="saveMySubjects(); renderMiniSubjectPanels();">Lưu</button>
+                <button type="button" class="secondary" onclick="clearMySubjects(); renderMiniSubjectPanels();">Xóa hết</button>
             </div>
 
             <div id="mySubjectsList" class="my-tags"></div>
@@ -1169,12 +1158,12 @@
                     <div class="mini-head">
                         <div>
                             <div class="mini-title">📅 Lịch thi</div>
-                            <div class="mini-subtitle">Khung xem nhanh các môn đã lưu để mở lịch thi ngay.</div>
+                            <div class="mini-subtitle">Khung bên trái hiển thị lịch thi theo các môn đang lưu.</div>
                         </div>
                     </div>
                     <div class="mini-content" id="mini-lichthi"></div>
                     <div class="mini-actions">
-                        <button type="button" class="mini-btn lichthi" onclick="openWithSubjects('lichthi.html')">Mở lịch thi</button>
+                        <button type="button" class="mini-btn lichthi" onclick="openWithSubjects('lichthi.html')">Mở toàn bộ lịch thi</button>
                     </div>
                 </div>
 
@@ -1182,12 +1171,12 @@
                     <div class="mini-head">
                         <div>
                             <div class="mini-title">📝 Danh sách thi</div>
-                            <div class="mini-subtitle">Khung xem nhanh các môn đã lưu để mở danh sách thi ngay.</div>
+                            <div class="mini-subtitle">Khung bên phải hiển thị danh sách thi theo các môn đang lưu.</div>
                         </div>
                     </div>
                     <div class="mini-content" id="mini-danhsach"></div>
                     <div class="mini-actions">
-                        <button type="button" class="mini-btn danhsachthi" onclick="openWithSubjects('danhsachthi.html')">Mở danh sách thi</button>
+                        <button type="button" class="mini-btn danhsachthi" onclick="openWithSubjects('danhsachthi.html')">Mở toàn bộ danh sách thi</button>
                     </div>
                 </div>
             </div>
@@ -1317,13 +1306,43 @@
 
         function getSavedSubjectsSafe() {
             try {
-                const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
-                return Array.isArray(subjects)
-                    ? subjects.map(s => String(s || '').trim()).filter(Boolean)
+                const stored = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+                const fromStorage = Array.isArray(stored)
+                    ? stored.map(s => String(s || "").trim()).filter(Boolean)
                     : [];
+
+                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")]
+                    .map(tag => {
+                        const clone = tag.cloneNode(true);
+                        const btn = clone.querySelector("button");
+                        if (btn) btn.remove();
+                        return clone.textContent.trim();
+                    })
+                    .filter(Boolean);
+
+                const input = document.getElementById("mySubjectInput");
+                const fromInput = input
+                    ? String(input.value || "")
+                        .split(",")
+                        .map(s => s.trim())
+                        .filter(Boolean)
+                    : [];
+
+                const merged = [...fromStorage, ...tags, ...fromInput];
+                return [...new Set(merged)];
             } catch (e) {
                 return [];
             }
+        }
+
+        function buildSubjectsQuery(page, subjects) {
+            let finalSubjects = subjects;
+            if (page === "lichthi.html") {
+                finalSubjects = subjects.map(formatSubjectForLichThi);
+            } else if (page === "danhsachthi.html") {
+                finalSubjects = subjects.map(formatSubjectForDanhSachThi);
+            }
+            return encodeURIComponent(finalSubjects.join(", "));
         }
 
         function renderMiniSubjectPanels() {
@@ -1337,27 +1356,32 @@
                 lichBox.innerHTML = `
                     <div class="mini-empty">
                         Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để khung lịch thi tự cập nhật.
+                        Thêm môn ở ô phía trên để bên trái hiện lịch thi ngay tại trang này.
                     </div>
                 `;
                 dsBox.innerHTML = `
                     <div class="mini-empty">
                         Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để khung danh sách thi tự cập nhật.
+                        Thêm môn ở ô phía trên để bên phải hiện danh sách thi ngay tại trang này.
                     </div>
                 `;
                 return;
             }
 
-            const build = (badgeText) => subjects.map(subject => `
-                <div class="mini-chip">
-                    <span>${studyEscapeHtml(subject)}</span>
-                    <span class="mini-chip-badge">${badgeText}</span>
-                </div>
-            `).join("");
+            const lichQuery = buildSubjectsQuery("lichthi.html", subjects);
+            const dsQuery = buildSubjectsQuery("danhsachthi.html", subjects);
 
-            lichBox.innerHTML = build("Lịch thi");
-            dsBox.innerHTML = build("Danh sách");
+            lichBox.innerHTML = `
+                <div class="mini-frame-wrap">
+                    <iframe class="mini-frame" src="lichthi.html?m=${lichQuery}" loading="lazy"></iframe>
+                </div>
+            `;
+
+            dsBox.innerHTML = `
+                <div class="mini-frame-wrap">
+                    <iframe class="mini-frame" src="danhsachthi.html?m=${dsQuery}" loading="lazy"></iframe>
+                </div>
+            `;
         }
 
         function hookMiniPanels() {
@@ -1366,7 +1390,7 @@
                 if (typeof oldFn === 'function' && !oldFn.__miniHooked) {
                     const wrapped = function(...args) {
                         const result = oldFn.apply(this, args);
-                        setTimeout(renderMiniSubjectPanels, 0);
+                        setTimeout(renderMiniSubjectPanels, 50);
                         return result;
                     };
                     wrapped.__miniHooked = true;
@@ -1376,13 +1400,14 @@
 
             const input = document.getElementById('mySubjectInput');
             if (input && !input.__miniEnterHooked) {
-                input.addEventListener('keydown', () => setTimeout(renderMiniSubjectPanels, 0));
+                input.addEventListener('input', () => setTimeout(renderMiniSubjectPanels, 50));
                 input.__miniEnterHooked = true;
             }
 
             window.addEventListener('storage', renderMiniSubjectPanels);
             renderMiniSubjectPanels();
         }
+
 
         function openWithSubjects(page) {
             const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
