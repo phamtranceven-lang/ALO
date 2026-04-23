@@ -78,7 +78,7 @@
         .main-container {
             flex: 1;
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -86,14 +86,7 @@
         }
 
         .header-wrapper {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            max-width: 1000px;
-            gap: 40px;
-            margin-bottom: 20px;
-            padding: 0 10px;
-            flex-shrink: 0;
+            display: none;
         }
 
         .logo-area {
@@ -426,6 +419,185 @@
             font-size: 14px;
             color: var(--muted);
             font-style: italic;
+        }
+
+        
+        .dashboard-wrap{
+            width:100%;
+            max-width:none;
+            margin:22px 0 30px;
+            padding:0;
+        }
+
+        .dashboard-titlebar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:14px;
+            padding:0 6px;
+        }
+
+        .dashboard-titlebar h2{
+            margin:0;
+            color:var(--text);
+            font-size:24px;
+            font-weight:800;
+        }
+
+        .dashboard-titlebar .hint{
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
+        }
+
+        .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+        .dashboard-panel-head{
+            padding:18px 18px 14px;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            background:rgba(255,255,255,.02);
+        }
+
+        .dashboard-panel-title{
+            margin:0;
+            color:var(--blue);
+            font-size:22px;
+            font-weight:800;
+        }
+
+        .dashboard-panel-sub{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .dashboard-panel-body{
+            flex:1;
+            min-height:0;
+            padding:14px;
+            background:rgba(255,255,255,.015);
+        }
+
+        .dashboard-frame-wrap{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border-radius:16px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(5,10,25,.65);
+        }
+
+        .dashboard-frame{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border:none;
+            background:transparent;
+        }
+
+        .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
+        }
+
+        .dashboard-panel-actions{
+            padding:14px;
+            border-top:1px solid rgba(255,255,255,.07);
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .dashboard-btn{
+            flex:1;
+            min-width:180px;
+            border:none;
+            border-radius:14px;
+            padding:14px 16px;
+            font-size:14px;
+            font-weight:800;
+            color:#fff;
+            cursor:pointer;
+        }
+
+        .dashboard-btn.left{
+            background:linear-gradient(135deg,#0ea5e9,#2563eb);
+        }
+
+        .dashboard-btn.right{
+            background:linear-gradient(135deg,#10b981,#059669);
+        }
+
+        @media (max-width:1100px){
+            .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
+        }
+
+            .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+            .dashboard-frame-wrap,
+            .dashboard-frame,
+            .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
+        }
+
+            .dashboard-titlebar{
+                flex-direction:column;
+                align-items:flex-start;
+            }
         }
 
         @media (min-width: 600px) {
@@ -951,219 +1123,6 @@
             .study-search-row,.study-picker-row{grid-template-columns:1fr}
         }
 
-
-        .dashboard-wrap {
-            width: 100%;
-            max-width: 100%;
-            margin: 8px auto 28px;
-            padding: 0 18px;
-        }
-
-        .dashboard-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            margin: 0 auto 12px;
-            max-width: 1600px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .dashboard-title {
-            color: var(--text);
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        .dashboard-shell {
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            gap: 0;
-            min-height: 980px;
-            height: calc(100vh - 250px);
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid rgba(120,170,255,.16);
-            background: rgba(10,16,35,.70);
-            box-shadow: 0 24px 50px rgba(0,0,0,.28);
-            backdrop-filter: blur(14px);
-        }
-
-        .panel {
-            min-width: 320px;
-            display: flex;
-            flex-direction: column;
-            background: rgba(10,16,35,.86);
-        }
-
-        .panel-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 18px 12px;
-            border-bottom: 1px solid rgba(255,255,255,.07);
-            background: rgba(255,255,255,.02);
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--blue);
-        }
-
-        .panel-subtitle {
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .panel-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            flex-shrink: 0;
-        }
-
-        .panel-btn {
-            border: none;
-            border-radius: 12px;
-            padding: 11px 14px;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            color: #fff;
-        }
-
-        .panel-btn.left {
-            background: linear-gradient(135deg, #0ea5e9, #2563eb);
-        }
-
-        .panel-btn.right {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .panel-body {
-            flex: 1;
-            min-height: 0;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            background: rgba(255,255,255,.015);
-        }
-
-        .panel-empty {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--muted);
-            border: 1px dashed rgba(255,255,255,.10);
-            border-radius: 18px;
-            padding: 24px;
-            line-height: 1.7;
-            background: rgba(5,10,25,.5);
-        }
-
-        .panel-frame-wrap {
-            flex: 1;
-            min-height: 0;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,.08);
-            background: rgba(5,10,25,.65);
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-        }
-
-        .panel-frame {
-            width: 100%;
-            height: 100%;
-            min-height: 100%;
-            border: none;
-            background: transparent;
-        }
-
-        .panel-resizer {
-            width: 12px;
-            cursor: col-resize;
-            background:
-                linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)),
-                rgba(255,255,255,.02);
-            position: relative;
-            flex: 0 0 12px;
-            border-left: 1px solid rgba(255,255,255,.05);
-            border-right: 1px solid rgba(255,255,255,.05);
-        }
-
-        .panel-resizer::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 60px;
-            border-radius: 999px;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, rgba(56,189,248,.8), rgba(34,211,238,.5));
-            box-shadow: 0 0 14px rgba(34,211,238,.25);
-        }
-
-        .panel.left-panel { flex: 1 1 50%; }
-        .panel.right-panel { flex: 1 1 50%; }
-
-        @media (max-width: 1200px) {
-            .dashboard-shell {
-                min-height: 900px;
-                height: auto;
-                flex-direction: column;
-            }
-
-            .panel {
-                min-width: 100%;
-                min-height: 520px;
-            }
-
-            .panel-resizer {
-                width: 100%;
-                height: 12px;
-                cursor: row-resize;
-            }
-
-            .panel-resizer::before {
-                width: 60px;
-                height: 4px;
-            }
-        }
-
-        @media (max-width: 760px) {
-            .dashboard-wrap {
-                padding: 0 10px;
-            }
-
-            .dashboard-shell {
-                min-height: 860px;
-                border-radius: 18px;
-            }
-
-            .panel-head {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .panel-actions {
-                width: 100%;
-            }
-
-            .panel-btn {
-                flex: 1;
-            }
-        }
-
-
         @media (max-width:850px) {
             body {
                 min-height: 100vh;
@@ -1215,17 +1174,6 @@
 
     <div class="main-container">
 
-        <div class="header-wrapper">
-            <div class="logo-area">
-                <img src="https://files02.duytan.edu.vn/svruploads/dtu-duytan/upload/images/logoDT-70.png" alt="Logo Đại Học Duy Tân">
-            </div>
-
-            <div class="time-container">
-                <div id="clock">00:00:00</div>
-                <div id="date">Đang tải...</div>
-            </div>
-        </div>
-
         <div class="search-section-wrapper">
             <div class="search-box">
 
@@ -1254,14 +1202,48 @@
 
             <div class="my-row">
                 <input id="mySubjectInput" type="text" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy">
-                <button type="button" onclick="addMySubject(); renderMiniSubjectPanels();">Thêm</button>
-                <button type="button" class="secondary" onclick="saveMySubjects(); renderMiniSubjectPanels();">Lưu</button>
-                <button type="button" class="secondary" onclick="clearMySubjects(); renderMiniSubjectPanels();">Xóa hết</button>
+                <button type="button" onclick="addMySubject(); renderLivePanels();">Thêm</button>
+                <button type="button" class="secondary" onclick="saveMySubjects(); renderLivePanels();">Lưu</button>
+                <button type="button" class="secondary" onclick="clearMySubjects(); renderLivePanels();">Xóa hết</button>
             </div>
 
             <div id="mySubjectsList" class="my-tags"></div>
 
+            <div class="my-row" style="margin-top:14px;">
+                <button type="button" class="green" onclick="openWithSubjects('lichthi.html')">📅 Xem lịch thi</button>
+                <button type="button" class="green" onclick="openWithSubjects('danhsachthi.html')">📝 Xem danh sách thi</button>
+            </div>
+        </div>
 
+        <div class="dashboard-wrap">
+            <div class="dashboard-titlebar">
+                <h2>⚡ Dashboard tra cứu nhanh</h2>
+                <div class="hint">Bên trái hiện Lịch thi, bên phải hiện Danh sách thi theo các môn đang lưu.</div>
+            </div>
+
+            <div class="dashboard-grid">
+                <section class="dashboard-panel">
+                    <div class="dashboard-panel-head">
+                        <h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+                        <div class="dashboard-panel-sub">Khung trái hiển thị trực tiếp lịch thi ngay trong trang này.</div>
+                    </div>
+                    <div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+                    <div class="dashboard-panel-actions">
+                        <button type="button" class="dashboard-btn left" onclick="openWithSubjects('lichthi.html')">Mở toàn bộ lịch thi</button>
+                    </div>
+                </section>
+
+                <section class="dashboard-panel">
+                    <div class="dashboard-panel-head">
+                        <h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+                        <div class="dashboard-panel-sub">Khung phải hiển thị trực tiếp danh sách thi ngay trong trang này.</div>
+                    </div>
+                    <div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+                    <div class="dashboard-panel-actions">
+                        <button type="button" class="dashboard-btn right" onclick="openWithSubjects('danhsachthi.html')">Mở toàn bộ danh sách thi</button>
+                    </div>
+                </section>
+            </div>
         </div>
 
         <div id="resultDisplay"></div>
@@ -1386,38 +1368,28 @@
         }
 
 
-        function getSavedSubjectsSafe() {
+        function getLiveSubjects() {
             try {
                 const stored = JSON.parse(localStorage.getItem("mySubjects") || "[]");
-                const fromStorage = Array.isArray(stored)
-                    ? stored.map(s => String(s || "").trim()).filter(Boolean)
-                    : [];
+                const fromStorage = Array.isArray(stored) ? stored.map(s => String(s || '').trim()).filter(Boolean) : [];
 
-                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")]
-                    .map(tag => {
-                        const clone = tag.cloneNode(true);
-                        const btn = clone.querySelector("button");
-                        if (btn) btn.remove();
-                        return clone.textContent.trim();
-                    })
-                    .filter(Boolean);
+                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")].map(tag => {
+                    const clone = tag.cloneNode(true);
+                    const btn = clone.querySelector("button");
+                    if (btn) btn.remove();
+                    return clone.textContent.trim();
+                }).filter(Boolean);
 
                 const input = document.getElementById("mySubjectInput");
-                const fromInput = input
-                    ? String(input.value || "")
-                        .split(",")
-                        .map(s => s.trim())
-                        .filter(Boolean)
-                    : [];
+                const fromInput = input ? String(input.value || '').split(',').map(s => s.trim()).filter(Boolean) : [];
 
-                const merged = [...fromStorage, ...tags, ...fromInput];
-                return [...new Set(merged)];
+                return [...new Set([...fromStorage, ...tags, ...fromInput])];
             } catch (e) {
                 return [];
             }
         }
 
-        function buildSubjectsQuery(page, subjects) {
+        function buildLiveQuery(page, subjects) {
             let finalSubjects = subjects;
             if (page === "lichthi.html") {
                 finalSubjects = subjects.map(formatSubjectForLichThi);
@@ -1427,105 +1399,59 @@
             return encodeURIComponent(finalSubjects.join(", "));
         }
 
-        function renderMiniSubjectPanels() {
-            const lichBox = document.getElementById("mini-lichthi");
-            const dsBox = document.getElementById("mini-danhsach");
-            if (!lichBox || !dsBox) return;
+        function renderLivePanels() {
+            const left = document.getElementById("live-lichthi-panel");
+            const right = document.getElementById("live-danhsach-panel");
+            if (!left || !right) return;
 
-            const subjects = getSavedSubjectsSafe();
+            const subjects = getLiveSubjects();
 
             if (!subjects.length) {
-                lichBox.innerHTML = `
-                    <div class="panel-empty">
-                        Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để bên trái hiện lịch thi ngay tại trang này.
-                    </div>
-                `;
-                dsBox.innerHTML = `
-                    <div class="panel-empty">
-                        Chưa có môn nào được lưu.<br>
-                        Thêm môn ở ô phía trên để bên phải hiện danh sách thi ngay tại trang này.
-                    </div>
-                `;
+                left.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Lịch thi ngay tại đây.</div>';
+                right.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Danh sách thi ngay tại đây.</div>';
                 return;
             }
 
-            const lichQuery = buildSubjectsQuery("lichthi.html", subjects);
-            const dsQuery = buildSubjectsQuery("danhsachthi.html", subjects);
+            const leftQuery = buildLiveQuery("lichthi.html", subjects);
+            const rightQuery = buildLiveQuery("danhsachthi.html", subjects);
 
-            lichBox.innerHTML = `
-                <div class="panel-frame-wrap">
-                    <iframe class="panel-frame" src="lichthi.html?m=${lichQuery}" loading="lazy"></iframe>
+            left.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="lichthi.html?m=${leftQuery}" loading="lazy"></iframe>
                 </div>
             `;
 
-            dsBox.innerHTML = `
-                <div class="panel-frame-wrap">
-                    <iframe class="panel-frame" src="danhsachthi.html?m=${dsQuery}" loading="lazy"></iframe>
+            right.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="danhsachthi.html?m=${rightQuery}" loading="lazy"></iframe>
                 </div>
             `;
         }
 
-        function hookMiniPanels() {
-            ['addMySubject', 'saveMySubjects', 'clearMySubjects'].forEach(fnName => {
+        function hookLivePanels() {
+            ['addMySubject','saveMySubjects','clearMySubjects'].forEach(fnName => {
                 const oldFn = window[fnName];
-                if (typeof oldFn === 'function' && !oldFn.__miniHooked) {
+                if (typeof oldFn === 'function' && !oldFn.__liveHooked) {
                     const wrapped = function(...args) {
                         const result = oldFn.apply(this, args);
-                        setTimeout(renderMiniSubjectPanels, 50);
+                        setTimeout(renderLivePanels, 60);
                         return result;
                     };
-                    wrapped.__miniHooked = true;
+                    wrapped.__liveHooked = true;
                     window[fnName] = wrapped;
                 }
             });
 
             const input = document.getElementById('mySubjectInput');
-            if (input && !input.__miniEnterHooked) {
-                input.addEventListener('input', () => setTimeout(renderMiniSubjectPanels, 50));
-                input.__miniEnterHooked = true;
+            if (input && !input.__liveInputHooked) {
+                input.addEventListener('input', () => setTimeout(renderLivePanels, 60));
+                input.__liveInputHooked = true;
             }
 
-            window.addEventListener('storage', renderMiniSubjectPanels);
-            renderMiniSubjectPanels();
+            window.addEventListener('storage', renderLivePanels);
+            renderLivePanels();
         }
 
-        function setupDashboardResize() {
-            const shell = document.getElementById('dashboardShell');
-            const left = document.getElementById('leftPanel');
-            const right = document.getElementById('rightPanel');
-            const resizer = document.getElementById('panelResizer');
-            if (!shell || !left || !right || !resizer) return;
-
-            let isDragging = false;
-
-            const stopDrag = () => {
-                isDragging = false;
-                document.body.style.userSelect = '';
-                document.body.style.cursor = '';
-            };
-
-            const onMove = (clientX) => {
-                if (!isDragging || window.innerWidth <= 1200) return;
-                const rect = shell.getBoundingClientRect();
-                const min = 320;
-                let leftWidth = clientX - rect.left;
-                leftWidth = Math.max(min, Math.min(leftWidth, rect.width - min));
-                left.style.flex = `0 0 ${leftWidth}px`;
-                right.style.flex = '1 1 auto';
-            };
-
-            resizer.addEventListener('mousedown', () => {
-                if (window.innerWidth <= 1200) return;
-                isDragging = true;
-                document.body.style.userSelect = 'none';
-                document.body.style.cursor = 'col-resize';
-            });
-
-            window.addEventListener('mousemove', (e) => onMove(e.clientX));
-            window.addEventListener('mouseup', stopDrag);
-            window.addEventListener('mouseleave', stopDrag);
-        }
 
         function openWithSubjects(page) {
             const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
@@ -1766,8 +1692,7 @@
         studyCurrentMode = 'Mẫu';
         studyCurrentTab = 'all';
         studyRender();
-        hookMiniPanels();
-        setupDashboardResize();
+        hookLivePanels();
     </script>
  <script src="vien-7mau-tuyet.js"></script>
 </body>
