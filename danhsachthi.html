@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Danh Sách Thi</title>
     <style>
         :root {
@@ -29,6 +29,9 @@
             background: linear-gradient(180deg, #0b1220, #0f172a);
             color: var(--text);
             font-family: "Segoe UI", Tahoma, sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
@@ -42,9 +45,8 @@
         }
 
         .hero {
-            position: sticky;
-            top: 0;
-            z-index: 30;
+            position: relative;
+            z-index: 20;
             backdrop-filter: blur(14px);
             background: rgba(15, 23, 42, 0.88);
             border-bottom: 1px solid var(--line);
@@ -151,7 +153,7 @@
 
         .content {
             padding-top: 16px;
-            padding-bottom: 90px;
+            padding-bottom: 150px;
         }
 
         .day-group {
@@ -159,9 +161,9 @@
         }
 
         .day-title {
-            position: sticky;
-            top: 176px;
-            z-index: 10;
+            position: relative;
+            top: auto;
+            z-index: 1;
             display: inline-block;
             padding: 8px 12px;
             border-radius: 12px;
@@ -200,6 +202,7 @@
             font-weight: 800;
             color: white;
             line-height: 1.4;
+            word-break: break-word;
         }
 
         .item-meta {
@@ -272,7 +275,7 @@
             position: fixed;
             left: 14px;
             right: 14px;
-            bottom: 14px;
+            bottom: calc(14px + env(safe-area-inset-bottom));
             z-index: 50;
             background: rgba(15, 23, 42, 0.96);
             border: 1px solid var(--line);
@@ -294,7 +297,7 @@
         .fab-top {
             position: fixed;
             right: 18px;
-            bottom: 72px;
+            bottom: calc(78px + env(safe-area-inset-bottom));
             z-index: 60;
             width: 48px;
             height: 48px;
@@ -326,13 +329,9 @@
             .item-action {
                 text-align: left;
             }
-
-            .day-title {
-                top: 210px;
-            }
         }
 
-        @media (max-width: 520px) {
+        @media (max-width: 768px) {
             .container,
             .hero-inner {
                 padding: 12px;
@@ -342,20 +341,78 @@
                 font-size: 22px;
             }
 
+            .action-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                min-height: 50px;
+                font-size: 13px;
+            }
+
             .stats {
                 grid-template-columns: 1fr;
             }
 
+            .item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+
             .item-date {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .item-title {
-                font-size: 16px;
+                font-size: 15px;
+                line-height: 1.45;
             }
 
-            .day-title {
-                top: 255px;
+            .item-action {
+                text-align: left;
+            }
+
+            .status {
+                left: 10px;
+                right: 10px;
+                bottom: calc(10px + env(safe-area-inset-bottom));
+                font-size: 12px;
+                padding: 10px 12px;
+                border-radius: 12px;
+            }
+
+            .fab-top {
+                right: 14px;
+                bottom: calc(86px + env(safe-area-inset-bottom));
+                width: 52px;
+                height: 52px;
+            }
+
+            .content {
+                padding-bottom: 170px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .action-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            #search-box {
+                font-size: 15px;
+                padding: 13px 14px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .content {
+                padding-bottom: 180px;
             }
         }
     </style>
@@ -364,7 +421,7 @@
     <div class="hero">
         <div class="hero-inner">
             <h1>DANH SÁCH THI</h1>
-            <div class="sub">BẢN QUYỀN: PHẠM TRẦN QUỐC BẢO , ZALO 0589363333</div>
+            <div class="sub">Bản mobile fix: kéo mượt, không bị sticky đè nội dung, hiện lỗi API thật.</div>
 
             <div class="search-box">
                 <input
@@ -539,7 +596,8 @@
                         ? highlightMatches(item.examTitle || "", tokens)
                         : escapeHtml(item.examTitle || "");
 
-                    const fullUrl = CONFIG.BASE_URL + String(item.examDetailsUrl || "").replace(/^\/+/, "");
+                    const detailsPath = String(item.examDetailsUrl || "").replace(/^\.\.\//, "");
+                    const fullUrl = CONFIG.BASE_URL + detailsPath;
 
                     return `
                         <div class="item">
@@ -671,7 +729,8 @@
             window.addEventListener("scroll", () => {
                 if (window.scrollY > 300) fab.classList.add("show");
                 else fab.classList.remove("show");
-            });
+            }, { passive: true });
+
             fab.addEventListener("click", () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
             });
