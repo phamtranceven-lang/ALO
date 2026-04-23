@@ -129,8 +129,9 @@
         .stats {
             margin-top: 14px;
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: 1fr;
             gap: 10px;
+            max-width: 280px;
         }
 
         .stat-card {
@@ -317,10 +318,6 @@
         }
 
         @media (max-width: 800px) {
-            .stats {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
             .item {
                 grid-template-columns: 1fr;
                 text-align: left;
@@ -440,12 +437,11 @@
                 </div>
             </div>
 
-           <div class="stats">
-    <div class="stat-card">
-        <div class="stat-label">Tổng danh sách</div>
-        <div class="stat-value" id="stat-total">0</div>
-    </div>
-</div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Tổng danh sách</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
             </div>
         </div>
     </div>
@@ -471,7 +467,7 @@
         function normalize(str) {
             return String(str || "")
                 .toLowerCase()
-                .replace(/[\s\-_/()]/g, "");
+                .replace(/[\s\\-_/()]/g, "");
         }
 
         function escapeHtml(str) {
@@ -540,15 +536,11 @@
             return result;
         }
 
-        function updateStats(visibleData) {
-            document.getElementById("stat-total").textContent = allExams.length;
-            document.getElementById("stat-visible").textContent = visibleData.length;
-
-            const uniqueDays = new Set(visibleData.map(i => getDateOnly(i.uploadDate)));
-            document.getElementById("stat-days").textContent = uniqueDays.size;
-
-            const maxPage = visibleData.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
-            document.getElementById("stat-page").textContent = maxPage;
+        function updateStats() {
+            const totalEl = document.getElementById("stat-total");
+            if (totalEl) {
+                totalEl.textContent = allExams.length;
+            }
         }
 
         function groupByDate(data) {
@@ -565,7 +557,7 @@
             const body = document.getElementById("data-body");
             const tokens = parseSearchTokens(searchText);
 
-            updateStats(data);
+            updateStats();
 
             if (!data.length) {
                 body.innerHTML = `<div class="empty-state">Không có dữ liệu phù hợp hoặc chưa tải được API.</div>`;
@@ -757,6 +749,6 @@
 
         init();
     </script>
- <script src="vien-7mau-tuyet.js"></script>
+    <script src="vien-7mau-tuyet.js"></script>
 </body>
 </html>
