@@ -1143,6 +1143,48 @@
 </head>
 
 <body>
+
+<button id="copyBtn" style="
+position:fixed;
+top:15px;
+right:15px;
+z-index:9999;
+padding:10px 16px;
+border:none;
+border-radius:10px;
+background:#0ea5e9;
+color:#fff;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.3);
+">📋 Copy</button>
+
+<script>
+document.getElementById('copyBtn').onclick = function(){
+    const text = `Mình đã upload file sẵn. Hãy tự mở file đó, sửa trực tiếp theo yêu cầu trong cuộc chat, rồi trả lại **file đã sửa**.
+
+Cách làm việc mình muốn:
+
+* Tự đọc file upload
+* Tự chỉnh trực tiếp trong file
+* Trả lại đúng file đã sửa để tải về
+* Nếu chỉ sửa 1 file thì trả đúng 1 file đó
+* Nếu là HTML/CSS/JS thì giữ nguyên cấu trúc cũ, chỉ sửa phần cần thiết
+* Không chỉ hướng dẫn
+* Không chỉ đưa snippet rời
+* Không hiện code Python nội bộ, code xử lý file, hay log thao tác
+* Không cần giải thích dài
+
+Kết quả trả về chỉ cần:
+
+1. file đã sửa
+2. tóm tắt rất ngắn những gì đã sửa`;
+    navigator.clipboard.writeText(text);
+    this.innerText = "✅ Đã copy";
+    setTimeout(()=> this.innerText = "📋 Copy",1500);
+}
+</script>
+
     <script>
         if (window.self !== window.top) {
             document.body.style.minHeight = "100vh";
