@@ -1,5 +1,7 @@
 let mySubjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
 
+const DATE_FILTER_KEY = "mainDateFilter";
+
 function normalizeSubject(v) {
     return String(v || "").trim().toUpperCase();
 }
@@ -59,7 +61,7 @@ function addMySubject() {
 function removeMySubject(subject) {
     mySubjects = mySubjects.filter(s => s !== subject);
     renderMySubjects();
-    saveMySubjects(true);
+    saveAllFilters(true);
 }
 
 function saveMySubjects(silent = false) {
@@ -67,10 +69,65 @@ function saveMySubjects(silent = false) {
 }
 
 function clearMySubjects() {
-    if (!mySubjects.length) return;
     mySubjects = [];
     renderMySubjects();
     saveMySubjects(true);
+}
+
+function getMainDateFilter() {
+    const fromInput = document.getElementById("mainFromDate");
+    const toInput = document.getElementById("mainToDate");
+
+    return {
+        from: fromInput?.value || "",
+        to: toInput?.value || ""
+    };
+}
+
+function saveMainDateFilter() {
+    const dateFilter = getMainDateFilter();
+    localStorage.setItem(DATE_FILTER_KEY, JSON.stringify(dateFilter));
+}
+
+function loadMainDateFilter() {
+    const saved = JSON.parse(localStorage.getItem(DATE_FILTER_KEY) || "{}");
+
+    const fromInput = document.getElementById("mainFromDate");
+    const toInput = document.getElementById("mainToDate");
+
+    if (fromInput) fromInput.value = saved.from || "";
+    if (toInput) toInput.value = saved.to || "";
+}
+
+function clearMainDateFilter() {
+    localStorage.removeItem(DATE_FILTER_KEY);
+
+    const fromInput = document.getElementById("mainFromDate");
+    const toInput = document.getElementById("mainToDate");
+
+    if (fromInput) fromInput.value = "";
+    if (toInput) toInput.value = "";
+}
+
+function saveAllFilters(silent = false) {
+    saveMySubjects(true);
+    saveMainDateFilter();
+}
+
+function buildOpenUrl(page) {
+    const params = new URLSearchParams();
+
+    if (mySubjects.length) {
+        params.set("m", mySubjects.join(", "));
+    }
+
+    const { from, to } = getMainDateFilter();
+
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+
+    const queryString = params.toString();
+    return queryString ? `${page}?${queryString}` : page;
 }
 
 function openWithSubjects(page) {
@@ -78,8 +135,37 @@ function openWithSubjects(page) {
         return;
     }
 
-    const query = encodeURIComponent(mySubjects.join(", "));
-    window.location.href = `${page}?m=${query}`;
+    window.location.href = buildOpenUrl(page);
 }
 
-document.addEventListener("DOMContentLoaded", renderMySubjects);
+function openWithFilters(page) {
+    window.location.href = buildOpenUrl(page);
+}
+
+function clearAllFilters() {
+    clearMySubjects();
+    clearMainDateFilter();
+}
+
+function bindMainDateAutoSave() {
+    const fromInput = document.getElementById("mainFromDate");
+    const toInput = document.getElementById("mainToDate");
+
+    if (fromInput) {
+        fromInput.addEventListener("change", () => {
+            saveMainDateFilter();
+        });
+    }
+
+    if (toInput) {
+        toInput.addEventListener("change", () => {
+            saveMainDateFilter();
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderMySubjects();
+    loadMainDateFilter();
+    bindMainDateAutoSave();
+});
