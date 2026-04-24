@@ -76,20 +76,6 @@ font-weight:700;
 <script>
 let current = "";
 
-// 👉 Nếu có ?u= → redirect luôn
-const params = new URLSearchParams(location.search);
-const u = params.get("u");
-
-if(u){
-    try{
-        const decoded = decodeURIComponent(u);
-        if(decoded.startsWith("http")){
-            location.href = decoded;
-        }
-    }catch(e){}
-}
-
-// 👉 Tạo link
 function make(){
 const url = document.getElementById("url").value.trim();
 
@@ -98,13 +84,12 @@ alert("Nhập link");
 return;
 }
 
-current = location.origin + "/Alo?u=" + encodeURIComponent(url);
+current = location.origin + "/ALO/go.html?u=" + encodeURIComponent(url);
 
 document.getElementById("result").innerHTML =
 `<a href="${current}" target="_blank">${current}</a>`;
 }
 
-// 👉 Copy chắc chắn chạy
 function copyLink(){
 if(!current){
 alert("Chưa có link");
