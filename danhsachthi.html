@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 
 <html lang="vi">
@@ -60,6 +59,7 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 16px;
+            text-align: center;
         }
 
         h1 {
@@ -274,13 +274,26 @@
         .badge-new {
             display: inline-block;
             margin-left: 8px;
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444, #f97316);
             color: white;
             font-size: 10px;
-            font-weight: 800;
-            padding: 4px 7px;
+            font-weight: 900;
+            padding: 4px 8px;
             border-radius: 999px;
             vertical-align: middle;
+            animation: newPulse 1.1s infinite;
+            box-shadow: 0 0 14px rgba(239,68,68,0.55);
+        }
+
+        @keyframes newPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 8px rgba(239,68,68,0.45);
+            }
+            50% {
+                transform: scale(1.12);
+                box-shadow: 0 0 18px rgba(250,204,21,0.85);
+            }
         }
 
         .badge-page {
@@ -457,6 +470,29 @@
             }
         }
     
+.report-bar{
+    margin:15px 0;
+    padding:12px 14px;
+    border-radius:14px;
+    background:rgba(59,130,246,0.10);
+    border:1px solid rgba(59,130,246,0.42);
+    color:#bfdbfe;
+    font-weight:900;
+    text-align:center;
+    line-height:1.55;
+    box-shadow:0 0 18px rgba(59,130,246,0.18);
+}
+.report-bar .report-total{
+    color:#22c55e;
+    font-size:18px;
+}
+.report-bar .report-today{
+    color:#facc15;
+    font-size:18px;
+}
+
+
+/* ===== QUY TẮC MODAL - LẤY NỘI DUNG KIỂU 23 ===== */
 .admin-rainbow {
     font-weight:900;
     background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
@@ -470,7 +506,6 @@
     0% {background-position:0%}
     100% {background-position:100%}
 }
-
 
 .btn-zalo, .btn-admin{
     padding:10px 20px;
@@ -486,154 +521,29 @@
     background:rgba(34,211,238,0.1);
     border:1px solid rgba(34,211,238,0.4);
     color:#22d3ee;
-}
-
-.btn-admin{
-    background:rgba(34,211,238,0.1);
-    border:1px solid rgba(34,211,238,0.4);
-    background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
-    background-size:300%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:adminRainbow 4s linear infinite;
-}
-
-
-/* ===== 1. ZALO pulse ===== */
-.btn-zalo {
     animation: pulse 2s infinite;
 }
+
 @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
     70% { box-shadow: 0 0 0 10px rgba(34,211,238,0); }
     100% { box-shadow: 0 0 0 0 rgba(34,211,238,0); }
 }
 
-/* ===== 2. ADMIN hover ===== */
-.btn-admin {
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 0 12px rgba(255,255,255,0.08);
-    transition: 0.2s;
+.btn-admin{
+    border:1px solid rgba(255,255,255,0.15);
+    background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    background-size:300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:adminRainbow 4s linear infinite;
+    box-shadow:0 0 12px rgba(255,255,255,0.08);
+    transition:0.2s;
 }
+
 .btn-admin:hover {
     transform: translateY(-2px) scale(1.03);
 }
-
-/* ===== 3. ADMIN glow nhẹ ===== */
-.btn-admin {
-    box-shadow: 0 0 12px rgba(255,255,255,0.08);
-}
-
-/* ===== 4. text nhỏ dưới ADMIN ===== */
-.admin-sub {
-    font-size:12px;
-    color:#94a3b8;
-    text-align:center;
-    margin-top:4px;
-}
-
-/* ===== 5. badge new blink ===== */
-.badge-new {
-    animation: blink 1.2s infinite;
-}
-@keyframes blink {
-    0%,100% { opacity:1; }
-    50% { opacity:0.5; }
-}
-
-/* ===== 6. hover item ===== */
-.item:hover {
-    transform: translateY(-3px);
-    transition: 0.2s;
-}
-
-/* ===== 7. scroll smooth ===== */
-html {
-    scroll-behavior: smooth;
-}
-
-
-/* FIX nút MỞ TẢI giống mẫu */
-.item-action{
-    display:flex;
-    justify-content:center;
-}
-
-.btn-open{
-    width:100%;
-    max-width:120px;
-    text-align:center;
-    padding:12px 0;
-    font-size:14px;
-    border-radius:14px;
-}
-
-/* ===== SEARCH SIÊU NỔ ===== */
-#search-box {
-    position: relative;
-    border: 2px solid rgba(34,211,238,0.4);
-    background: rgba(34,211,238,0.05);
-    animation: searchPulse 1.5s infinite;
-}
-
-@keyframes searchPulse {
-    0% { box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
-    50% { box-shadow: 0 0 20px 5px rgba(34,211,238,0.5); }
-    100% { box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
-}
-
-#search-box:focus {
-    border-color: #22d3ee;
-    box-shadow: 0 0 25px rgba(34,211,238,0.8);
-    transform: scale(1.02);
-}
-
-#search-box::placeholder {
-    animation: blinkText 1.5s infinite;
-}
-
-@keyframes blinkText {
-    0%,100% { opacity:1; }
-    50% { opacity:0.5; }
-}
-
-
-/* rung nhẹ */
-#search-box {
-    animation: searchPulse 1.5s infinite, shake 3s infinite;
-}
-
-@keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    50% { transform: translateX(2px); }
-    75% { transform: translateX(-2px); }
-}
-
-/* viền 7 màu */
-#search-box {
-    border: 2px solid;
-    border-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet) 1;
-}
-
-
-.btn-lite{
-    display:inline-block;
-    margin-top:10px;
-    padding:10px 20px;
-    border-radius:12px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.16);
-    color:#cbd5e1;
-    font-weight:900;
-    text-decoration:none;
-    transition:0.2s;
-}
-.btn-lite:hover{
-    background:rgba(255,255,255,0.12);
-    transform:translateY(-2px);
-}
-
 
 .btn-lite{
     display:inline-block;
@@ -648,80 +558,140 @@ html {
     transition:0.2s;
     animation:redBlink 1s infinite;
 }
+
 @keyframes redBlink{
     0%,100%{opacity:1;box-shadow:0 0 5px rgba(255,0,0,0.5);}
     50%{opacity:0.4;box-shadow:0 0 20px rgba(255,0,0,1);}
 }
+
 .btn-lite:hover{
     transform:scale(1.05);
     box-shadow:0 0 25px rgba(255,0,0,1);
 }
 
+.rules-btn{
+    display:block;
+    width:max-content;
+    max-width:100%;
+    margin:12px auto 14px;
+    padding:12px 22px;
+    border-radius:14px;
+    border:1px solid rgba(34,211,238,0.45);
+    background:rgba(34,211,238,0.10);
+    color:#67e8f9;
+    font-weight:900;
+    text-decoration:none;
+    cursor:pointer;
+    box-shadow:0 0 18px rgba(34,211,238,0.18);
+    transition:.2s;
+}
+
+.rules-btn:hover{
+    transform:translateY(-2px) scale(1.02);
+    box-shadow:0 0 28px rgba(34,211,238,0.35);
+}
+
+.rules-modal{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(0,0,0,0.62);
+    backdrop-filter:blur(10px);
+}
+
+.rules-modal.show{
+    display:flex;
+}
+
+.rules-card{
+    width:min(760px, 96vw);
+    max-height:86vh;
+    overflow:auto;
+    border-radius:22px;
+    padding:22px;
+    background:linear-gradient(180deg, rgba(30,20,42,0.98), rgba(15,23,42,0.98));
+    border:1px solid rgba(239,68,68,0.35);
+    box-shadow:0 25px 80px rgba(0,0,0,.55), 0 0 35px rgba(34,211,238,.16);
+    text-align:center;
+}
+
+.rules-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.rules-title{
+    font-size:22px;
+    font-weight:900;
+    color:#e2e8f0;
+}
+
+.rules-close{
+    border:none;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    cursor:pointer;
+    background:rgba(239,68,68,0.18);
+    color:#fecaca;
+    font-size:22px;
+    font-weight:900;
+}
+
+.rules-content{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    line-height:1.65;
+}
+
+.rules-line-yellow{color:#facc15;font-weight:900;}
+.rules-line-pink{color:#fb7185;font-weight:900;}
+.rules-line-green{color:#22c55e;font-weight:900;}
+.rules-line-blue{color:#a78bfa;font-weight:900;}
+
 </style>
 </head>
 <body>
-<div class="hero" style="text-align:center; margin:12px auto; display:block;">
+
+<div class="rules-modal" id="rules-modal">
+    <div class="rules-card">
+        <div class="rules-head">
+            <div class="rules-title">📌 Quy tắc và mẹo khi tra danh sách</div>
+            <button class="rules-close" id="rules-close" type="button">×</button>
+        </div>
+        <div class="rules-content">
+            <a class="btn-zalo" href="https://byvn.net/3J9P" target="_blank">
+                ZALO(NHẤN VÀO ĐỂ LIÊN HỆ CHỈ KHI BUỔI TỐI CUỐI TRƯỚC KHI VẪN KHÔNG THẤY DANH SÁCH)
+            </a>
+            <div class="rules-line-pink">📌 Dữ liệu đã được Admin quét đúng danh sách trong đợt thi này đảm bảo không có danh sách cũ.</div>
+            <div class="rules-line-yellow">📌 Danh sách thi được cập nhật từ mới nhất trở đi.</div>
+            <div class="rules-line-green">📌 Sau 1 phút sẽ tự động quét danh sách bên trường 1 lần, nếu có danh sách mới tự khắc sẽ hiện bên này.</div>
+            <div class="rules-line-blue">📌 Nhớ kỹ: danh sách có thể sát ngày mới có nên trường chưa up thì bên này cũng không có được.</div>
+            <div class="btn-admin">ADMIN : PHẠM TRẦN QUỐC BẢO</div>
+        </div>
+    </div>
+</div>
+
+<div class="hero">
 <div class="hero-inner">
 <h1>DANH SÁCH THI</h1>
-<div class="sub" style="
-    font-weight:700;
-    color:#f87171;
-    background:rgba(239,68,68,0.1);
-    padding:12px;
-    border-radius:12px;
-    border:1px solid rgba(239,68,68,0.3);
-    line-height:1.6;
-    ">
-<div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-<a class="btn-zalo" href="https://byvn.net/3J9P" target="_blank">
-ZALO(NHẤN VÀO ĐỂ LIÊN HỆ CHỈ KHI BUỔI TỐI CUỐI TRƯỚC KHI VẪN KHÔNG THẤY DANH SÁCH)
-</a>
-<a href="ds.html" class="btn-lite">
-⚡ Xài bản không hiệu ứng chỉ tập trung tra danh sách
-</a>
-</div>
-<br/>
-<div style="color:white; font-weight:800;">
-📌 Danh sách thi được cập nhật từ mới nhất trở đi.
-</div>
-<div style="color:#4ade80; font-weight:800;">
-📌 Sau 1 phút sẽ tự động quét danh sách bên trường 1 lần, nếu có danh sách mới tự khắc sẽ hiện bên này.
-</div>
-<div style="color:#60a5fa; font-weight:800;">
-📌 Nhớ kỹ: danh sách có thể sát ngày mới có nên trường chưa up thì bên này cũng không có được.
-</div>
-<br/>
-<div class="btn-admin" style="text-align:center;">
-ADMIN : PHẠM TRẦN QUỐC BẢO
-</div>
-</div>
+<div id="report-bar" class="report-bar">📊 Đang thống kê...</div>
+<button class="rules-btn" id="rules-open" type="button">📌 Quy tắc và mẹo khi tra danh sách</button>
 <div class="search-box">
-<input autocomplete="off" autofocus="" id="search-box" placeholder="Ví dụ: ENG128, LISTENING LEVEL 1 (KHÔNG NHẬP MÃ LỚP)" type="text"/>
-<div class="date-filter-row">
-<div class="date-field">
-<label for="from-date">Từ ngày ( dùng cái này để xem danh sách từ lúc này về sau thôi cho đỡ rối trùng với mấy danh sách cũ ) </label>
-<input id="from-date" type="date"/>
-</div>
-<div class="date-field">
-<label for="to-date">Đến ngày</label>
-<input id="to-date" type="date"/>
-</div>
-</div>
-<div class="action-row">
-<button class="btn share-btn" id="share-btn">🔗 Share link</button>
-<button class="btn refresh-btn" id="refresh-btn">🔄 Check lại DANH SÁCH</button>
-<button class="btn today-btn" id="today-btn">📅 Xem ds mới đăng hôm nay</button>
-<button class="btn clear-btn" id="clear-cache-btn">🗑️ Xóa dữ liệu</button>
-</div>
-</div>
-<div class="stats">
-<div class="stat-card">
-<div class="stat-label">Tổng danh sách thi quét được</div>
-<div class="stat-value" id="stat-total">0</div>
+<input autocomplete="off" autofocus="" id="search-box" placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03" type="text"/>
+
 </div>
 </div>
 </div>
-</div><div class="admin-sub">Hỗ trợ khi cần gấp</div>
 <div class="container content">
 <div id="data-body"></div>
 </div>
@@ -801,8 +771,6 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             const params = new URLSearchParams();
             const text = String(searchText || "").trim();
             if (text) params.set("m", text);
-            if (selectedFromDate) params.set("from", selectedFromDate);
-            if (selectedToDate) params.set("to", selectedToDate);
             const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
             window.history.replaceState({}, "", newUrl);
         }
@@ -861,6 +829,25 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             return result;
         }
 
+
+        function updateReportBar(data) {
+            const el = document.getElementById("report-bar");
+            if (!el) return;
+
+            const list = Array.isArray(data) ? data : [];
+            const total = list.length;
+
+            const now = new Date();
+            const todayStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+
+            const todayCount = list.filter(item => String(item.uploadDate || "").includes(todayStr)).length;
+
+            el.innerHTML = `
+                📊 Đợt này đã đăng được: <span class="report-total">${total}</span> danh sách thi<br>
+                📅 Hôm nay trường đã up thêm được: <span class="report-today">${todayCount}</span> danh sách
+            `;
+        }
+
         function updateStats() {
             const totalEl = document.getElementById("stat-total");
             if (totalEl) {
@@ -885,7 +872,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             updateStats();
 
             if (!data.length) {
-                body.innerHTML = `<div class="empty-state">DANH SÁCH TRƯỜNG CHƯA UP HOẶC BẠN GÕ SAI CÁCH , VÍ DỤ HỌC ENG128D THÌ GÕ ENG128 THÔI</div>`;
+                body.innerHTML = `<div class="empty-state">Không có dữ liệu.</div>`;
                 return;
             }
 
@@ -912,7 +899,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
                             <div>
                                 <div class="item-title">
                                     ${displayTitle}
-                                    ${item.isNew ? '<span class="badge-new">MỚI</span>' : ''}
+                                    ${(item.isNew || isTodayVN(day)) ? '<span class="badge-new">NEW</span>' : ''}
                                     ${item.page ? `<span class="badge-page">trang ${item.page}</span>` : ''}
                                 </div>
                                 <div class="item-meta">Giờ đăng: ${escapeHtml(String(item.uploadDate || "").split(" ")[0] || "--:--")}</div>
@@ -944,8 +931,6 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             if (showingTodayOnly) {
                 filtered = filtered.filter(item => isTodayVN(getDateOnly(item.uploadDate)));
             }
-
-            filtered = filtered.filter(item => isWithinSelectedDateRange(item.uploadDate));
 
             if (normalizedTokens.length) {
                 filtered = filtered.filter(ex => {
@@ -990,6 +975,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
                 }
 
                 allExams = data.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+                updateReportBar(allExams);
                 localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(allExams));
                 applySearch(document.getElementById("search-box").value);
 
@@ -1011,8 +997,6 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
 
             const params = new URLSearchParams();
             params.set("m", input);
-            if (selectedFromDate) params.set("from", selectedFromDate);
-            if (selectedToDate) params.set("to", selectedToDate);
             const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 
             navigator.clipboard.writeText(url)
@@ -1058,10 +1042,8 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
                     return {};
                 }
             })();
-            const urlFilters = getDateFiltersFromURL();
-            selectedFromDate = urlFilters.from || sharedFilter.from || "";
-            selectedToDate = urlFilters.to || sharedFilter.to || "";
-            syncDateInputs();
+            selectedFromDate = "";
+            selectedToDate = "";
 
             if (searchFromURL) {
                 input.value = searchFromURL;
@@ -1071,6 +1053,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             if (cached) {
                 try {
                     allExams = JSON.parse(cached).sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
+                    updateReportBar(allExams);
                     applySearch(input.value);
                     setStatus("Đã tải cache cục bộ...");
                 } catch (e) {
@@ -1078,21 +1061,15 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
                 }
             }
 
-            document.getElementById("share-btn").addEventListener("click", shareSearch);
-            document.getElementById("refresh-btn").addEventListener("click", fetchData);
-            document.getElementById("clear-cache-btn").addEventListener("click", clearCache);
-            document.getElementById("today-btn").addEventListener("click", toggleTodayOnly);
-            document.getElementById("from-date").addEventListener("change", e => {
-                selectedFromDate = e.target.value || "";
-                persistSharedDateFilter();
-                applySearch(input.value);
-            });
-            document.getElementById("to-date").addEventListener("change", e => {
-                selectedToDate = e.target.value || "";
-                persistSharedDateFilter();
-                applySearch(input.value);
-            });
-            input.addEventListener("input", e => applySearch(e.target.value));
+            const shareBtn = document.getElementById("share-btn");
+            const refreshBtn = document.getElementById("refresh-btn");
+            const clearCacheBtn = document.getElementById("clear-cache-btn");
+            const todayBtn = document.getElementById("today-btn");
+if (shareBtn) shareBtn.addEventListener("click", shareSearch);
+            if (refreshBtn) refreshBtn.addEventListener("click", fetchData);
+            if (clearCacheBtn) clearCacheBtn.addEventListener("click", clearCache);
+            if (todayBtn) todayBtn.addEventListener("click", toggleTodayOnly);
+input.addEventListener("input", e => applySearch(e.target.value));
 
             setupFab();
             await fetchData();
@@ -1104,22 +1081,32 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
 <script src="vien-7mau-tuyet.js"></script>
 
 <script>
-// auto gõ demo
-const demoText = "Nếu học ENG129D thì gõ ENG129 để tra danh sách";
-let i = 0;
-function typeEffect(){
-    const input = document.getElementById("search-box");
-    if(!input) return;
-    if(document.activeElement === input) return;
-    input.placeholder = demoText.slice(0, i++);
-    if(i <= demoText.length){
-        setTimeout(typeEffect, 80);
-    } else {
-        i = 0;
-        setTimeout(typeEffect, 1500);
+(function(){
+    const modal = document.getElementById("rules-modal");
+    const openBtn = document.getElementById("rules-open");
+    const closeBtn = document.getElementById("rules-close");
+
+    function openRules(){
+        if(modal) modal.classList.add("show");
     }
-}
-setTimeout(typeEffect, 1000);
+
+    function closeRules(){
+        if(modal) modal.classList.remove("show");
+    }
+
+    if(openBtn) openBtn.addEventListener("click", openRules);
+    if(closeBtn) closeBtn.addEventListener("click", closeRules);
+
+    if(modal){
+        modal.addEventListener("click", function(e){
+            if(e.target === modal) closeRules();
+        });
+    }
+
+    document.addEventListener("keydown", function(e){
+        if(e.key === "Escape") closeRules();
+    });
+})();
 </script>
 
 </body>
