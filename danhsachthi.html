@@ -1,924 +1,1786 @@
+
 <!DOCTYPE html>
+
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Danh Sách Thi</title>
-    <style>
-        :root {
-            --p: #3b82f6;
-            --bg: #0f172a;
-            --card: #111827;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --line: rgba(255,255,255,0.08);
-            --share: #6366f1;
-            --refresh: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --cyan: #22d3ee;
-        }
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<title>QUOC BAO</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
         * {
             box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(180deg, #0b1220, #0f172a);
-            color: var(--text);
-            font-family: "Segoe UI", Tahoma, sans-serif;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+        input,
+        textarea {
+            user-select: text !important;
+        }
+
+        :root{
+            --bg:#050816;
+            --panel:rgba(10,16,35,.78);
+            --panel-2:rgba(15,22,46,.9);
+            --line:rgba(120,170,255,.18);
+            --text:#eef4ff;
+            --muted:#94a7cc;
+            --blue:#38bdf8;
+            --cyan:#22d3ee;
+            --purple:#a78bfa;
+            --green:#34d399;
+            --red:#fb7185;
+            --yellow:#fbbf24;
+            --shadow:0 18px 60px rgba(0,0,0,.35);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body::before{
+            content:"";
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(0,255,180,.08), transparent 24%),
+                radial-gradient(circle at 70% 20%, rgba(0,180,255,.10), transparent 24%),
+                radial-gradient(circle at 60% 80%, rgba(140,0,255,.08), transparent 26%);
+            filter: blur(70px);
+            z-index:-1;
         }
 
         body {
+            width: 100%;
             min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(34,211,238,0.10), transparent 20%),
+                radial-gradient(circle at 85% 25%, rgba(59,130,246,0.12), transparent 22%),
+                radial-gradient(circle at 50% 80%, rgba(124,58,237,0.10), transparent 24%),
+                linear-gradient(180deg, #020617 0%, #081224 45%, #0b1120 100%);
+            color: var(--text);
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 16px;
+        .main-container {
+            flex: 1;
+            width: 100%;
+            max-width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .hero {
+        .search-section-wrapper {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 25px;
+            z-index: 100;
             position: relative;
-            z-index: 20;
-            backdrop-filter: blur(14px);
-            background: rgba(15, 23, 42, 0.88);
-            border-bottom: 1px solid var(--line);
-        }
-
-        .hero-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 16px;
-        }
-
-        h1 {
-            margin: 0 0 10px;
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #e2e8f0;
-            text-transform: uppercase;
-        }
-
-        .sub {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 14px;
+            flex-shrink: 0;
         }
 
         .search-box {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        #search-box {
+            display: flex;
             width: 100%;
-            padding: 14px 16px;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            outline: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-wrapper {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+        }
+
+        .action-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: var(--blue);
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            background: rgba(255,255,255,.03);
+            border: 1px solid rgba(120,170,255,.14);
+            box-shadow: 0 8px 22px rgba(0,0,0,.18);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            background: rgba(255,255,255,.08);
+            color: var(--cyan);
+            box-shadow: 0 10px 24px rgba(34,211,238,.16);
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px;
+            padding-right: 130px;
             font-size: 16px;
-            background: rgba(255,255,255,0.04);
-            color: white;
+            border: 1px solid rgba(120,170,255,.18);
+            border-radius: 30px;
+            background: rgba(10,16,35,.84);
+            box-shadow: 0 10px 24px rgba(0,0,0,.18);
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            color: var(--text);
         }
 
-        #search-box::placeholder {
-            color: #94a3b8;
+        #searchInput:focus {
+            border-color: var(--blue);
+            background: rgba(12,20,42,.94);
+            box-shadow: 0 0 0 4px rgba(56,189,248,.12), 0 10px 28px rgba(0,0,0,.22);
         }
 
-        #search-box:focus {
-            border-color: rgba(59,130,246,0.6);
-            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+        #clearButton {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            padding: 0;
+        }
+
+        #resultCounter {
+            position: absolute;
+            right: 55px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--blue);
+            font-size: 0.9em;
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        #suggestionsWrapper {
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            right: 20px;
+            background-color: rgba(10,16,35,.98);
+            border: 1px solid rgba(120,170,255,.14);
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 101;
+            display: none;
+            box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+        }
+
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .suggestion-item:hover {
+            background-color: rgba(56,189,248,.10);
+        }
+
+        #resultDisplay {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            font-family: 'Inter', sans-serif;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .result-item {
+            border: 1px solid rgba(120,170,255,.12);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+            border-radius: 12px;
+            background-color: rgba(10, 16, 35, 0.95);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s, border-color .2s;
+        }
+
+        .result-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+            border-color: rgba(56,189,248,.28);
+        }
+
+        .result-answer {
+            padding: 20px 24px;
+            line-height: 1.7;
+            flex-grow: 1;
+            overflow-wrap: break-word;
+            user-select: text;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b71c1c #f1f1f1;
+        }
+
+        .result-answer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-answer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .result-answer::-webkit-scrollbar-thumb {
+            background: var(--blue);
+            border-radius: 4px;
+        }
+
+        .result-answer::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan);
+        }
+
+        .result-answer strong {
+            color: #7dd3fc;
+        }
+
+        .result-keywords {
+            padding: 15px 24px;
+            background-color: rgba(255,255,255,.04);
+            border-top: 1px solid rgba(255,255,255,.08);
+            font-size: 0.9em;
+            color: var(--muted);
+        }
+
+        .my-subjects-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 0 24px;
+            background: rgba(10,16,35,.78);
+            border: 1px solid rgba(120,170,255,.16);
+            border-radius: 20px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.25);
+            padding: 18px;
+        }
+
+        .my-subjects-title {
+            margin: 0 0 12px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .my-subjects-desc {
+            margin: 0 0 14px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .my-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .my-row input {
+            flex: 1;
+            min-width: 220px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(120,170,255,.16);
+            background: rgba(5,10,25,.8);
+            color: var(--text);
+            font-size: 15px;
+            font-family: 'Nunito', sans-serif;
         }
 
         .date-filter-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
+            align-items: flex-end;
         }
 
-        .date-field {
+        .date-filter-field {
             display: flex;
             flex-direction: column;
             gap: 6px;
+            min-width: 180px;
+            flex: 1;
         }
 
-        .date-field label {
-            color: var(--muted);
-            font-size: 12px;
+        .date-filter-field label {
+            font-size: 13px;
             font-weight: 700;
+            color: #8fdcff;
         }
 
-        .date-field input {
-            width: 100%;
+        .date-filter-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .date-filter-summary {
+            margin: -4px 0 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .my-row button {
+            border: none;
+            border-radius: 12px;
             padding: 12px 14px;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            outline: none;
-            font-size: 15px;
-            background: rgba(255,255,255,0.04);
-            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(14,165,233,.18);
         }
 
-        .date-field input:focus {
-            border-color: rgba(59,130,246,0.6);
-            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+        .my-row button.secondary {
+            background: #374151;
         }
 
-        .action-row {
+        .my-row button.green {
+            background: #0f766e;
+        }
+
+        .my-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            min-height: 32px;
+        }
+
+        .my-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,.06);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .my-tag button {
+            border: none;
+            background: #dc2626;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .my-empty {
+            font-size: 14px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        
+        .dashboard-wrap{
+            width:100%;
+            max-width:none;
+            margin:22px 0 30px;
+            padding:0;
+        }
+
+        .dashboard-titlebar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:14px;
+            padding:0 6px;
+        }
+
+        .dashboard-titlebar h2{
+            margin:0;
+            color:var(--text);
+            font-size:24px;
+            font-weight:800;
+        }
+
+        .dashboard-titlebar .hint{
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
+        }
+
+        .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+        .dashboard-panel-head{
+            padding:18px 18px 14px;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            background:rgba(255,255,255,.02);
+        }
+
+        .dashboard-panel-title{
+            margin:0;
+            color:var(--blue);
+            font-size:22px;
+            font-weight:800;
+        }
+
+        .dashboard-panel-sub{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .dashboard-panel-body{
+            flex:1;
+            min-height:0;
+            padding:14px;
+            background:rgba(255,255,255,.015);
+        }
+
+        .dashboard-frame-wrap{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border-radius:16px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(5,10,25,.65);
+        }
+
+        .dashboard-frame{
+            width:100%;
+            height:100%;
+            min-height:860px;
+            border:none;
+            background:transparent;
+        }
+
+        .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
+        }
+
+        .dashboard-panel-actions{
+            padding:14px;
+            border-top:1px solid rgba(255,255,255,.07);
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .dashboard-btn{
+            flex:1;
+            min-width:180px;
+            border:none;
+            border-radius:14px;
+            padding:14px 16px;
+            font-size:14px;
+            font-weight:800;
+            color:#fff;
+            cursor:pointer;
+        }
+
+        .dashboard-btn.left{
+            background:linear-gradient(135deg,#0ea5e9,#2563eb);
+        }
+
+        .dashboard-btn.right{
+            background:linear-gradient(135deg,#10b981,#059669);
+        }
+
+        @media (max-width:1100px){
+            .dashboard-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            width:100%;
+        }
+
+            .dashboard-panel{
+            background:rgba(10,16,35,.82);
+            border:1px solid rgba(120,170,255,.16);
+            border-radius:22px;
+            box-shadow:0 20px 40px rgba(0,0,0,.22);
+            min-height:1000px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+            .dashboard-frame-wrap,
+            .dashboard-frame,
+            .dashboard-empty{
+            min-height:860px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:var(--muted);
+            font-size:15px;
+            line-height:1.7;
+            border:1px dashed rgba(255,255,255,.12);
+            border-radius:16px;
+            background:rgba(5,10,25,.45);
+            padding:20px;
+        }
+
+            .dashboard-titlebar{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+        }
+
+        @media (min-width: 600px) {
+            .result-item {
+                flex-direction: row;
+            }
+
+            .result-answer {
+                flex-basis: 70%;
+            }
+
+            .result-keywords {
+                flex-basis: 30%;
+                border-top: none;
+                border-left: 1px solid #e9ecef;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 18px;
+            }
+
+            .search-box {
+                gap: 10px;
+            }
+        }
+
+        #mainMenuContainer {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            justify-content: center;
+            gap: 40px;
+            padding: 0 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .section-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--blue);
+            margin-bottom: 5px;
+            font-weight: 800;
+            text-align: center;
         }
 
         .btn {
-            border: none;
-            border-radius: 12px;
-            padding: 11px 15px;
-            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
             font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            color: white;
+            color: var(--text);
+            text-decoration: none;
+            background: rgba(10,16,35,.78);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(120,170,255,.14);
+            border-radius: 16px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .btn i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+            color: var(--blue);
+            transition: transform 0.3s;
         }
 
         .btn:hover {
-            transform: translateY(-1px);
-            opacity: 0.95;
+            transform: translateY(-3px);
+            background: rgba(15,22,46,.96);
+            box-shadow: 0 18px 34px rgba(0,0,0,.26);
+            color: #fff;
+            border-color: rgba(56,189,248,.35);
         }
 
-        .share-btn { background: var(--share); }
-        .refresh-btn { background: var(--refresh); }
-        .clear-btn { background: var(--danger); }
-        .today-btn { background: var(--warning); color: #111827; }
-
-        .stats {
-            margin-top: 14px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            max-width: 280px;
+        .btn:hover i {
+            transform: scale(1.1);
         }
 
-        .stat-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 14px;
+        .column:first-child .btn:nth-of-type(1) { animation-delay: 0.1s; }
+        .column:first-child .btn:nth-of-type(2) { animation-delay: 0.2s; }
+        .column:first-child .btn:nth-of-type(3) { animation-delay: 0.3s; }
+        .column:first-child .btn:nth-of-type(4) { animation-delay: 0.4s; }
+        .column:first-child .btn:nth-of-type(5) { animation-delay: 0.5s; }
+        .column:first-child .btn:nth-of-type(6) { animation-delay: 0.6s; }
+
+        .column:last-child .btn:nth-of-type(1) { animation-delay: 0.15s; }
+        .column:last-child .btn:nth-of-type(2) { animation-delay: 0.25s; }
+        .column:last-child .btn:nth-of-type(3) { animation-delay: 0.35s; }
+        .column:last-child .btn:nth-of-type(4) { animation-delay: 0.45s; }
+        .column:last-child .btn:nth-of-type(5) { animation-delay: 0.55s; }
+        .column:last-child .btn:nth-of-type(6) { animation-delay: 0.65s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stat-label {
+        body.search-active #mainMenuContainer {
+            display: none !important;
+        }
+
+        body.search-active #resultDisplay {
+            display: grid !important;
+            animation: fadeInResults 0.3s ease-out;
+        }
+
+        @keyframes fadeInResults {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer {
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
             color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 6px;
+            font-weight: 600;
+            margin-top: auto;
+            opacity: 0.8;
         }
 
-        .stat-value {
-            font-size: 22px;
-            font-weight: 800;
+        .result-answer.force-full-height {
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+            border: none !important;
         }
 
-        .content {
-            padding-top: 16px;
-            padding-bottom: 150px;
-        }
-
-        .day-group {
-            margin-bottom: 18px;
-        }
-
-        .day-title {
+        .study-section {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 28px;
+            padding: 0 10px 24px;
             position: relative;
-            top: auto;
             z-index: 1;
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 12px;
-            background: rgba(34, 211, 238, 0.12);
-            border: 1px solid rgba(34, 211, 238, 0.18);
-            color: #7dd3fc;
-            font-weight: 800;
-            margin-bottom: 10px;
         }
 
-        .list {
-            display: grid;
-            gap: 10px;
+        .study-section .bg-grid::before,
+        .study-section .bg-grid::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .item {
-            display: grid;
-            grid-template-columns: 150px 1fr 130px;
-            gap: 12px;
-            align-items: center;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+        .study-section .bg-grid::before{
+            background-image:
+                linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+            background-size:40px 40px;
+            mask-image: radial-gradient(circle at center, black 35%, transparent 95%);
         }
 
-        .item-date {
-            font-weight: 800;
-            color: #60a5fa;
-            font-size: 18px;
+        .study-section .bg-grid::after{
+            background:radial-gradient(circle, rgba(56,189,248,.2) 0 2px, transparent 3px);
+            background-size:180px 180px;
+            animation: floatDots 18s linear infinite;
+            opacity:.22;
         }
 
-        .item-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: white;
-            line-height: 1.4;
-            word-break: break-word;
+        @keyframes floatDots {
+            from { transform:translateY(0) }
+            to { transform:translateY(-180px) }
         }
 
-        .item-meta {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 6px;
+        .study-wrap {
+            position: relative;
+            z-index: 1;
         }
 
-        .item-action {
-            text-align: right;
+        .study-card{
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:28px;
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            box-shadow:var(--shadow);
+            padding:22px;
+            position:relative;
+            overflow:hidden;
+            margin-bottom: 20px;
+            color: var(--text);
+            font-family: Inter,Segoe UI,Arial,sans-serif;
         }
 
-        .btn-open {
-            display: inline-block;
-            text-decoration: none;
-            color: white;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            transition: 0.2s;
+        .study-card::before{
+            content:"";
+            position:absolute;
+            inset:auto -30% 100% auto;
+            width:220px;height:220px;
+            background:radial-gradient(circle, rgba(56,189,248,.22), transparent 68%);
+            pointer-events:none;
+            transform:translate(30%,-35%);
         }
 
-        .btn-open:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
+        .study-hero-title{
+            display:flex;
+            align-items:center;
+            gap:16px;
+            margin-bottom:16px;
         }
 
-        .badge-new {
-            display: inline-block;
-            margin-left: 8px;
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 7px;
-            border-radius: 999px;
-            vertical-align: middle;
+        .study-logo{
+            width:74px;
+            height:74px;
+            border-radius:24px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:34px;
+            background:linear-gradient(135deg,var(--blue),var(--cyan));
+            color:#05101f;
+            box-shadow:0 0 30px rgba(34,211,238,.35);
+            flex-shrink:0;
         }
 
-        .badge-page {
-            display: inline-block;
-            margin-left: 8px;
-            background: rgba(255,255,255,0.08);
-            color: #cbd5e1;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 7px;
-            border-radius: 999px;
-            vertical-align: middle;
+        .study-card h1,
+        .study-card h2,
+        .study-card p {
+            margin: 0;
         }
 
-        .highlight-code {
-            color: #facc15;
-            text-decoration: underline;
-            font-weight: 900;
+        .study-card h1{
+            font-size:38px;
+            line-height:1.08;
+            letter-spacing:.2px;
+            background:linear-gradient(90deg,#fff,#d6ebff 40%,#7dd3fc 90%);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
         }
 
-        .empty-state {
-            text-align: center;
-            color: var(--muted);
-            background: rgba(255,255,255,0.04);
-            border: 1px dashed rgba(255,255,255,0.12);
-            padding: 30px 16px;
-            border-radius: 18px;
+        .study-card h2{
+            font-size:22px;
+            color: var(--text);
         }
 
-        .status {
-            position: fixed;
-            left: 14px;
-            right: 14px;
-            bottom: calc(14px + env(safe-area-inset-bottom));
-            z-index: 50;
-            background: rgba(15, 23, 42, 0.96);
-            border: 1px solid var(--line);
-            color: #cbd5e1;
-            border-radius: 14px;
-            padding: 12px 14px;
-            font-size: 13px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            word-break: break-word;
+        .study-muted{color:var(--muted)}
+        .study-desc{margin-top:8px;line-height:1.65;max-width:820px}
+
+        .study-stats{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
+            margin-top:18px;
         }
 
-        .status.error {
-            color: #fecaca;
-            border-color: rgba(239,68,68,0.35);
+        .study-stat{
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.06);
+            border-radius:22px;
+            padding:16px;
+            min-height:102px;
         }
 
-        .fab-top {
-            position: fixed;
-            right: 18px;
-            bottom: calc(78px + env(safe-area-inset-bottom));
-            z-index: 60;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            background: var(--cyan);
-            color: #0f172a;
-            font-size: 20px;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(34,211,238,0.35);
-            display: none;
+        .study-stat strong{
+            display:block;
+            margin-top:8px;
+            font-size:30px;
+            line-height:1;
+            color: var(--text);
         }
 
-        .fab-top.show {
-            display: block;
+        .study-search-row{
+            display:grid;
+            grid-template-columns:1fr auto auto;
+            gap:12px;
+            margin-top:18px;
         }
 
-        @keyframes glow {
-            0% { text-shadow: 0 0 5px #facc15; }
-            50% { text-shadow: 0 0 15px #facc15; }
-            100% { text-shadow: 0 0 5px #facc15; }
+        .study-search,
+        .study-file-picker{
+            width:100%;
+            border-radius:18px;
+            border:1px solid rgba(255,255,255,.1);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            padding:14px 16px;
+            outline:none;
+            font-size:14px;
         }
 
-        @media (max-width: 800px) {
-            .item {
+        .study-search::placeholder{color:#89a0c9}
+
+        .study-picker-row{
+            display:grid;
+            grid-template-columns:1fr auto;
+            gap:12px;
+            margin-top:14px;
+            align-items:center
+        }
+
+        .study-btn{
+            border:none;
+            cursor:pointer;
+            border-radius:18px;
+            padding:14px 18px;
+            font-size:14px;
+            font-weight:800;
+            transition:.18s ease;
+            color:#041120;
+            background:linear-gradient(135deg,var(--blue),var(--cyan));
+            box-shadow:0 14px 26px rgba(34,211,238,.16);
+        }
+
+        .study-btn:hover{
+            transform:translateY(-1px) scale(1.01)
+        }
+
+        .study-btn.secondary{
+            color:var(--text);
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.11);
+            box-shadow:none;
+        }
+
+        .study-tabs{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+        }
+
+        .study-tab{
+            border:none;
+            border-radius:999px;
+            padding:12px 18px;
+            cursor:pointer;
+            color:#dbe9ff;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.08);
+            font-weight:700;
+            transition:.2s ease;
+        }
+
+        .study-tab.active.all,
+        .study-tab.active.listening{
+            background:rgba(56,189,248,.18);
+            border-color:rgba(56,189,248,.45);
+            box-shadow:0 0 20px rgba(56,189,248,.18)
+        }
+
+        .study-tab.active.speaking{
+            background:rgba(167,139,250,.18);
+            border-color:rgba(167,139,250,.45);
+            box-shadow:0 0 20px rgba(167,139,250,.18)
+        }
+
+        .study-section-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            margin-bottom:14px;
+        }
+
+        .study-badge{
+            border-radius:999px;
+            padding:6px 10px;
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.08);
+            font-size:12px;
+            color:#dce9ff;
+            font-weight:700;
+        }
+
+        .study-files{
+            display:grid;
+            gap:16px;
+            margin-top:8px;
+        }
+
+        .study-file{
+            display:grid;
+            grid-template-columns:1fr auto;
+            gap:16px;
+            align-items:center;
+            padding:18px;
+            border-radius:24px;
+            background:var(--panel-2);
+            border:1px solid rgba(255,255,255,.07);
+            box-shadow:0 12px 26px rgba(0,0,0,.12);
+            transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+            opacity:0;
+            transform:translateY(14px);
+            animation:studyFadeIn .42s ease forwards;
+        }
+
+        .study-file.all:hover,
+        .study-file.listening:hover{
+            border-color:rgba(56,189,248,.42);
+            box-shadow:0 0 28px rgba(56,189,248,.18);
+            transform:translateY(-3px) scale(1.01)
+        }
+
+        .study-file.speaking:hover{
+            border-color:rgba(167,139,250,.42);
+            box-shadow:0 0 28px rgba(167,139,250,.18);
+            transform:translateY(-3px) scale(1.01)
+        }
+
+        @keyframes studyFadeIn {
+            to { opacity:1; transform:translateY(0) }
+        }
+
+        .study-file-left{
+            display:flex;
+            gap:14px;
+            min-width:0;
+            align-items:flex-start;
+        }
+
+        .study-file-icon{
+            width:56px;
+            height:56px;
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:25px;
+            flex-shrink:0;
+            border:1px solid rgba(255,255,255,.08);
+            background:linear-gradient(135deg, rgba(56,189,248,.22), rgba(34,211,238,.18))
+        }
+
+        .study-file-name{
+            font-size:16px;
+            font-weight:800;
+            line-height:1.45;
+            word-break:break-word;
+            color: var(--text);
+        }
+
+        .study-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:8px;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .study-tag{
+            padding:5px 10px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+            border:1px solid rgba(255,255,255,.07);
+            background:rgba(255,255,255,.05);
+            color:#eef5ff;
+        }
+
+        .study-tag.new{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.28);color:#d7ffea}
+        .study-tag.hot{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.28);color:#fff0c2}
+        .study-tag.pin{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.28);color:#dff6ff}
+        .study-tag.exam{background:rgba(167,139,250,.14);border-color:rgba(167,139,250,.28);color:#efe7ff}
+
+        .study-actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+            align-items:center;
+        }
+
+        .study-empty{
+            border-radius:24px;
+            border:1px dashed rgba(255,255,255,.16);
+            padding:42px 20px;
+            color:var(--muted);
+            text-align:center;
+            background:rgba(255,255,255,.03);
+        }
+
+        .study-hl{
+            color:#fff6c7;
+            background:linear-gradient(90deg, rgba(251,191,36,.26), rgba(251,191,36,.12));
+            padding:0 4px;
+            border-radius:6px;
+        }
+
+        @media (max-width:1020px){
+            .study-stats{grid-template-columns:repeat(2,1fr)}
+            .study-search-row,.study-picker-row{grid-template-columns:1fr}
+        }
+
+        @media (max-width:850px) {
+            body {
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            .header-wrapper,
+            #mainMenuContainer {
+                flex-direction: column;
+                gap: 20px;
+                max-width: 500px;
+            }
+
+            .logo-area,
+            .column {
+                align-items: stretch !important;
+            }
+
+            #resultDisplay {
                 grid-template-columns: 1fr;
-                text-align: left;
-            }
-
-            .item-action {
-                text-align: left;
             }
         }
 
-        @media (max-width: 768px) {
-            .container,
-            .hero-inner {
-                padding: 12px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            .action-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-
-            .btn {
-                width: 100%;
-                min-height: 50px;
-                font-size: 13px;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            .item {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                padding: 12px;
-            }
-
-            .item-date {
-                font-size: 15px;
-            }
-
-            .item-title {
-                font-size: 15px;
-                line-height: 1.45;
-            }
-
-            .item-action {
-                text-align: left;
-            }
-
-            .status {
-                left: 10px;
-                right: 10px;
-                bottom: calc(10px + env(safe-area-inset-bottom));
-                font-size: 12px;
-                padding: 10px 12px;
-                border-radius: 12px;
-            }
-
-            .fab-top {
-                right: 14px;
-                bottom: calc(86px + env(safe-area-inset-bottom));
-                width: 52px;
-                height: 52px;
-            }
-
-            .content {
-                padding-bottom: 170px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .action-row {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            #search-box {
-                font-size: 15px;
-                padding: 13px 14px;
-            }
-
-            .stat-value {
-                font-size: 20px;
-            }
-
-            .content {
-                padding-bottom: 180px;
-            }
+        @media (max-width:760px){
+            .study-section { padding: 0 0 20px; }
+            .study-stats{grid-template-columns:1fr}
+            .study-file{grid-template-columns:1fr}
+            .study-actions{justify-content:stretch}
+            .study-actions a,.study-actions button{width:100%}
+            .study-card h1{font-size:31px}
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-inner">
-            <h1>DANH SÁCH THI</h1>
-<div class="sub" style="
-    font-weight:700;
-    color:#f87171;
-    background:rgba(239,68,68,0.1);
-    padding:12px;
-    border-radius:12px;
-    border:1px solid rgba(239,68,68,0.3);
-    line-height:1.6;
-">
+<button id="copyBtn" style="
+position:fixed;
+top:15px;
+right:15px;
+z-index:9999;
+padding:10px 16px;
+border:none;
+border-radius:10px;
+background:#0ea5e9;
+color:#fff;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.3);
+">📋 Copy</button>
+<script>
+document.getElementById('copyBtn').onclick = function(){
+    const text = `Mình đã upload file sẵn. Hãy tự mở file đó, sửa trực tiếp theo yêu cầu trong cuộc chat, rồi trả lại **file đã sửa**.
 
-⚠️ Danh sách thi có thể sát ngày mới có. Tốt nhất là tra từng ngày và nếu còn 10 tiếng cuối trước khi thi mà không tìm được thì liên hệ
+Cách làm việc mình muốn:
 
-<a href="https://zalo.me/0589363333" target="_blank"
-style="color:#22d3ee; font-weight:900; text-decoration:none;">
-ZALO
+* Tự đọc file upload
+* Tự chỉnh trực tiếp trong file
+* Trả lại đúng file đã sửa để tải về
+* Nếu chỉ sửa 1 file thì trả đúng 1 file đó
+* Nếu là HTML/CSS/JS thì giữ nguyên cấu trúc cũ, chỉ sửa phần cần thiết
+* Không chỉ hướng dẫn
+* Không chỉ đưa snippet rời
+* Không hiện code Python nội bộ, code xử lý file, hay log thao tác
+* Không cần giải thích dài
+
+Kết quả trả về chỉ cần:
+
+1. file đã sửa
+2. tóm tắt rất ngắn những gì đã sửa
+
+(đã thêm nút copy)`;
+    navigator.clipboard.writeText(text);
+    this.innerText = "✅ Đã copy";
+    setTimeout(()=> this.innerText = "📋 Copy",1500);
+}
+</script>
+<script>
+        if (window.self !== window.top) {
+            document.body.style.minHeight = "100vh";
+            document.body.style.height = "auto";
+            document.body.style.overflowY = "auto";
+            document.body.style.overflowX = "hidden";
+        }
+    </script>
+<div class="main-container">
+</div>
+<div class="search-section-wrapper">
+<div class="search-box">
+<a class="action-btn" href="/" title=".">
+<i class="fa-solid fa-person-dress"></i>
 </a>
-
-<span onclick="copyPhone()"
-style="cursor:pointer; color:#facc15; font-weight:900; font-size:16px; animation: glow 1.5s infinite;">
-0589363333
-</span>
-
-<button onclick="openZalo()" style="
-    margin-left:10px;
-    padding:6px 10px;
-    border:none;
-    border-radius:8px;
-    background:#ef4444;
-    color:white;
-    font-weight:700;
-    cursor:pointer;
-">
-🔥 ZALO ( Chỉ liên hệ khi còn 10 tiếng mà không thấy )
-</button>
-
-<br><br>
-
-📌 Danh sách thi được cập nhật từ mới nhất trở đi.<br>
-📌 Sau 1 phút sẽ quét danh sách bên trường 1 lần, nếu có tự khắc sẽ hiện bên này.
-
+<div class="input-wrapper">
+<input autocomplete="off" id="searchInput" placeholder="Nhập từ khóa (Ví dụ: học phí, điểm F)..." type="text"/>
+<span id="resultCounter"></span>
+<button id="clearButton" title="Xóa">×</button>
+<div id="suggestionsWrapper"></div>
+</div>
+<a class="action-btn" href="camera.html" title="Camera">
+<i class="fa-solid fa-camera"></i>
+</a>
+</div>
+</div>
+<!-- MOVED DOWN -->
+<div class="dashboard-wrap">
+<div class="dashboard-grid">
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+</div>
+<div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+</section>
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+</div>
+<div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+</section>
+</div>
+</div>
+<div class="my-subjects-section">
+<h3 class="my-subjects-title">📚 Môn đang học của tôi</h3>
+<p class="my-subjects-desc">Nhập mã môn đang học, lưu lại để mở nhanh lịch thi và danh sách thi của riêng bạn.</p>
+<div class="my-row">
+<input id="mySubjectInput" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy" type="text"/>
+<button onclick="addMySubject(); renderLivePanels();" type="button">Thêm</button>
+<button class="secondary" onclick="saveMySubjects(); saveSharedDateFilter(document.getElementById('mainFromDate')?.value || '', document.getElementById('mainToDate')?.value || ''); updateDateFilterSummary(); renderLivePanels();" type="button">Lưu</button>
+<button class="secondary" onclick="clearMySubjects(); renderLivePanels();" type="button">Xóa hết</button>
+</div>
+<div class="my-tags" id="mySubjectsList"></div>
+<div class="my-row date-filter-row">
+<div class="date-filter-field">
+<label for="mainFromDate">Từ ngày</label>
+<input id="mainFromDate" type="date"/>
+</div>
+<div class="date-filter-field">
+<label for="mainToDate">Đến ngày</label>
+<input id="mainToDate" type="date"/>
+</div>
+<div class="date-filter-actions">
+<button class="secondary" onclick="clearSharedDateFilter();" type="button">Xóa lọc ngày</button>
+</div>
+</div>
+<div class="date-filter-summary" id="mainDateFilterSummary">Đang xem toàn bộ ngày thi và danh sách thi.</div>
+<div class="my-row" style="margin-top:14px;">
+<button class="green" onclick="openWithSubjects('lichthi.html')" type="button">📅 Xem lịch thi</button>
+<button class="green" onclick="openWithSubjects('danhsachthi.html')" type="button">📝 Xem danh sách thi</button>
+</div>
+</div>
+<div class="dashboard-wrap">
+</div>
+<div class="dashboard-grid">
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+<div class="dashboard-panel-sub">Khung trái hiển thị trực tiếp lịch thi ngay trong trang này.</div>
+</div>
+<div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+<div class="dashboard-panel-actions">
+<button class="dashboard-btn left" onclick="openWithSubjects('lichthi.html')" type="button">Mở toàn bộ lịch thi</button>
+</div>
+</section>
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+<div class="dashboard-panel-sub">Khung phải hiển thị trực tiếp danh sách thi ngay trong trang này.</div>
+</div>
+<div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+<div class="dashboard-panel-actions">
+<button class="dashboard-btn right" onclick="openWithSubjects('danhsachthi.html')" type="button">Mở toàn bộ danh sách thi</button>
+</div>
+</section>
 </div>
 
-            <div class="search-box">
-                <input
-                    type="text"
-                    id="search-box"
-                    placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03"
-                    autocomplete="off"
-                    autofocus
-                />
-
-                <div class="date-filter-row">
-                    <div class="date-field">
-                        <label for="from-date">Từ ngày ( dùng cái này để xem danh sách từ lúc này về sau thôi cho đỡ rối trùng với mấy danh sách cũ ) </label>
-                        <input type="date" id="from-date" />
+<div id="resultDisplay"></div>
+<div class="study-section">
+<div class="bg-grid"></div>
+<div class="study-wrap">
+<div class="study-card">
+<div class="study-hero-title">
+<div class="study-logo">⚡</div>
+<div>
+<h1>Kho tài liệu học nhóm</h1>
+<p class="study-desc study-muted">Đã nâng cấp để tra cứu trực tiếp từ file <b>data.json</b>. Bạn có thể giữ tài liệu mẫu cũ hoặc nạp dữ liệu lịch thi đã crawl để tìm nhanh hơn.</p>
+</div>
+</div>
+<div class="study-stats">
+<div class="study-stat"><span class="study-muted">Tổng tài liệu</span><strong id="studyTotalStat">0</strong></div>
+<div class="study-stat"><span class="study-muted">Đang hiển thị</span><strong id="studyVisibleStat">0</strong></div>
+<div class="study-stat"><span class="study-muted">Danh mục</span><strong id="studyCategoryStat">All</strong></div>
+<div class="study-stat"><span class="study-muted">Nguồn dữ liệu</span><strong id="studyModeStat">Mẫu</strong></div>
+</div>
+<div class="study-search-row">
+<input class="study-search" id="studySearchInput" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." type="text">
+<button class="study-btn secondary" id="studySortBtn">A → Z</button>
+<button class="study-btn secondary" id="studyClearBtn">Xóa tìm kiếm</button>
+</input></div>
+<div class="study-picker-row">
+<input accept=".json,application/json" class="study-file-picker" id="studyFileInput" type="file">
+<button class="study-btn secondary" id="studySampleBtn">Dùng dữ liệu mẫu</button>
+</input></div>
+<div style="margin-top:12px;color:var(--muted);font-size:13px;">
+                        Chọn <b>data.json</b> để nạp dữ liệu lịch thi đã crawl. Bấm <b>Tải về</b> để mở link trực tiếp.
                     </div>
-                    <div class="date-field">
-                        <label for="to-date">Đến ngày</label>
-                        <input type="date" id="to-date" />
-                    </div>
+</div>
+<div class="study-card">
+<div class="study-section-head">
+<h2>Danh mục tài liệu</h2>
+<span class="study-badge">Neon UI</span>
+</div>
+<div class="study-tabs">
+<button class="study-tab active all" data-tab="all">📚 Tất cả</button>
+<button class="study-tab listening" data-tab="listening">🎧 Listening</button>
+<button class="study-tab speaking" data-tab="speaking">🎤 Speaking</button>
+</div>
+<div class="study-files" id="studyFileList"></div>
+</div>
+</div>
+</div>
+
+<div class="footer">© Thông tin chỉ mang tính chất tham khảo &amp; hỗ trợ cộng đồng</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://phamtranceven-lang.github.io/ALO/database.js"></script>
+<script src="https://phamtranceven-lang.github.io/ALO/script.js"></script>
+<script src="my-subjects.js"></script>
+<script>
+        const searchInputDemo = document.getElementById('searchInput');
+        const clearButtonDemo = document.getElementById('clearButton');
+
+        if (searchInputDemo) {
+            searchInputDemo.addEventListener('input', function () {
+                if (this.value.trim() !== "") {
+                    document.body.classList.add('search-active');
+                    clearButtonDemo.style.display = 'block';
+                } else {
+                    document.body.classList.remove('search-active');
+                    clearButtonDemo.style.display = 'none';
+                }
+            });
+
+            if (clearButtonDemo) {
+                clearButtonDemo.addEventListener('click', function () {
+                    searchInputDemo.value = '';
+                    document.body.classList.remove('search-active');
+                    this.style.display = 'none';
+                    searchInputDemo.focus();
+                });
+            }
+        }
+
+        function formatSubjectForLichThi(subject) {
+            return String(subject || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '')
+                .replace(/^([A-Z\-]+)(\d+)([A-Z]*)$/i, function (_, prefix, number, suffix) {
+                    return suffix ? `${prefix} ${number} ${suffix}` : `${prefix} ${number}`;
+                });
+        }
+
+        function formatSubjectForDanhSachThi(subject) {
+            return String(subject || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '')
+                .replace(/^([A-Z\-]+)(\d+)([A-Z]+)$/i, '$1$2');
+        }
+
+
+        const LIVE_PANEL_INPUT_DEBOUNCE = 6000;
+        let livePanelInputTimer = null;
+
+        function scheduleLivePanelsFromTyping() {
+            clearTimeout(livePanelInputTimer);
+            livePanelInputTimer = setTimeout(() => {
+                renderLivePanels();
+            }, LIVE_PANEL_INPUT_DEBOUNCE);
+        }
+
+        function getLiveSubjects() {
+            try {
+                const stored = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+                const fromStorage = Array.isArray(stored) ? stored.map(s => String(s || '').trim()).filter(Boolean) : [];
+
+                const tags = [...document.querySelectorAll("#mySubjectsList .my-tag")].map(tag => {
+                    const clone = tag.cloneNode(true);
+                    const btn = clone.querySelector("button");
+                    if (btn) btn.remove();
+                    return clone.textContent.trim();
+                }).filter(Boolean);
+
+                const input = document.getElementById("mySubjectInput");
+                const fromInput = input ? String(input.value || '').split(',').map(s => s.trim()).filter(Boolean) : [];
+
+                return [...new Set([...fromStorage, ...tags, ...fromInput])];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function getSharedDateFilter() {
+            try {
+                const saved = JSON.parse(localStorage.getItem("sharedDateFilter") || "{}");
+                return {
+                    from: saved.from || "",
+                    to: saved.to || ""
+                };
+            } catch (e) {
+                return { from: "", to: "" };
+            }
+        }
+
+        function saveSharedDateFilter(from, to) {
+            localStorage.setItem("sharedDateFilter", JSON.stringify({ from: from || "", to: to || "" }));
+        }
+
+        function updateDateFilterSummary() {
+            const summary = document.getElementById("mainDateFilterSummary");
+            if (!summary) return;
+            const { from, to } = getSharedDateFilter();
+            if (from && to) {
+                summary.textContent = `Đang lọc từ ${from.split('-').reverse().join('/')} đến ${to.split('-').reverse().join('/')}.`;
+            } else if (from) {
+                summary.textContent = `Đang lọc từ ngày ${from.split('-').reverse().join('/')} trở đi.`;
+            } else if (to) {
+                summary.textContent = `Đang lọc đến ngày ${to.split('-').reverse().join('/')} trở về trước.`;
+            } else {
+                summary.textContent = "Đang xem toàn bộ ngày thi và danh sách thi.";
+            }
+        }
+
+        function syncDateFilterInputs() {
+            const { from, to } = getSharedDateFilter();
+            const fromInput = document.getElementById("mainFromDate");
+            const toInput = document.getElementById("mainToDate");
+            if (fromInput) fromInput.value = from;
+            if (toInput) toInput.value = to;
+            updateDateFilterSummary();
+        }
+
+        function attachDateFilterEvents() {
+            const fromInput = document.getElementById("mainFromDate");
+            const toInput = document.getElementById("mainToDate");
+            if (!fromInput || fromInput.__sharedDateHooked) return;
+
+            const onChange = () => {
+                saveSharedDateFilter(fromInput.value, toInput.value);
+                updateDateFilterSummary();
+                renderLivePanels();
+            };
+
+            fromInput.addEventListener("change", onChange);
+            toInput.addEventListener("change", onChange);
+            fromInput.__sharedDateHooked = true;
+            toInput.__sharedDateHooked = true;
+        }
+
+        function clearSharedDateFilter() {
+            saveSharedDateFilter("", "");
+            syncDateFilterInputs();
+            renderLivePanels();
+        }
+
+        function buildPageUrl(page, subjects) {
+            let finalSubjects = subjects;
+            if (page === "lichthi.html") {
+                finalSubjects = subjects.map(formatSubjectForLichThi);
+            } else if (page === "danhsachthi.html") {
+                finalSubjects = subjects.map(formatSubjectForDanhSachThi);
+            }
+
+            const params = new URLSearchParams();
+            params.set("m", finalSubjects.join(", "));
+
+            const { from, to } = getSharedDateFilter();
+            if (from) params.set("from", from);
+            if (to) params.set("to", to);
+
+            return `${page}?${params.toString()}`;
+        }
+
+        function renderLivePanels() {
+            const left = document.getElementById("live-lichthi-panel");
+            const right = document.getElementById("live-danhsach-panel");
+            if (!left || !right) return;
+
+            const subjects = getLiveSubjects();
+
+            if (!subjects.length) {
+                left.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Lịch thi ngay tại đây.</div>';
+                right.innerHTML = '<div class="dashboard-empty">Chưa có môn nào được lưu.<br>Thêm môn ở ô phía trên để hiện Danh sách thi ngay tại đây.</div>';
+                return;
+            }
+
+            const leftUrl = buildPageUrl("lichthi.html", subjects);
+            const rightUrl = buildPageUrl("danhsachthi.html", subjects);
+
+            left.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="${leftUrl}" loading="lazy"></iframe>
                 </div>
+            `;
 
-                <div class="action-row">
-                    <button class="btn share-btn" id="share-btn">🔗 Share link</button>
-                    <button class="btn refresh-btn" id="refresh-btn">🔄 Check lại DANH SÁCH</button>
-                    <button class="btn today-btn" id="today-btn">📅 Xem lịch mới đăng hôm nay</button>
-                    <button class="btn clear-btn" id="clear-cache-btn">🗑️ Xóa cache</button>
+            right.innerHTML = `
+                <div class="dashboard-frame-wrap">
+                    <iframe class="dashboard-frame" src="${rightUrl}" loading="lazy"></iframe>
                 </div>
-            </div>
+            `;
+        }
 
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-label">Tổng danh sách thi quét được</div>
-                    <div class="stat-value" id="stat-total">0</div>
-                </div>
-            </div>
-        </div>
-    </div>
+        function hookLivePanels() {
+            ['addMySubject','saveMySubjects','clearMySubjects'].forEach(fnName => {
+                const oldFn = window[fnName];
+                if (typeof oldFn === 'function' && !oldFn.__liveHooked) {
+                    const wrapped = function(...args) {
+                        clearTimeout(livePanelInputTimer);
+                        const result = oldFn.apply(this, args);
+                        setTimeout(renderLivePanels, 60);
+                        return result;
+                    };
+                    wrapped.__liveHooked = true;
+                    window[fnName] = wrapped;
+                }
+            });
 
-    <div class="container content">
-        <div id="data-body"></div>
-    </div>
+            const input = document.getElementById('mySubjectInput');
+            if (input && !input.__liveInputHooked) {
+                input.addEventListener('input', () => {
+                    scheduleLivePanelsFromTyping();
+                });
+                input.__liveInputHooked = true;
+            }
 
-    <button id="fab-top" class="fab-top">↑</button>
-    <div id="status" class="status">Hệ thống đang quét danh sách</div>
+            attachDateFilterEvents();
+            syncDateFilterInputs();
+            window.addEventListener('storage', () => {
+                syncDateFilterInputs();
+                renderLivePanels();
+            });
+            renderLivePanels();
+        }
 
-    <script>
-        const CONFIG = {
-            API: "https://dtu.tapcube2007.workers.dev",
-            BASE_URL: "https://pdaotao.duytan.edu.vn/",
-            STORAGE_KEY: "dtu_cache_ultra_xin",
-            REFRESH_RATE: 60000
+
+        function openWithSubjects(page) {
+            const subjects = JSON.parse(localStorage.getItem("mySubjects") || "[]");
+
+            if (!subjects.length) {
+                alert("Chưa có môn nào");
+                return;
+            }
+
+            window.location.href = buildPageUrl(page, subjects);
+        }
+
+        let studyCurrentTab = 'all';
+        let studySortAsc = true;
+        let studyCurrentMode = 'Mẫu';
+
+        const studySampleData = {
+            listening: [
+                { name: 'Lesson 05 và 06', url: 'https://drive.google.com/file/d/1M-D0IfRzrtOPDpyxJvGrtPvmUqo9x6_Z/view', note: 'Listening', badge: '' },
+                { name: 'Lesson 07 và 08', url: 'https://drive.google.com/file/d/1DJdtWFsteHNsbLGTXWaPf_bjHM6Br9Hd/view', note: 'Listening', badge: '' },
+                { name: 'Lesson 09 và 10', url: 'https://drive.google.com/file/d/15tI6nM1fc9dLf73KrXyCyu5QAQWl6cz-/view', note: 'Listening', badge: '' },
+                { name: 'Lesson 11 và 12', url: 'https://drive.google.com/file/d/1-pA5KYPdwxq0QTYX2KfKUkXqznGK5TI_/view', note: 'Listening', badge: '' },
+                { name: 'Lesson 13 và 14', url: 'https://drive.google.com/file/d/1FTfxh4vXdkKqqRaSkO4noAg3t26FH88m/view', note: 'Listening', badge: '' },
+                { name: 'Lesson 15', url: 'https://drive.google.com/file/d/18XsGReUsUVqrM-e6VnYL8ITFYDyQKQBP/view', note: 'Listening', badge: 'hot' }
+            ],
+            speaking: [
+                { name: 'Lesson 01 và 02', url: 'https://drive.google.com/file/d/1cas7HCNBtBsqtO8QMFOznhPRfCRMlerJ/view', note: 'Speaking', badge: 'new' },
+                { name: 'Lesson 03 và 04', url: 'https://drive.google.com/file/d/1t-0cuHoQkynhuJJ1C6da96OpSRc0PTgU/view', note: 'Speaking', badge: 'hot' },
+                { name: 'Lesson 05 và 06', url: 'https://drive.google.com/file/d/1KIdrAJJTgztBne1UNQ53fYRPRZaWE_4I/view', note: 'Speaking', badge: 'hot' },
+                { name: 'Lesson 10 11 12', url: 'https://drive.google.com/file/d/1FWxx5w1bBsut2aBKzwG9mrkMP3N-GHMh/view', note: 'Speaking', badge: 'new' }
+            ]
         };
 
-        let allExams = [];
-        let showingTodayOnly = false;
-        let selectedFromDate = "";
-        let selectedToDate = "";
+        let studyExamItems = [];
 
-        function copyPhone() {
-            navigator.clipboard.writeText("0589363333")
-                .then(() => alert("Đã copy số Zalo"))
-                .catch(() => alert("0589363333"));
+        const studyModeStat = document.getElementById('studyModeStat');
+        const studyTotalStat = document.getElementById('studyTotalStat');
+        const studyVisibleStat = document.getElementById('studyVisibleStat');
+        const studyCategoryStat = document.getElementById('studyCategoryStat');
+        const studySearchInput = document.getElementById('studySearchInput');
+        const studySortBtn = document.getElementById('studySortBtn');
+        const studyClearBtn = document.getElementById('studyClearBtn');
+        const studyFileInput = document.getElementById('studyFileInput');
+        const studySampleBtn = document.getElementById('studySampleBtn');
+        const studyFileList = document.getElementById('studyFileList');
+        const studyTabs = [...document.querySelectorAll('.study-tab')];
+
+        function studyBadgeText(type){
+            if(type === 'new') return 'NEW';
+            if(type === 'hot') return 'HOT';
+            if(type === 'pin') return 'IMPORTANT';
+            if(type === 'exam') return 'EXAM';
+            return 'TAG';
         }
 
-        function openZalo() {
-            window.open("https://zalo.me/0589363333", "_blank");
+        function studyTabIcon(tab){
+            if(tab === 'listening') return '🎧';
+            if(tab === 'speaking') return '🎤';
+            return '📄';
         }
 
-        function normalize(str) {
-            return String(str || "")
-                .toLowerCase()
-                .replace(/[\s\-_/()]/g, "");
+        function studyCategoryName(tab){
+            if(tab === 'all') return 'All';
+            return tab.charAt(0).toUpperCase() + tab.slice(1);
         }
 
-        function escapeHtml(str) {
-            return String(str || "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        function studyEscapeHtml(str){
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&':'&amp;',
+                '<':'&lt;',
+                '>':'&gt;',
+                '"':'&quot;',
+                "'":'&#39;'
+            }[m]));
         }
 
-        function parseSearchTokens(text) {
-            return String(text || "")
-                .split(",")
-                .map(s => s.trim())
-                .filter(Boolean);
+        function studyHighlight(text, query){
+            const escaped = studyEscapeHtml(text);
+            if(!query) return escaped;
+            const lower = escaped.toLowerCase();
+            const qLower = query.toLowerCase();
+            const idx = lower.indexOf(qLower);
+            if(idx === -1) return escaped;
+            return escaped.slice(0, idx) + '<span class="study-hl">' + escaped.slice(idx, idx + query.length) + '</span>' + escaped.slice(idx + query.length);
         }
 
-        function getSearchValueFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            const m = params.get("m");
-            return m ? decodeURIComponent(m) : "";
+        function studyTriggerProtectedDownload(url, filename){
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || '';
+            link.target = '_blank';
+            link.rel = 'noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         }
 
-        function getDateFiltersFromURL() {
-            const params = new URLSearchParams(window.location.search);
+        function studyNormalizeExamItem(item){
             return {
-                from: params.get("from") || "",
-                to: params.get("to") || ""
+                name: item.title || item.examTitle || 'Không có tên',
+                url: item.link || item.examDetailsUrl || '',
+                note: item.date || item.uploadDate || '',
+                badge: 'exam',
+                type: 'all'
             };
         }
 
-        function syncDateInputs() {
-            const fromInput = document.getElementById("from-date");
-            const toInput = document.getElementById("to-date");
-            if (fromInput) fromInput.value = selectedFromDate;
-            if (toInput) toInput.value = selectedToDate;
-        }
-
-        function persistSharedDateFilter() {
-            localStorage.setItem("sharedDateFilter", JSON.stringify({ from: selectedFromDate || "", to: selectedToDate || "" }));
-        }
-
-        function updateURLWithFilters(searchText) {
-            const params = new URLSearchParams();
-            const text = String(searchText || "").trim();
-            if (text) params.set("m", text);
-            if (selectedFromDate) params.set("from", selectedFromDate);
-            if (selectedToDate) params.set("to", selectedToDate);
-            const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-            window.history.replaceState({}, "", newUrl);
-        }
-
-        function isWithinSelectedDateRange(uploadDateValue) {
-            const uploadDate = parseUploadDate(uploadDateValue);
-            if (!uploadDate || Number.isNaN(uploadDate.getTime())) return true;
-            const fromDate = selectedFromDate ? new Date(selectedFromDate + "T00:00:00") : null;
-            const toDate = selectedToDate ? new Date(selectedToDate + "T23:59:59") : null;
-            if (fromDate && uploadDate < fromDate) return false;
-            if (toDate && uploadDate > toDate) return false;
-            return true;
-        }
-
-        function setStatus(text, isError = false) {
-            const el = document.getElementById("status");
-            el.textContent = text;
-            el.classList.toggle("error", isError);
-        }
-
-        function parseUploadDate(str) {
-            if (!str) return new Date(0);
-            const [time, date] = String(str).trim().split(" ");
-            if (!time || !date) return new Date(0);
-            const [d, m, y] = date.split("/");
-            return new Date(`${y}-${m}-${d}T${time}:00`);
-        }
-
-        function getDateOnly(str) {
-            const parts = String(str || "").split(" ");
-            return parts[1] || str || "";
-        }
-
-        function isTodayVN(dateStr) {
-            const today = new Date();
-            const dd = String(today.getDate()).padStart(2, "0");
-            const mm = String(today.getMonth() + 1).padStart(2, "0");
-            const yyyy = today.getFullYear();
-            return dateStr === `${dd}/${mm}/${yyyy}`;
-        }
-
-        function highlightMatches(title, tokens) {
-            let result = escapeHtml(title);
-
-            tokens.forEach(token => {
-                const raw = token.trim();
-                if (!raw) return;
-
-                const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-                const flexible = escaped.replace(/\s+/g, "\\s*[-_/ ]?\\s*");
-                const regex = new RegExp(flexible, "gi");
-
-                result = result.replace(regex, match => `<span class="highlight-code">${match}</span>`);
-            });
-
-            return result;
-        }
-
-        function updateStats() {
-            const totalEl = document.getElementById("stat-total");
-            if (totalEl) {
-                totalEl.textContent = allExams.length;
+        function studyGetCurrentList(){
+            if(studyCurrentMode === 'JSON') {
+                return studyExamItems;
             }
+            if(studyCurrentTab === 'all') {
+                return [...studySampleData.listening, ...studySampleData.speaking].map(item => ({...item, type:'all'}));
+            }
+            return (studySampleData[studyCurrentTab] || []).map(item => ({...item, type: studyCurrentTab}));
         }
 
-        function groupByDate(data) {
-            const groups = {};
-            data.forEach(item => {
-                const day = getDateOnly(item.uploadDate);
-                if (!groups[day]) groups[day] = [];
-                groups[day].push(item);
-            });
-            return groups;
+        function studyUpdateStats(visible){
+            const total = studyGetCurrentList().length;
+            studyTotalStat.textContent = total;
+            studyVisibleStat.textContent = visible.length;
+            studyCategoryStat.textContent = studyCurrentMode === 'JSON' ? 'All' : studyCategoryName(studyCurrentTab);
+            studyModeStat.textContent = studyCurrentMode;
         }
 
-        function render(data, searchText = "") {
-            const body = document.getElementById("data-body");
-            const tokens = parseSearchTokens(searchText);
+        function studyRender(){
+            const q = studySearchInput.value.trim();
+            let list = studyGetCurrentList().filter(item =>
+                item.name.toLowerCase().includes(q.toLowerCase()) ||
+                String(item.note || '').toLowerCase().includes(q.toLowerCase())
+            );
 
-            updateStats();
+            list.sort((a,b)=> studySortAsc
+                ? a.name.localeCompare(b.name, undefined, { numeric:true, sensitivity:'base' })
+                : b.name.localeCompare(a.name, undefined, { numeric:true, sensitivity:'base' })
+            );
 
-            if (!data.length) {
-                body.innerHTML = `<div class="empty-state">Không có dữ liệu.</div>`;
+            studyUpdateStats(list);
+
+            if(!list.length){
+                studyFileList.innerHTML = `<div class="study-empty">Không có dữ liệu nào khớp từ khóa tìm kiếm.</div>`;
                 return;
             }
 
-            const groups = groupByDate(data);
-            const orderedDates = Object.keys(groups).sort((a, b) => {
-                const da = parseUploadDate(`00:00 ${a}`);
-                const db = parseUploadDate(`00:00 ${b}`);
-                return db - da;
-            });
-
-            body.innerHTML = orderedDates.map(day => {
-                const items = groups[day].map(item => {
-                    const displayTitle = tokens.length
-                        ? highlightMatches(item.examTitle || "", tokens)
-                        : escapeHtml(item.examTitle || "");
-
-                    const detailsPath = String(item.examDetailsUrl || "").replace(/^\.\.\//, "");
-                    const fullUrl = CONFIG.BASE_URL + detailsPath;
-
-                    return `
-                        <div class="item">
-                            <div class="item-date">${escapeHtml(day)}</div>
-
-                            <div>
-                                <div class="item-title">
-                                    ${displayTitle}
-                                    ${item.isNew ? '<span class="badge-new">MỚI</span>' : ''}
-                                    ${item.page ? `<span class="badge-page">trang ${item.page}</span>` : ''}
-                                </div>
-                                <div class="item-meta">Giờ đăng: ${escapeHtml(String(item.uploadDate || "").split(" ")[0] || "--:--")}</div>
-                            </div>
-
-                            <div class="item-action">
-                                <a href="${fullUrl}" target="_blank" class="btn-open">MỞ TẢI</a>
+            studyFileList.innerHTML = list.map((item, i) => `
+                <div class="study-file ${studyCurrentMode === 'JSON' ? 'all' : studyCurrentTab}" style="animation-delay:${i * .05}s">
+                    <div class="study-file-left">
+                        <div class="study-file-icon">${studyTabIcon(studyCurrentMode === 'JSON' ? 'all' : studyCurrentTab)}</div>
+                        <div>
+                            <div class="study-file-name">${studyHighlight(item.name, q)}</div>
+                            <div class="study-meta">
+                                <span class="study-tag ${item.badge || ''}">${studyBadgeText(item.badge)}</span>
+                                ${item.note ? `<span>${studyHighlight(item.note, q)}</span>` : ''}
                             </div>
                         </div>
-                    `;
-                }).join("");
-
-                return `
-                    <div class="day-group">
-                        <div class="day-title">📅 ${escapeHtml(day)}</div>
-                        <div class="list">${items}</div>
                     </div>
-                `;
-            }).join("");
+                    <div class="study-actions">
+                        <button class="study-btn study-download-btn" type="button" data-url="${studyEscapeHtml(item.url)}" data-name="${studyEscapeHtml(item.name)}">Tải về</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function applySearch(fullText = "") {
-            const rawText = String(fullText || "").trim();
-            const tokens = parseSearchTokens(rawText);
-            const normalizedTokens = tokens.map(normalize);
+        studyFileList.addEventListener('click', (event) => {
+            const btn = event.target.closest('.study-download-btn');
+            if(!btn) return;
+            event.preventDefault();
+            studyTriggerProtectedDownload(btn.dataset.url, btn.dataset.name);
+        });
 
-            let filtered = [...allExams];
-
-            if (showingTodayOnly) {
-                filtered = filtered.filter(item => isTodayVN(getDateOnly(item.uploadDate)));
-            }
-
-            filtered = filtered.filter(item => isWithinSelectedDateRange(item.uploadDate));
-
-            if (normalizedTokens.length) {
-                filtered = filtered.filter(ex => {
-                    const titleNorm = normalize(ex.examTitle);
-                    const dateNorm = normalize(ex.uploadDate);
-                    return normalizedTokens.some(token =>
-                        titleNorm.includes(token) || dateNorm.includes(token)
-                    );
-                });
-            }
-
-            filtered.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
-            updateURLWithFilters(rawText);
-            render(filtered, rawText);
-        }
-
-        async function fetchData() {
-            try {
-                setStatus("Đang tải dữ liệu từ API...");
-                const res = await fetch(CONFIG.API, {
-                    method: "GET",
-                    cache: "no-store"
-                });
-
-                const raw = await res.text();
-
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status} - ${raw.slice(0, 200)}`);
+        studyTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                studyCurrentTab = tab.dataset.tab;
+                if(studyCurrentMode === 'JSON') {
+                    studyCurrentTab = 'all';
                 }
+                studyTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                studyRender();
+            });
+        });
 
-                let json;
+        studySearchInput.addEventListener('input', studyRender);
+
+        studySortBtn.addEventListener('click', () => {
+            studySortAsc = !studySortAsc;
+            studySortBtn.textContent = studySortAsc ? 'A → Z' : 'Z → A';
+            studyRender();
+        });
+
+        studyClearBtn.addEventListener('click', () => {
+            studySearchInput.value = '';
+            studyRender();
+        });
+
+        studySampleBtn.addEventListener('click', () => {
+            studyCurrentMode = 'Mẫu';
+            studyCurrentTab = 'all';
+            studyTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.study-tab[data-tab="all"]').classList.add('active');
+            studyRender();
+        });
+
+        studyFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (evt) => {
                 try {
-                    json = JSON.parse(raw);
+                    const json = JSON.parse(evt.target.result);
+                    if(!Array.isArray(json)) {
+                        alert('File JSON phải là một mảng dữ liệu.');
+                        return;
+                    }
+                    studyExamItems = json.map(studyNormalizeExamItem).filter(item => item.name || item.note || item.url);
+                    studyCurrentMode = 'JSON';
+                    studyCurrentTab = 'all';
+                    studyTabs.forEach(t => t.classList.remove('active'));
+                    document.querySelector('.study-tab[data-tab="all"]').classList.add('active');
+                    studyRender();
                 } catch (err) {
-                    throw new Error("API không trả JSON hợp lệ: " + raw.slice(0, 300));
+                    alert('File JSON không hợp lệ.');
                 }
+            };
+            reader.readAsText(file, 'utf-8');
+        });
 
-                const data = json.response?.data || [];
-
-                if (!Array.isArray(data)) {
-                    throw new Error("json.response.data không phải mảng");
-                }
-
-                allExams = data.sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
-                localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(allExams));
-                applySearch(document.getElementById("search-box").value);
-
-                const maxPage = allExams.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
-                setStatus(`Online • ${allExams.length} dòng • quét tới trang ${maxPage} • cập nhật lúc ${new Date().toLocaleTimeString("vi-VN")}`);
-            } catch (e) {
-                console.error("FETCH ERROR:", e);
-                setStatus("Lỗi tải API: " + e.message, true);
-            }
-        }
-
-        function shareSearch() {
-            const input = document.getElementById("search-box").value.trim();
-
-            if (!input) {
-                alert("Chưa có từ khóa để share");
-                return;
-            }
-
-            const params = new URLSearchParams();
-            params.set("m", input);
-            if (selectedFromDate) params.set("from", selectedFromDate);
-            if (selectedToDate) params.set("to", selectedToDate);
-            const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-
-            navigator.clipboard.writeText(url)
-                .then(() => alert("Đã copy link share"))
-                .catch(() => alert(url));
-        }
-
-        function clearCache() {
-            localStorage.removeItem(CONFIG.STORAGE_KEY);
-            allExams = [];
-            applySearch("");
-            alert("Đã xóa cache");
-            setStatus("Đã xóa cache cục bộ");
-        }
-
-        function toggleTodayOnly() {
-            showingTodayOnly = !showingTodayOnly;
-            document.getElementById("today-btn").textContent = showingTodayOnly
-                ? "📅 Đang lọc hôm nay"
-                : "📅 Chỉ xem hôm nay";
-            applySearch(document.getElementById("search-box").value);
-        }
-
-        function setupFab() {
-            const fab = document.getElementById("fab-top");
-            window.addEventListener("scroll", () => {
-                if (window.scrollY > 300) fab.classList.add("show");
-                else fab.classList.remove("show");
-            }, { passive: true });
-
-            fab.addEventListener("click", () => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-        }
-
-        async function init() {
-            const input = document.getElementById("search-box");
-            const searchFromURL = getSearchValueFromURL();
-            const sharedFilter = (() => {
-                try {
-                    return JSON.parse(localStorage.getItem("sharedDateFilter") || "{}");
-                } catch (e) {
-                    return {};
-                }
-            })();
-            const urlFilters = getDateFiltersFromURL();
-            selectedFromDate = urlFilters.from || sharedFilter.from || "";
-            selectedToDate = urlFilters.to || sharedFilter.to || "";
-            syncDateInputs();
-
-            if (searchFromURL) {
-                input.value = searchFromURL;
-            }
-
-            const cached = localStorage.getItem(CONFIG.STORAGE_KEY);
-            if (cached) {
-                try {
-                    allExams = JSON.parse(cached).sort((a, b) => parseUploadDate(b.uploadDate) - parseUploadDate(a.uploadDate));
-                    applySearch(input.value);
-                    setStatus("Đã tải cache cục bộ...");
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            document.getElementById("share-btn").addEventListener("click", shareSearch);
-            document.getElementById("refresh-btn").addEventListener("click", fetchData);
-            document.getElementById("clear-cache-btn").addEventListener("click", clearCache);
-            document.getElementById("today-btn").addEventListener("click", toggleTodayOnly);
-            document.getElementById("from-date").addEventListener("change", e => {
-                selectedFromDate = e.target.value || "";
-                persistSharedDateFilter();
-                applySearch(input.value);
-            });
-            document.getElementById("to-date").addEventListener("change", e => {
-                selectedToDate = e.target.value || "";
-                persistSharedDateFilter();
-                applySearch(input.value);
-            });
-            input.addEventListener("input", e => applySearch(e.target.value));
-
-            setupFab();
-            await fetchData();
-            setInterval(fetchData, CONFIG.REFRESH_RATE);
-        }
-
-        init();
+        studyCurrentMode = 'Mẫu';
+        studyCurrentTab = 'all';
+        studyRender();
+        hookLivePanels();
     </script>
-
-    <script src="vien-7mau-tuyet.js"></script>
+<script src="vien-7mau-tuyet.js"></script>
 </body>
 </html>
