@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 
 <html lang="vi">
@@ -566,6 +567,55 @@ html {
     font-size:14px;
     border-radius:14px;
 }
+
+/* ===== SEARCH SIÊU NỔ ===== */
+#search-box {
+    position: relative;
+    border: 2px solid rgba(34,211,238,0.4);
+    background: rgba(34,211,238,0.05);
+    animation: searchPulse 1.5s infinite;
+}
+
+@keyframes searchPulse {
+    0% { box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
+    50% { box-shadow: 0 0 20px 5px rgba(34,211,238,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
+}
+
+#search-box:focus {
+    border-color: #22d3ee;
+    box-shadow: 0 0 25px rgba(34,211,238,0.8);
+    transform: scale(1.02);
+}
+
+#search-box::placeholder {
+    animation: blinkText 1.5s infinite;
+}
+
+@keyframes blinkText {
+    0%,100% { opacity:1; }
+    50% { opacity:0.5; }
+}
+
+
+/* rung nhẹ */
+#search-box {
+    animation: searchPulse 1.5s infinite, shake 3s infinite;
+}
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+}
+
+/* viền 7 màu */
+#search-box {
+    border: 2px solid;
+    border-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet) 1;
+}
+
 </style>
 </head>
 <body>
@@ -602,7 +652,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
 </div>
 </div>
 <div class="search-box">
-<input autocomplete="off" autofocus="" id="search-box" placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03" type="text"/>
+<input autocomplete="off" autofocus="" id="search-box" placeholder="Ví dụ: ENG128, LISTENING LEVEL 1 (KHÔNG NHẬP MÃ LỚP)" type="text"/>
 <div class="date-filter-row">
 <div class="date-field">
 <label for="from-date">Từ ngày ( dùng cái này để xem danh sách từ lúc này về sau thôi cho đỡ rối trùng với mấy danh sách cũ ) </label>
@@ -791,7 +841,7 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
             updateStats();
 
             if (!data.length) {
-                body.innerHTML = `<div class="empty-state">Không có dữ liệu.</div>`;
+                body.innerHTML = `<div class="empty-state">DANH SÁCH TRƯỜNG CHƯA UP HOẶC BẠN GÕ SAI CÁCH , VÍ DỤ HỌC ENG128D THÌ GÕ ENG128 THÔI</div>`;
                 return;
             }
 
@@ -1008,5 +1058,25 @@ ADMIN : PHẠM TRẦN QUỐC BẢO
         init();
     </script>
 <script src="vien-7mau-tuyet.js"></script>
+
+<script>
+// auto gõ demo
+const demoText = "Ví dụ: ENG128, LISTENING LEVEL 1 (KHÔNG NHẬP MÃ LỚP)";
+let i = 0;
+function typeEffect(){
+    const input = document.getElementById("search-box");
+    if(!input) return;
+    if(document.activeElement === input) return;
+    input.placeholder = demoText.slice(0, i++);
+    if(i <= demoText.length){
+        setTimeout(typeEffect, 80);
+    } else {
+        i = 0;
+        setTimeout(typeEffect, 1500);
+    }
+}
+setTimeout(typeEffect, 1000);
+</script>
+
 </body>
 </html>
