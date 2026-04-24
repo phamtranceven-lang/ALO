@@ -616,6 +616,47 @@ html {
     border-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet) 1;
 }
 
+
+.btn-lite{
+    display:inline-block;
+    margin-top:10px;
+    padding:10px 20px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.16);
+    color:#cbd5e1;
+    font-weight:900;
+    text-decoration:none;
+    transition:0.2s;
+}
+.btn-lite:hover{
+    background:rgba(255,255,255,0.12);
+    transform:translateY(-2px);
+}
+
+
+.btn-lite{
+    display:inline-block;
+    margin-top:10px;
+    padding:10px 20px;
+    border-radius:12px;
+    background:rgba(255,0,0,0.08);
+    border:1px solid rgba(255,0,0,0.4);
+    color:#fecaca;
+    font-weight:900;
+    text-decoration:none;
+    transition:0.2s;
+    animation:redBlink 1s infinite;
+}
+@keyframes redBlink{
+    0%,100%{opacity:1;box-shadow:0 0 5px rgba(255,0,0,0.5);}
+    50%{opacity:0.4;box-shadow:0 0 20px rgba(255,0,0,1);}
+}
+.btn-lite:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 25px rgba(255,0,0,1);
+}
+
 </style>
 </head>
 <body>
@@ -634,6 +675,9 @@ html {
 <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
 <a class="btn-zalo" href="https://byvn.net/3J9P" target="_blank">
 ZALO(NHẤN VÀO ĐỂ LIÊN HỆ CHỈ KHI BUỔI TỐI CUỐI TRƯỚC KHI VẪN KHÔNG THẤY DANH SÁCH)
+</a>
+<a href="ds.html" class="btn-lite">
+⚡ Xài bản không hiệu ứng chỉ tập trung tra danh sách
 </a>
 </div>
 <br/>
