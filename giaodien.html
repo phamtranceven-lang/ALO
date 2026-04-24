@@ -1,16 +1,15 @@
 
 <!DOCTYPE html>
+
 <html lang="vi">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>QUOC BAO</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<title>QUOC BAO</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
         * {
             box-sizing: border-box;
             outline: none;
@@ -1140,11 +1139,39 @@
             .study-actions a,.study-actions button{width:100%}
             .study-card h1{font-size:31px}
         }
-    </style>
+    
+
+.custom-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+width:100%;
+max-width:1400px;
+}
+
+.left-col{
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+.right-col{
+display:flex;
+flex-direction:column;
+}
+
+.right-col .dashboard-panel{
+height:100%;
+}
+
+@media(max-width:900px){
+.custom-grid{
+grid-template-columns:1fr;
+}
+}
+</style>
 </head>
-
 <body>
-
 <button id="copyBtn" style="
 position:fixed;
 top:15px;
@@ -1159,7 +1186,6 @@ font-weight:700;
 cursor:pointer;
 box-shadow:0 8px 20px rgba(0,0,0,.3);
 ">📋 Copy</button>
-
 <script>
 document.getElementById('copyBtn').onclick = function(){
     const text = `Mình đã upload file sẵn. Hãy tự mở file đó, sửa trực tiếp theo yêu cầu trong cuộc chat, rồi trả lại **file đã sửa**.
@@ -1187,8 +1213,7 @@ Kết quả trả về chỉ cần:
     setTimeout(()=> this.innerText = "📋 Copy",1500);
 }
 </script>
-
-    <script>
+<script>
         if (window.self !== window.top) {
             document.body.style.minHeight = "100vh";
             document.body.style.height = "auto";
@@ -1196,180 +1221,148 @@ Kết quả trả về chỉ cần:
             document.body.style.overflowX = "hidden";
         }
     </script>
+<div class="main-container">
 
-    <div class="main-container">
-
-        </div>
-
-        <div class="search-section-wrapper">
-            <div class="search-box">
-
-                <a href="/" class="action-btn" title=".">
-                    <i class="fa-solid fa-person-dress"></i>
-                </a>
-
-                <div class="input-wrapper">
-                    <input type="text" id="searchInput" placeholder="Nhập từ khóa (Ví dụ: học phí, điểm F)..."
-                        autocomplete="off">
-                    <span id="resultCounter"></span>
-                    <button id="clearButton" title="Xóa">×</button>
-                    <div id="suggestionsWrapper"></div>
-                </div>
-
-                <a href="camera.html" class="action-btn" title="Camera">
-                    <i class="fa-solid fa-camera"></i>
-                </a>
-
-            </div>
-        </div>
-
-        <!-- MOVED DOWN -->
-
-<div class="dashboard-wrap">
-    <div class="dashboard-grid">
-        <section class="dashboard-panel">
-            <div class="dashboard-panel-head">
-                <h3 class="dashboard-panel-title">📅 Lịch thi</h3>
-            </div>
-            <div class="dashboard-panel-body" id="live-lichthi-panel"></div>
-        </section>
-
-        <section class="dashboard-panel">
-            <div class="dashboard-panel-head">
-                <h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
-            </div>
-            <div class="dashboard-panel-body" id="live-danhsach-panel"></div>
-        </section>
-    </div>
-</div>
-
+<div class="custom-grid">
+<div class="left-col">
 <div class="my-subjects-section">
-            <h3 class="my-subjects-title">📚 Môn đang học của tôi</h3>
-            <p class="my-subjects-desc">Nhập mã môn đang học, lưu lại để mở nhanh lịch thi và danh sách thi của riêng bạn.</p>
+<h3 class="my-subjects-title">📚 Môn đang học của tôi</h3>
+<p class="my-subjects-desc">Nhập mã môn đang học, lưu lại để mở nhanh lịch thi và danh sách thi của riêng bạn.</p>
+<div class="my-row">
+<input id="mySubjectInput" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy" type="text"/>
+<button onclick="addMySubject(); renderLivePanels();" type="button">Thêm</button>
+<button class="secondary" onclick="saveMySubjects(); saveSharedDateFilter(document.getElementById('mainFromDate')?.value || '', document.getElementById('mainToDate')?.value || ''); updateDateFilterSummary(); renderLivePanels();" type="button">Lưu</button>
+<button class="secondary" onclick="clearMySubjects(); renderLivePanels();" type="button">Xóa hết</button>
+</div>
+<div class="my-tags" id="mySubjectsList"></div>
+<div class="my-row date-filter-row">
+<div class="date-filter-field">
+<label for="mainFromDate">Từ ngày</label>
+<input id="mainFromDate" type="date"/>
+</div>
+<div class="date-filter-field">
+<label for="mainToDate">Đến ngày</label>
+<input id="mainToDate" type="date"/>
+</div>
+<div class="date-filter-actions">
+<button class="secondary" onclick="clearSharedDateFilter();" type="button">Xóa lọc ngày</button>
+</div>
+</div>
+<div class="date-filter-summary" id="mainDateFilterSummary">Đang xem toàn bộ ngày thi và danh sách thi.</div>
+<div class="my-row" style="margin-top:14px;">
+<button class="green" onclick="openWithSubjects('lichthi.html')" type="button">📅 Xem lịch thi</button>
+<button class="green" onclick="openWithSubjects('danhsachthi.html')" type="button">📝 Xem danh sách thi</button>
+</div>
+</div><section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+</div>
+<div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+</section></div>
+<div class="right-col">
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+</div>
+<div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+</section></div>
+</div>
+</div>
+<div class="search-section-wrapper">
+<div class="search-box">
+<a class="action-btn" href="/" title=".">
+<i class="fa-solid fa-person-dress"></i>
+</a>
+<div class="input-wrapper">
+<input autocomplete="off" id="searchInput" placeholder="Nhập từ khóa (Ví dụ: học phí, điểm F)..." type="text"/>
+<span id="resultCounter"></span>
+<button id="clearButton" title="Xóa">×</button>
+<div id="suggestionsWrapper"></div>
+</div>
+<a class="action-btn" href="camera.html" title="Camera">
+<i class="fa-solid fa-camera"></i>
+</a>
+</div>
+</div>
+<!-- MOVED DOWN -->
 
-            <div class="my-row">
-                <input id="mySubjectInput" type="text" placeholder="Ví dụ: CSE201 hoặc nhập nhiều môn ngăn cách bằng dấu phẩy">
-                <button type="button" onclick="addMySubject(); renderLivePanels();">Thêm</button>
-                <button type="button" class="secondary" onclick="saveMySubjects(); saveSharedDateFilter(document.getElementById('mainFromDate')?.value || '', document.getElementById('mainToDate')?.value || ''); updateDateFilterSummary(); renderLivePanels();">Lưu</button>
-                <button type="button" class="secondary" onclick="clearMySubjects(); renderLivePanels();">Xóa hết</button>
-            </div>
 
-            <div id="mySubjectsList" class="my-tags"></div>
 
-            <div class="my-row date-filter-row">
-                <div class="date-filter-field">
-                    <label for="mainFromDate">Từ ngày</label>
-                    <input id="mainFromDate" type="date">
-                </div>
-                <div class="date-filter-field">
-                    <label for="mainToDate">Đến ngày</label>
-                    <input id="mainToDate" type="date">
-                </div>
-                <div class="date-filter-actions">
-                    <button type="button" class="secondary" onclick="clearSharedDateFilter();">Xóa lọc ngày</button>
-                </div>
-            </div>
-
-            <div id="mainDateFilterSummary" class="date-filter-summary">Đang xem toàn bộ ngày thi và danh sách thi.</div>
-
-            <div class="my-row" style="margin-top:14px;">
-                <button type="button" class="green" onclick="openWithSubjects('lichthi.html')">📅 Xem lịch thi</button>
-                <button type="button" class="green" onclick="openWithSubjects('danhsachthi.html')">📝 Xem danh sách thi</button>
-            </div>
-        </div>
-
-        <div class="dashboard-wrap">
+<div class="dashboard-grid">
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📅 Lịch thi</h3>
+<div class="dashboard-panel-sub">Khung trái hiển thị trực tiếp lịch thi ngay trong trang này.</div>
+</div>
+<div class="dashboard-panel-body" id="live-lichthi-panel"></div>
+<div class="dashboard-panel-actions">
+<button class="dashboard-btn left" onclick="openWithSubjects('lichthi.html')" type="button">Mở toàn bộ lịch thi</button>
+</div>
+</section>
+<section class="dashboard-panel">
+<div class="dashboard-panel-head">
+<h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
+<div class="dashboard-panel-sub">Khung phải hiển thị trực tiếp danh sách thi ngay trong trang này.</div>
+</div>
+<div class="dashboard-panel-body" id="live-danhsach-panel"></div>
+<div class="dashboard-panel-actions">
+<button class="dashboard-btn right" onclick="openWithSubjects('danhsachthi.html')" type="button">Mở toàn bộ danh sách thi</button>
+</div>
+</section>
 </div>
 
-            <div class="dashboard-grid">
-                <section class="dashboard-panel">
-                    <div class="dashboard-panel-head">
-                        <h3 class="dashboard-panel-title">📅 Lịch thi</h3>
-                        <div class="dashboard-panel-sub">Khung trái hiển thị trực tiếp lịch thi ngay trong trang này.</div>
-                    </div>
-                    <div class="dashboard-panel-body" id="live-lichthi-panel"></div>
-                    <div class="dashboard-panel-actions">
-                        <button type="button" class="dashboard-btn left" onclick="openWithSubjects('lichthi.html')">Mở toàn bộ lịch thi</button>
-                    </div>
-                </section>
-
-                <section class="dashboard-panel">
-                    <div class="dashboard-panel-head">
-                        <h3 class="dashboard-panel-title">📝 Danh sách thi</h3>
-                        <div class="dashboard-panel-sub">Khung phải hiển thị trực tiếp danh sách thi ngay trong trang này.</div>
-                    </div>
-                    <div class="dashboard-panel-body" id="live-danhsach-panel"></div>
-                    <div class="dashboard-panel-actions">
-                        <button type="button" class="dashboard-btn right" onclick="openWithSubjects('danhsachthi.html')">Mở toàn bộ danh sách thi</button>
-                    </div>
-                </section>
-            </div>
-        </div>
-
-        <div id="resultDisplay"></div>
-
-        <div class="study-section">
-            <div class="bg-grid"></div>
-            <div class="study-wrap">
-                <div class="study-card">
-                    <div class="study-hero-title">
-                        <div class="study-logo">⚡</div>
-                        <div>
-                            <h1>Kho tài liệu học nhóm</h1>
-                            <p class="study-desc study-muted">Đã nâng cấp để tra cứu trực tiếp từ file <b>data.json</b>. Bạn có thể giữ tài liệu mẫu cũ hoặc nạp dữ liệu lịch thi đã crawl để tìm nhanh hơn.</p>
-                        </div>
-                    </div>
-
-                    <div class="study-stats">
-                        <div class="study-stat"><span class="study-muted">Tổng tài liệu</span><strong id="studyTotalStat">0</strong></div>
-                        <div class="study-stat"><span class="study-muted">Đang hiển thị</span><strong id="studyVisibleStat">0</strong></div>
-                        <div class="study-stat"><span class="study-muted">Danh mục</span><strong id="studyCategoryStat">All</strong></div>
-                        <div class="study-stat"><span class="study-muted">Nguồn dữ liệu</span><strong id="studyModeStat">Mẫu</strong></div>
-                    </div>
-
-                    <div class="study-search-row">
-                        <input id="studySearchInput" class="study-search" type="text" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." />
-                        <button class="study-btn secondary" id="studySortBtn">A → Z</button>
-                        <button class="study-btn secondary" id="studyClearBtn">Xóa tìm kiếm</button>
-                    </div>
-
-                    <div class="study-picker-row">
-                        <input id="studyFileInput" class="study-file-picker" type="file" accept=".json,application/json" />
-                        <button class="study-btn secondary" id="studySampleBtn">Dùng dữ liệu mẫu</button>
-                    </div>
-
-                    <div style="margin-top:12px;color:var(--muted);font-size:13px;">
+<div id="resultDisplay"></div>
+<div class="study-section">
+<div class="bg-grid"></div>
+<div class="study-wrap">
+<div class="study-card">
+<div class="study-hero-title">
+<div class="study-logo">⚡</div>
+<div>
+<h1>Kho tài liệu học nhóm</h1>
+<p class="study-desc study-muted">Đã nâng cấp để tra cứu trực tiếp từ file <b>data.json</b>. Bạn có thể giữ tài liệu mẫu cũ hoặc nạp dữ liệu lịch thi đã crawl để tìm nhanh hơn.</p>
+</div>
+</div>
+<div class="study-stats">
+<div class="study-stat"><span class="study-muted">Tổng tài liệu</span><strong id="studyTotalStat">0</strong></div>
+<div class="study-stat"><span class="study-muted">Đang hiển thị</span><strong id="studyVisibleStat">0</strong></div>
+<div class="study-stat"><span class="study-muted">Danh mục</span><strong id="studyCategoryStat">All</strong></div>
+<div class="study-stat"><span class="study-muted">Nguồn dữ liệu</span><strong id="studyModeStat">Mẫu</strong></div>
+</div>
+<div class="study-search-row">
+<input class="study-search" id="studySearchInput" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." type="text">
+<button class="study-btn secondary" id="studySortBtn">A → Z</button>
+<button class="study-btn secondary" id="studyClearBtn">Xóa tìm kiếm</button>
+</input></div>
+<div class="study-picker-row">
+<input accept=".json,application/json" class="study-file-picker" id="studyFileInput" type="file">
+<button class="study-btn secondary" id="studySampleBtn">Dùng dữ liệu mẫu</button>
+</input></div>
+<div style="margin-top:12px;color:var(--muted);font-size:13px;">
                         Chọn <b>data.json</b> để nạp dữ liệu lịch thi đã crawl. Bấm <b>Tải về</b> để mở link trực tiếp.
                     </div>
-                </div>
+</div>
+<div class="study-card">
+<div class="study-section-head">
+<h2>Danh mục tài liệu</h2>
+<span class="study-badge">Neon UI</span>
+</div>
+<div class="study-tabs">
+<button class="study-tab active all" data-tab="all">📚 Tất cả</button>
+<button class="study-tab listening" data-tab="listening">🎧 Listening</button>
+<button class="study-tab speaking" data-tab="speaking">🎤 Speaking</button>
+</div>
+<div class="study-files" id="studyFileList"></div>
+</div>
+</div>
+</div>
 
-                <div class="study-card">
-                    <div class="study-section-head">
-                        <h2>Danh mục tài liệu</h2>
-                        <span class="study-badge">Neon UI</span>
-                    </div>
-
-                    <div class="study-tabs">
-                        <button class="study-tab active all" data-tab="all">📚 Tất cả</button>
-                        <button class="study-tab listening" data-tab="listening">🎧 Listening</button>
-                        <button class="study-tab speaking" data-tab="speaking">🎤 Speaking</button>
-                    </div>
-
-                    <div id="studyFileList" class="study-files"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer">© Thông tin chỉ mang tính chất tham khảo & hỗ trợ cộng đồng</div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://phamtranceven-lang.github.io/ALO/database.js"></script>
-    <script src="https://phamtranceven-lang.github.io/ALO/script.js"></script>
-    <script src="my-subjects.js"></script>
-
-    <script>
+<div class="footer">© Thông tin chỉ mang tính chất tham khảo &amp; hỗ trợ cộng đồng</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://phamtranceven-lang.github.io/ALO/database.js"></script>
+<script src="https://phamtranceven-lang.github.io/ALO/script.js"></script>
+<script src="my-subjects.js"></script>
+<script>
         const searchInputDemo = document.getElementById('searchInput');
         const clearButtonDemo = document.getElementById('clearButton');
 
@@ -1819,7 +1812,6 @@ Kết quả trả về chỉ cần:
         studyRender();
         hookLivePanels();
     </script>
- <script src="vien-7mau-tuyet.js"></script>
+<script src="vien-7mau-tuyet.js"></script>
 </body>
-
 </html>
