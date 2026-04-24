@@ -1625,7 +1625,7 @@ Kết quả:
             let finalSubjects = subjects;
             if (page === "lichthi.html") {
                 finalSubjects = subjects.map(formatSubjectForLichThi);
-            } else if (page === "danhsachthi.html" || page === "ds.html") {
+            } else if (page === "danhsachthi.html" || page === "danhsachthi.html") {
                 finalSubjects = subjects.map(formatSubjectForDanhSachThi);
             }
 
@@ -1653,7 +1653,7 @@ Kết quả:
             }
 
             const leftUrl = buildPageUrl("lichthi.html", subjects);
-            const rightUrl = buildPageUrl("ds.html", subjects);
+            const rightUrl = buildPageUrl("danhsachthi.html", subjects);
 
             left.innerHTML = `
                 <div class="dashboard-frame-wrap">
