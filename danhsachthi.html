@@ -86,12 +86,18 @@
         #search-box {
             width: 100%;
             padding: 14px 16px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 2px solid transparent;
             border-radius: 14px;
             outline: none;
             font-size: 16px;
-            background: rgba(255,255,255,0.04);
             color: white;
+            background-image:
+                linear-gradient(rgba(15,23,42,0.96), rgba(15,23,42,0.96)),
+                linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet, red);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            background-size: 100% 100%, 300% 100%;
+            animation: rainbowSearchBorder 4s linear infinite;
         }
 
         #search-box::placeholder {
@@ -99,8 +105,13 @@
         }
 
         #search-box:focus {
-            border-color: rgba(59,130,246,0.6);
-            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+            border-color: transparent;
+            box-shadow: 0 0 0 4px rgba(34,211,238,0.16), 0 0 20px rgba(250,204,21,0.22);
+        }
+
+        @keyframes rainbowSearchBorder {
+            0% { background-position: 0 0, 0% 50%; }
+            100% { background-position: 0 0, 300% 50%; }
         }
 
         .date-filter-row {
@@ -346,6 +357,14 @@
             border-color: rgba(239,68,68,0.35);
         }
 
+        .refresh-countdown {
+            margin-top: 6px;
+            color: #67e8f9;
+            font-size: 12px;
+            font-weight: 800;
+            text-shadow: 0 0 8px rgba(34,211,238,0.35);
+        }
+
         .fab-top {
             position: fixed;
             right: 18px;
@@ -584,6 +603,13 @@
     cursor:pointer;
     box-shadow:0 0 18px rgba(34,211,238,0.18);
     transition:.2s;
+    animation:pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow{
+    0%{box-shadow:0 0 10px rgba(34,211,238,0.2);}
+    50%{box-shadow:0 0 25px rgba(34,211,238,0.6);}
+    100%{box-shadow:0 0 10px rgba(34,211,238,0.2);}
 }
 
 .rules-btn:hover{
@@ -613,10 +639,26 @@
     overflow:auto;
     border-radius:22px;
     padding:22px;
-    background:linear-gradient(180deg, rgba(30,20,42,0.98), rgba(15,23,42,0.98));
-    border:1px solid rgba(239,68,68,0.35);
-    box-shadow:0 25px 80px rgba(0,0,0,.55), 0 0 35px rgba(34,211,238,.16);
+    border:2px solid transparent;
+    background-image:
+        linear-gradient(180deg, rgba(30,20,42,0.98), rgba(15,23,42,0.98)),
+        linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet, red);
+    background-origin:border-box;
+    background-clip:padding-box, border-box;
+    background-size:100% 100%, 300% 100%;
+    animation:rulesCardRainbow 4s linear infinite, rulesCardFloat 2.4s ease-in-out infinite;
+    box-shadow:0 25px 80px rgba(0,0,0,.55), 0 0 30px rgba(34,211,238,.28), 0 0 45px rgba(250,204,21,.18);
     text-align:center;
+}
+
+@keyframes rulesCardRainbow{
+    0%{background-position:0 0, 0% 50%;}
+    100%{background-position:0 0, 300% 50%;}
+}
+
+@keyframes rulesCardFloat{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-4px) scale(1.01);}
 }
 
 .rules-head{
@@ -653,10 +695,10 @@
     line-height:1.65;
 }
 
-.rules-line-yellow{color:#facc15;font-weight:900;}
-.rules-line-pink{color:#fb7185;font-weight:900;}
-.rules-line-green{color:#22c55e;font-weight:900;}
-.rules-line-blue{color:#a78bfa;font-weight:900;}
+.rules-line-pink{color:#fb7185;font-weight:900;text-shadow:0 0 8px rgba(251,113,133,0.25);}
+.rules-line-yellow{color:#facc15;font-weight:900;text-shadow:0 0 8px rgba(250,204,21,0.25);}
+.rules-line-green{color:#22c55e;font-weight:900;text-shadow:0 0 8px rgba(34,197,94,0.25);}
+.rules-line-blue{color:#a78bfa;font-weight:900;text-shadow:0 0 8px rgba(167,139,250,0.25);}
 
 </style>
 </head>
@@ -685,7 +727,7 @@
 <div class="hero-inner">
 <h1>DANH SÁCH THI</h1>
 <div id="report-bar" class="report-bar">📊 Đang thống kê...</div>
-<button class="rules-btn" id="rules-open" type="button">📌 Quy tắc và mẹo khi tra danh sách</button>
+<button class="rules-btn" id="rules-open" type="button">📌 Xem ngay quy tắc &amp; mẹo tra danh sách (tránh sót môn!)</button>
 <div class="search-box">
 <input autocomplete="off" autofocus="" id="search-box" placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03" type="text"/>
 
@@ -709,6 +751,9 @@
         let showingTodayOnly = false;
         let selectedFromDate = "";
         let selectedToDate = "";
+        let nextRefreshAt = Date.now() + CONFIG.REFRESH_RATE;
+        let lastStatusText = "Hệ thống đang quét danh sách";
+        let lastStatusIsError = false;
 
         function copyPhone() {
             navigator.clipboard.writeText("0589363333")
@@ -785,10 +830,28 @@
             return true;
         }
 
-        function setStatus(text, isError = false) {
+        function getCountdownText() {
+            const remainMs = Math.max(0, nextRefreshAt - Date.now());
+            const remainSec = Math.ceil(remainMs / 1000);
+            return `⏳ Còn ${remainSec} giây nữa sẽ tự động tìm dữ liệu mới`;
+        }
+
+        function renderStatus() {
             const el = document.getElementById("status");
-            el.textContent = text;
-            el.classList.toggle("error", isError);
+            if (!el) return;
+            el.innerHTML = `${escapeHtml(lastStatusText)}<div class="refresh-countdown" id="refresh-countdown">${escapeHtml(getCountdownText())}</div>`;
+            el.classList.toggle("error", lastStatusIsError);
+        }
+
+        function setStatus(text, isError = false) {
+            lastStatusText = text;
+            lastStatusIsError = isError;
+            renderStatus();
+        }
+
+        function startCountdown() {
+            renderStatus();
+            setInterval(renderStatus, 1000);
         }
 
         function parseUploadDate(str) {
@@ -872,7 +935,7 @@
             updateStats();
 
             if (!data.length) {
-                body.innerHTML = `<div class="empty-state">Không có dữ liệu.</div>`;
+                body.innerHTML = `<div class="empty-state">CHƯA THẤY DANH SÁCH BÊN TRƯỜNG HOẶC BẠN GÕ SAI CÁCH, VÍ DỤ HỌC ENG128D THÌ GÕ ENG128 THÔI</div>`;
                 return;
             }
 
@@ -980,6 +1043,7 @@
                 applySearch(document.getElementById("search-box").value);
 
                 const maxPage = allExams.reduce((max, item) => Math.max(max, Number(item.page || 0)), 0);
+                nextRefreshAt = Date.now() + CONFIG.REFRESH_RATE;
                 setStatus(`Online • ${allExams.length} dòng • quét tới trang ${maxPage} • cập nhật lúc ${new Date().toLocaleTimeString("vi-VN")}`);
             } catch (e) {
                 console.error("FETCH ERROR:", e);
@@ -1072,6 +1136,7 @@ if (shareBtn) shareBtn.addEventListener("click", shareSearch);
 input.addEventListener("input", e => applySearch(e.target.value));
 
             setupFab();
+            startCountdown();
             await fetchData();
             setInterval(fetchData, CONFIG.REFRESH_RATE);
         }
