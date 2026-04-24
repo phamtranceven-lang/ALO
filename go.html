@@ -1,1 +1,34 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Redirect</title>
+</head>
+
+<body style="background:#0b1120;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif">
+
+<div>🔗 Đang chuyển hướng...</div>
+
+<script>
+const url = new URLSearchParams(location.search).get("u");
+
+if(url){
+    try{
+        const decoded = decodeURIComponent(url);
+
+        if(decoded.startsWith("http")){
+            location.href = decoded;
+        }else{
+            document.body.innerHTML = "❌ Link không hợp lệ";
+        }
+    }catch(e){
+        document.body.innerHTML = "❌ Link lỗi";
+    }
+}else{
+    document.body.innerHTML = "❌ Thiếu link";
+}
+</script>
+
+</body>
+</html>
