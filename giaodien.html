@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 
 <html lang="vi">
@@ -1353,6 +1354,134 @@ Kết quả:
 <script src="https://phamtranceven-lang.github.io/ALO/database.js"></script>
 <script src="https://phamtranceven-lang.github.io/ALO/script.js"></script>
 <script src="my-subjects.js"></script>
+
+<script>
+/* FIX LƯU MÔN: lưu vào localStorage chắc chắn, reload không mất */
+(function(){
+    const KEY = "mySubjects";
+
+    function cleanSubject(s){
+        return String(s || "")
+            .trim()
+            .toUpperCase()
+            .replace(/\s+/g, "");
+    }
+
+    function readSubjects(){
+        try{
+            const arr = JSON.parse(localStorage.getItem(KEY) || "[]");
+            return Array.isArray(arr) ? arr.map(cleanSubject).filter(Boolean) : [];
+        }catch(e){
+            return [];
+        }
+    }
+
+    function writeSubjects(arr){
+        const unique = [...new Set((arr || []).map(cleanSubject).filter(Boolean))];
+        localStorage.setItem(KEY, JSON.stringify(unique));
+        return unique;
+    }
+
+    window.renderMySubjects = function(){
+        const box = document.getElementById("mySubjectsList");
+        if(!box) return;
+
+        const subjects = readSubjects();
+
+        if(!subjects.length){
+            box.innerHTML = '<div class="my-empty">Chưa lưu môn nào.</div>';
+            return;
+        }
+
+        box.innerHTML = subjects.map(s => `
+            <span class="my-tag">
+                ${s}
+                <button type="button" onclick="removeMySubject('${s}')">×</button>
+            </span>
+        `).join("");
+    };
+
+    window.addMySubject = function(){
+        const input = document.getElementById("mySubjectInput");
+        const raw = input ? input.value : "";
+
+        const adding = String(raw || "")
+            .split(",")
+            .map(cleanSubject)
+            .filter(Boolean);
+
+        if(!adding.length){
+            alert("Nhập mã môn trước");
+            return;
+        }
+
+        const subjects = writeSubjects([...readSubjects(), ...adding]);
+
+        if(input) input.value = "";
+        renderMySubjects();
+
+        if(typeof renderLivePanels === "function"){
+            setTimeout(renderLivePanels, 50);
+        }
+
+        return subjects;
+    };
+
+    window.saveMySubjects = function(){
+        const input = document.getElementById("mySubjectInput");
+        const raw = input ? input.value : "";
+
+        const adding = String(raw || "")
+            .split(",")
+            .map(cleanSubject)
+            .filter(Boolean);
+
+        const subjects = writeSubjects([...readSubjects(), ...adding]);
+
+        if(input) input.value = "";
+        renderMySubjects();
+
+        if(typeof renderLivePanels === "function"){
+            setTimeout(renderLivePanels, 50);
+        }
+
+        alert("Đã lưu môn. Reload web không mất.");
+        return subjects;
+    };
+
+    window.removeMySubject = function(subject){
+        const remove = cleanSubject(subject);
+        const subjects = readSubjects().filter(s => s !== remove);
+        writeSubjects(subjects);
+        renderMySubjects();
+
+        if(typeof renderLivePanels === "function"){
+            setTimeout(renderLivePanels, 50);
+        }
+    };
+
+    window.clearMySubjects = function(){
+        localStorage.removeItem(KEY);
+        renderMySubjects();
+
+        if(typeof renderLivePanels === "function"){
+            setTimeout(renderLivePanels, 50);
+        }
+    };
+
+    window.addEventListener("DOMContentLoaded", function(){
+        renderMySubjects();
+    });
+
+    window.addEventListener("load", function(){
+        renderMySubjects();
+        if(typeof renderLivePanels === "function"){
+            setTimeout(renderLivePanels, 100);
+        }
+    });
+})();
+</script>
+
 <script>
         const searchInputDemo = document.getElementById('searchInput');
         const clearButtonDemo = document.getElementById('clearButton');
