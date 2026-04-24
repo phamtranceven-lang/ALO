@@ -1412,7 +1412,7 @@ Kết quả trả về chỉ cần:
                 .trim()
                 .toUpperCase()
                 .replace(/\s+/g, '')
-                .replace(/^([A-Z\-]+)(\d+)([A-Z]+)$/i, '$1$2');
+                .replace(/^([A-Z]+\d+)[A-Z]+$/i, '$1');
         }
 
 
