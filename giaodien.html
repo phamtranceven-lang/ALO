@@ -1169,6 +1169,21 @@ height:100%;
 grid-template-columns:1fr;
 }
 }
+
+
+.main-container{
+align-items:stretch;
+}
+
+.custom-grid{
+grid-template-columns:520px 1fr;
+max-width:none;
+}
+
+.right-col{
+width:100%;
+}
+
 </style>
 </head>
 <body>
@@ -1222,7 +1237,6 @@ Kết quả trả về chỉ cần:
         }
     </script>
 <div class="main-container">
-
 <div class="custom-grid">
 <div class="left-col">
 <div class="my-subjects-section">
@@ -1285,9 +1299,6 @@ Kết quả trả về chỉ cần:
 </div>
 </div>
 <!-- MOVED DOWN -->
-
-
-
 <div class="dashboard-grid">
 <section class="dashboard-panel">
 <div class="dashboard-panel-head">
@@ -1310,7 +1321,6 @@ Kết quả trả về chỉ cần:
 </div>
 </section>
 </div>
-
 <div id="resultDisplay"></div>
 <div class="study-section">
 <div class="bg-grid"></div>
@@ -1330,14 +1340,14 @@ Kết quả trả về chỉ cần:
 <div class="study-stat"><span class="study-muted">Nguồn dữ liệu</span><strong id="studyModeStat">Mẫu</strong></div>
 </div>
 <div class="study-search-row">
-<input class="study-search" id="studySearchInput" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." type="text">
+<input class="study-search" id="studySearchInput" placeholder="Tìm theo tên tài liệu, mã môn, ngày thi hoặc ghi chú..." type="text"/>
 <button class="study-btn secondary" id="studySortBtn">A → Z</button>
 <button class="study-btn secondary" id="studyClearBtn">Xóa tìm kiếm</button>
-</input></div>
+</div>
 <div class="study-picker-row">
-<input accept=".json,application/json" class="study-file-picker" id="studyFileInput" type="file">
+<input accept=".json,application/json" class="study-file-picker" id="studyFileInput" type="file"/>
 <button class="study-btn secondary" id="studySampleBtn">Dùng dữ liệu mẫu</button>
-</input></div>
+</div>
 <div style="margin-top:12px;color:var(--muted);font-size:13px;">
                         Chọn <b>data.json</b> để nạp dữ liệu lịch thi đã crawl. Bấm <b>Tải về</b> để mở link trực tiếp.
                     </div>
@@ -1356,7 +1366,6 @@ Kết quả trả về chỉ cần:
 </div>
 </div>
 </div>
-
 <div class="footer">© Thông tin chỉ mang tính chất tham khảo &amp; hỗ trợ cộng đồng</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://phamtranceven-lang.github.io/ALO/database.js"></script>
