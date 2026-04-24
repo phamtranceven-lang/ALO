@@ -1201,81 +1201,36 @@ font-weight:700;
 cursor:pointer;
 box-shadow:0 8px 20px rgba(0,0,0,.3);
 ">📋 Copy</button>
+
 <script>
-(function () {
-    const COPY_TEXT = 'Mình đã upload file sẵn. Hãy tự mở file đó, sửa trực tiếp theo yêu cầu trong cuộc chat, rồi trả lại **file đã sửa**.
+document.getElementById("copyBtn").addEventListener("click", function(){
+    const text = `Mình đã upload file sẵn. Hãy tự mở file đó, sửa trực tiếp theo yêu cầu trong cuộc chat, rồi trả lại file đã sửa.
 
-Cách làm việc mình muốn:
+Cách làm việc:
+- Tự đọc file upload
+- Tự chỉnh trực tiếp trong file
+- Trả lại file đã sửa
 
-* Tự đọc file upload
-* Tự chỉnh trực tiếp trong file
-* Trả lại đúng file đã sửa để tải về
-* Nếu chỉ sửa 1 file thì trả đúng 1 file đó
-* Nếu là HTML/CSS/JS thì giữ nguyên cấu trúc cũ, chỉ sửa phần cần thiết
-* Không chỉ hướng dẫn
-* Không chỉ đưa snippet rời
-* Không hiện code Python nội bộ, code xử lý file, hay log thao tác
-* Không cần giải thích dài
-
-Kết quả trả về chỉ cần:
-
+Kết quả:
 1. file đã sửa
-2. tóm tắt rất ngắn những gì đã sửa';
+2. tóm tắt ngắn`;
 
-    function fallbackCopy(text) {
+    navigator.clipboard.writeText(text).then(()=>{
+        this.innerText = "✅ Đã copy";
+        setTimeout(()=> this.innerText = "📋 Copy",1500);
+    }).catch(()=>{
         const ta = document.createElement("textarea");
         ta.value = text;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "fixed";
-        ta.style.top = "0";
-        ta.style.left = "0";
-        ta.style.width = "1px";
-        ta.style.height = "1px";
-        ta.style.opacity = "0";
-        ta.style.zIndex = "999999";
         document.body.appendChild(ta);
-        ta.focus();
         ta.select();
-        ta.setSelectionRange(0, ta.value.length);
-
-        let ok = false;
-        try {
-            ok = document.execCommand("copy");
-        } catch (e) {
-            ok = false;
-        }
-
-        document.body.removeChild(ta);
-        return ok;
-    }
-
-    window.addEventListener("load", function () {
-        const btn = document.getElementById("copyBtn");
-        if (!btn) return;
-
-        btn.addEventListener("click", function () {
-            const oldText = btn.innerText;
-
-            if (fallbackCopy(COPY_TEXT)) {
-                btn.innerText = "✅ Đã copy";
-                setTimeout(() => btn.innerText = oldText || "📋 Copy", 1500);
-                return;
-            }
-
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(COPY_TEXT).then(function () {
-                    btn.innerText = "✅ Đã copy";
-                    setTimeout(() => btn.innerText = oldText || "📋 Copy", 1500);
-                }).catch(function () {
-                    prompt("Copy thủ công đoạn này:", COPY_TEXT);
-                });
-            } else {
-                prompt("Copy thủ công đoạn này:", COPY_TEXT);
-            }
-        });
+        document.execCommand("copy");
+        ta.remove();
+        this.innerText = "✅ Đã copy";
+        setTimeout(()=> this.innerText = "📋 Copy",1500);
     });
-})();
+});
 </script>
+
 <script>
         if (window.self !== window.top) {
             document.body.style.minHeight = "100vh";
