@@ -1,11 +1,12 @@
 
 <!DOCTYPE html>
+
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Danh Sách Thi</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Danh Sách Thi</title>
+<style>
         :root {
             --p: #3b82f6;
             --bg: #0f172a;
@@ -456,96 +457,31 @@
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-inner">
-            <h1>DANH SÁCH THI</h1>
-<div class="sub" style="
-    font-weight:700;
-    color:#f87171;
-    background:rgba(239,68,68,0.1);
-    padding:12px;
-    border-radius:12px;
-    border:1px solid rgba(239,68,68,0.3);
-    line-height:1.6;
-">
+<div class="hero">
+<div class="hero-inner">
+<h1>DANH SÁCH THI</h1>
+<div class="search-box">
+<input autocomplete="off" autofocus="" id="search-box" placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03" type="text"/>
 
-⚠️ Danh sách thi có thể sát ngày mới có. Tốt nhất là tra từng ngày và nếu còn 10 tiếng cuối trước khi thi mà không tìm được thì liên hệ
-
-<a href="https://zalo.me/0589363333" target="_blank"
-style="color:#22d3ee; font-weight:900; text-decoration:none;">
-ZALO
-</a>
-
-<span onclick="copyPhone()"
-style="cursor:pointer; color:#facc15; font-weight:900; font-size:16px; animation: glow 1.5s infinite;">
-0589363333
-</span>
-
-<button onclick="openZalo()" style="
-    margin-left:10px;
-    padding:6px 10px;
-    border:none;
-    border-radius:8px;
-    background:#ef4444;
-    color:white;
-    font-weight:700;
-    cursor:pointer;
-">
-🔥 ZALO ( Chỉ liên hệ khi còn 10 tiếng mà không thấy )
-</button>
-
-<br><br>
-
-📌 Danh sách thi được cập nhật từ mới nhất trở đi.<br>
-📌 Sau 1 phút sẽ quét danh sách bên trường 1 lần, nếu có tự khắc sẽ hiện bên này.
-
+<div class="date-filter-row">
+<div class="date-field">
+<label for="from-date">Từ ngày</label>
+<input id="from-date" type="date"/>
 </div>
-
-            <div class="search-box">
-                <input
-                    type="text"
-                    id="search-box"
-                    placeholder="Nhập môn, mã môn, lớp hoặc ngày... ví dụ: his221, chi 267, 14/03"
-                    autocomplete="off"
-                    autofocus
-                />
-
-                <div class="date-filter-row">
-                    <div class="date-field">
-                        <label for="from-date">Từ ngày ( dùng cái này để xem danh sách từ lúc này về sau thôi cho đỡ rối trùng với mấy danh sách cũ ) </label>
-                        <input type="date" id="from-date" />
-                    </div>
-                    <div class="date-field">
-                        <label for="to-date">Đến ngày</label>
-                        <input type="date" id="to-date" />
-                    </div>
-                </div>
-
-                <div class="action-row">
-                    <button class="btn share-btn" id="share-btn">🔗 Share</button>
-                    <button class="btn refresh-btn" id="refresh-btn">🔄 Check lại DANH SÁCH</button>
-                    <button class="btn today-btn" id="today-btn">📅 Xem lịch mới đăng hôm nay</button>
-                    <button class="btn clear-btn" id="clear-cache-btn">🗑️ Xóa cache</button>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-label">Tổng danh sách thi quét được</div>
-                    <div class="stat-value" id="stat-total">0</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container content">
-        <div id="data-body"></div>
-    </div>
-
-    <button id="fab-top" class="fab-top">↑</button>
-    <div id="status" class="status">Hệ thống đang quét danh sách</div>
-
-    <script>
+<div class="date-field">
+<label for="to-date">Đến ngày</label>
+<input id="to-date" type="date"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container content">
+<div id="data-body"></div>
+</div>
+<button class="fab-top" id="fab-top">↑</button>
+<div class="status" id="status">Hệ thống đang quét danh sách</div>
+<script>
         const CONFIG = {
             API: "https://dtu.tapcube2007.workers.dev",
             BASE_URL: "https://pdaotao.duytan.edu.vn/",
@@ -919,7 +855,6 @@ style="cursor:pointer; color:#facc15; font-weight:900; font-size:16px; animation
 
         init();
     </script>
-
-    <script src="vien-7mau-tuyet.js"></script>
+<script src="vien-7mau-tuyet.js"></script>
 </body>
 </html>
