@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="vi">
 
+<html lang="vi">
 <head>
-    <script src="guard.js"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="vip-theme.css">
-    <title>Lịch thi KTHP</title>
-    <link rel="icon" href="https://duytan.edu.vn/images/icon.png" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
+<script src="guard.js"></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="vip-theme.css" rel="stylesheet"/>
+<title>Lịch thi KTHP</title>
+<link href="https://duytan.edu.vn/images/icon.png" rel="icon">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
         :root {
             --primary-color: #d90429;
             --bg-light: #f8f9fa;
@@ -253,64 +253,56 @@
             margin: 2px 0 12px 2px;
         }
     </style>
-</head>
-
+</link></head>
 <body>
-    <div id="toast">
-        <span id="toastMsg">Thông báo</span>
-        <span id="undoLink" onclick="undoClear()" style="display:none;">HOÀN TÁC</span>
-    </div>
-
-    <div class="container">
-        <h1 id="dynamicTitle">HỆ THỐNG TRA CỨU...</h1>
-
-        <div class="search-container">
-            <div class="input-wrapper">
-                <div id="inputMonCount" class="input-count-prefix">0</div>
-                <input type="text" id="searchTermInput" placeholder="Nhập mã môn..." oninput="handleSearchInput()"
-                    onpaste="handlePaste(event)" autocomplete="off" />
-                <button id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
-                <div id="resultStats">0</div>
-            </div>
-            <div class="btn-group">
-                <button id="toggleBtn" class="btn" onclick="toggleViewMode()">🔄 Rút gọn</button>
-                <button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
-            </div>
-        </div>
-
-        <p id="sourceInfo">Đang tải nguồn file...</p>
-
-        <div class="table-wrapper" id="tableWrapper">
-            <div id="captureArea" style="background: white; padding: 10px;">
-                <div class="export-header">
-                    <h2 id="exportTitleText" style="color:var(--primary-color); margin:0;"></h2>
-                    <p id="exportTimeText" style="font-style:italic; color:#555; margin:5px 0 15px 0;"></p>
-                </div>
-                <table id="resultTable">
-                    <thead></thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="100%" style="text-align:center; padding:30px;">Đang tải dữ liệu...</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="conflictWarning" class="conflict-warning"></div>
-                <div id="exportFooter" class="export-footer"
-                    style="margin-top:15px; font-size:12px; color:red; border-top:1px solid #eee; padding-top:10px; font-weight:bold;">
+<div id="toast">
+<span id="toastMsg">Thông báo</span>
+<span id="undoLink" onclick="undoClear()" style="display:none;">HOÀN TÁC</span>
+</div>
+<div class="container">
+<h1 id="dynamicTitle">HỆ THỐNG TRA CỨU...</h1>
+<div class="search-container">
+<div class="input-wrapper">
+<div class="input-count-prefix" id="inputMonCount">0</div>
+<input autocomplete="off" id="searchTermInput" oninput="handleSearchInput()" onpaste="handlePaste(event)" placeholder="Nhập mã môn..." type="text"/>
+<button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+<div id="resultStats">0</div>
+</div>
+<div class="btn-group">
+<button class="btn" id="toggleBtn" onclick="toggleViewMode()">🔄 Đầy đủ</button>
+<button class="btn copy-button" onclick="doCapture()">📸 Ảnh</button>
+</div>
+</div>
+<p id="sourceInfo">Đang tải nguồn file...</p>
+<div class="table-wrapper" id="tableWrapper">
+<div id="captureArea" style="background: white; padding: 10px;">
+<div class="export-header">
+<h2 id="exportTitleText" style="color:var(--primary-color); margin:0;"></h2>
+<p id="exportTimeText" style="font-style:italic; color:#555; margin:5px 0 15px 0;"></p>
+</div>
+<table id="resultTable">
+<thead></thead>
+<tbody>
+<tr>
+<td colspan="100%" style="text-align:center; padding:30px;">Đang tải dữ liệu...</td>
+</tr>
+</tbody>
+</table>
+<div class="conflict-warning" id="conflictWarning"></div>
+<div class="export-footer" id="exportFooter" style="margin-top:15px; font-size:12px; color:red; border-top:1px solid #eee; padding-top:10px; font-weight:bold;">
                     * Nội dung chỉ mang tính chất THAM KHẢO / LT: Phòng lý thuyết; PM: Phòng máy *
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+<script>
         const params = new URLSearchParams(window.location.search);
 
         const EXAM_FILE_URL =
             params.get("src") ||
             "https://phamtranceven-lang.github.io/ALO/639124806022510476.xlsx";
 
-        let EXAM_DATA = [], HEADERS = [], isCompactView = false, lastSearchValue = "";
+        let EXAM_DATA = [], HEADERS = [], isCompactView = true, lastSearchValue = "";
         let FILTER_FROM = "";
         let FILTER_TO = "";
 
@@ -653,7 +645,6 @@
             });
         }
     </script>
-  <script src="vien-7mau-tuyet.js"></script>
+<script src="vien-7mau-tuyet.js"></script>
 </body>
-
 </html>
