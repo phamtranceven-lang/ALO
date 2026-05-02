@@ -1185,7 +1185,13 @@ max-width:none;
 width:100%;
 }
 
+
+.my-row a{
+    display:inline-block;
+    text-decoration:none;
+}
 </style>
+
 </head>
 <body>
 <button id="copyBtn" style="
@@ -1254,20 +1260,7 @@ Kết quả:
 <button class="secondary" onclick="clearMySubjects(); renderLivePanels();" type="button">Xóa hết</button>
 </div>
 <div class="my-tags" id="mySubjectsList"></div>
-<div class="my-row date-filter-row">
-<div class="date-filter-field">
-<label for="mainFromDate">Từ ngày</label>
-<input id="mainFromDate" type="date"/>
-</div>
-<div class="date-filter-field">
-<label for="mainToDate">Đến ngày</label>
-<input id="mainToDate" type="date"/>
-</div>
-<div class="date-filter-actions">
-<button class="secondary" onclick="clearSharedDateFilter();" type="button">Xóa lọc ngày</button>
-</div>
-</div>
-<div class="date-filter-summary" id="mainDateFilterSummary">Đang xem toàn bộ ngày thi và danh sách thi.</div>
+<div class="my-row"><a href="https://phamtranceven-lang.github.io/ALO/hoctuvung.html" target="_blank" class="green">Học từ vựng</a><a href="https://www.bitget.com/vi/futures/usdt/ETHUSDT" target="_blank" class="green">ETH</a><a href="https://www.bitget.com/vi/futures/usdt/SOLUSDT" target="_blank" class="green">SOL</a><a href="https://www.bitget.com/vi/futures/usdt/BNBUSDT" target="_blank" class="green">BNB</a><a href="https://www.bitget.com/vi/futures/usdt/XRPUSDT" target="_blank" class="green">XRP</a></div>
 <div class="my-row" style="margin-top:14px;">
 <button class="green" onclick="openWithSubjects('lichthi.html')" type="button">📅 Xem lịch thi</button>
 <button class="green" onclick="openWithSubjects('danhsachthi.html')" type="button">📝 Xem danh sách thi</button>
