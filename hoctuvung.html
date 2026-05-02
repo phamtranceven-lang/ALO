@@ -288,6 +288,240 @@ body{color:#f8fafc}.input,.select{color:#f8fafc;background:#1f2937;border-color:
   text-align:center;
 }
 
+/* BLAST FIX: JS controls falling so it still works when browser reduces CSS motion */
+.falling-word{will-change:top;}
+.falling-word.animate{animation:none !important;}
+
+
+
+/* FIX Blast 2026-05-02: nền đen + chữ chạm đất tự qua từ khác */
+.blast-game{
+  background:#0b0f19 !important;
+  border:2px solid #334155 !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04) !important;
+}
+.falling-word{
+  box-shadow:none !important;
+}
+
+
+
+/* LEARN FIX 2026-05-02: chọn sai vẫn hiện đáp án đúng màu xanh */
+.choice.correct{
+  border-color:#22c55e !important;
+  background:#dcfce7 !important;
+  color:#064e3b !important;
+}
+.choice.wrong{
+  border-color:#ef4444 !important;
+  background:#fee2e2 !important;
+  color:#7f1d1d !important;
+}
+.choice:disabled{
+  cursor:default;
+  opacity:1;
+}
+
+
+
+/* LEARN PACKS: 10 bộ ngẫu nhiên, mỗi bộ 100 từ */
+.learn-jump-panel{
+  min-height:220px;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.learn-jump-panel h2{
+  font-size:30px;
+  color:#f8fafc;
+  margin-bottom:8px;
+}
+
+.panel.learn-jump-panel.active{
+  display:flex;
+}
+
+.learn-jump-panel p{
+  color:#cbd5e1;
+  font-weight:850;
+  margin-bottom:16px;
+}
+.learn-pack-standalone{
+  margin:26px 0 0;
+  padding:24px;
+  border-radius:28px;
+  background:#1f2937;
+  border:1px solid rgba(96,165,250,.24);
+  scroll-margin-top:18px;
+}
+.learn-pack-layout{
+  display:grid;
+  grid-template-columns:minmax(260px,360px) minmax(0,1fr);
+  gap:20px;
+  align-items:start;
+}
+.learn-pack-box{
+  margin:0;
+  padding:18px;
+  border-radius:22px;
+  background:#0f172a;
+  border:1px solid rgba(96,165,250,.38);
+}
+.learn-pack-top{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:12px;
+  margin-bottom:14px;
+}
+.learn-pack-top strong{
+  color:#e0f2fe;
+  font-size:22px;
+  line-height:1.2;
+  font-weight:950;
+}
+.learn-pack-subtitle{
+  color:#94a3b8;
+  font-size:13px;
+  font-weight:850;
+  line-height:1.45;
+}
+.learn-pack-actions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+}
+.learn-pack-actions .btn{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  font-size:14px;
+}
+.learn-pack-tabs{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin:12px 0 14px;
+  max-height:472px;
+  overflow:auto;
+  padding-right:4px;
+}
+.pack-tab{
+  border:1px solid rgba(96,165,250,.36);
+  background:#111827;
+  color:#dbeafe;
+  border-radius:14px;
+  padding:12px 13px;
+  cursor:pointer;
+  font-weight:950;
+  text-align:left;
+}
+.pack-tab.active{
+  border-color:#00e5ff;
+  background:#0b3340;
+  color:#ffffff;
+}
+.pack-tab small{
+  display:block;
+  margin-top:5px;
+  color:#93c5fd;
+  font-size:12px;
+  font-weight:900;
+}
+.learn-pack-stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+.learn-pack-stat{
+  background:#020617;
+  border:1px solid rgba(148,163,184,.26);
+  border-radius:14px;
+  padding:11px 10px;
+  color:#e5e7eb;
+  font-weight:950;
+  text-align:center;
+}
+.learn-pack-stat b{
+  color:#67e8f9;
+  font-size:20px;
+}
+.learn-pack-stat span{
+  display:block;
+  color:#94a3b8;
+  font-size:12px;
+  margin-top:3px;
+}
+.learn-mode-label{
+  grid-column:1/-1;
+  color:#dbeafe;
+  font-weight:950;
+  text-align:center;
+  padding:8px 10px;
+  border-radius:14px;
+  background:#0b1120;
+  border:1px solid rgba(96,165,250,.24);
+}
+.learn-practice-card{
+  min-height:690px;
+  border-radius:26px;
+  background:#0b0f19;
+  border:1px solid rgba(96,165,250,.28);
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+.learn-practice-card .quiz-box{
+  width:100%;
+  max-width:100%;
+  margin:0;
+}
+.learn-practice-card .question{
+  min-height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 0 22px;
+  padding:24px 14px;
+  border-radius:22px;
+  background:#111827;
+  border:1px solid rgba(96,165,250,.28);
+  color:#00e5ff;
+  font-size:clamp(34px,5vw,62px);
+}
+.learn-practice-card .choices{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+}
+.learn-practice-card .choice{
+  min-height:72px;
+  padding:19px 22px;
+  border-radius:18px;
+  font-size:20px;
+  line-height:1.35;
+}
+.learn-practice-card .score{
+  margin-top:18px;
+  color:#dbeafe;
+  font-size:17px;
+}
+.choice:disabled{
+  cursor:not-allowed;
+}
+@media(max-width:920px){
+  .learn-pack-layout{grid-template-columns:1fr}
+  .learn-pack-tabs{grid-template-columns:repeat(2,1fr);max-height:none;overflow:visible}
+  .learn-practice-card{min-height:auto}
+}
+@media(max-width:620px){
+  .learn-pack-standalone{padding:16px;border-radius:22px}
+  .learn-pack-tabs{grid-template-columns:1fr}
+  .learn-practice-card{padding:16px}
+  .learn-practice-card .choice{font-size:17px}
+}
+
 </style>
 </head>
 <body>
@@ -298,7 +532,13 @@ body{color:#f8fafc}.input,.select{color:#f8fafc;background:#1f2937;border-color:
   <div class="stats"><div class="stat"><b id="statTopics">0</b><span>Chủ đề</span></div><div class="stat"><b id="statWords">0</b><span>Từ đang học</span></div><div class="stat"><b id="statKnown">0</b><span>Đã nhớ</span></div><div class="stat"><b id="statHard">0</b><span>Chưa nhớ</span></div></div>
   <section class="modes"><button class="mode-btn active" onclick="switchMode('flashcards',this)"><span class="icon"></span>Thẻ ghi nhớ</button><button class="mode-btn" onclick="switchMode('learn',this)"><span class="icon"></span>Học</button><button class="mode-btn" onclick="switchMode('test',this)"><span class="icon"></span>Kiểm tra</button><button class="mode-btn" onclick="switchMode('list',this)"><span class="icon"></span>Khối hộp</button><button class="mode-btn" onclick="switchMode('blast',this)"><span class="icon"></span>Blast</button><button class="mode-btn" onclick="switchMode('match',this)"><span class="icon"></span>Ghép thẻ</button></section>
   <section id="flashcards" class="panel active"><div class="flashcard-wrap"><div class="progress" id="flashProgress"></div><div class="flashcard" id="flashcard" onclick="flipCard()"><div class="flash-inner"><div class="front"><strong id="frontText"></strong><div class="pron" id="frontPron"></div><div class="cat" id="frontCat"></div></div><div class="back"><strong id="backText"></strong><div class="pron">Click để lật lại</div></div></div></div><div class="controls"><button class="btn" onclick="prevCard(event)">← Trước</button><button class="btn primary" onclick="nextCard(event)">Tiếp →</button><button class="btn" onclick="speakWord(event)">🔊 Đọc</button><button class="btn" onclick="shuffleCards(event)">Xáo trộn</button><button class="btn danger" onclick="markHard(event)">Chưa nhớ</button><button class="btn" onclick="markKnown(event)">Đã nhớ</button></div></div></section>
-  <section id="learn" class="panel"><div class="quiz-box"><div class="question" id="learnQuestion"></div><div class="choices" id="choices"></div><div class="score" id="learnScore"></div></div></section>
+  <section id="learn" class="panel learn-jump-panel">
+    <div>
+      <h2>Luyện 10 bộ × 100 từ</h2>
+      <p>Phần luyện riêng đã được đưa xuống dưới bảng chính để rộng hơn, dễ nhìn hơn.</p>
+      <button class="btn primary" type="button" onclick="scrollToLearnPacks()">Mở bảng luyện 100 từ ↓</button>
+    </div>
+  </section>
   <section id="test" class="panel"><div class="test-area"><div class="question" id="testQuestion"></div><input class="input" id="testInput" placeholder="Nhập nghĩa tiếng Việt..." onkeydown="if(event.key==='Enter')checkTest()"/><button class="btn primary" onclick="checkTest()">Kiểm tra</button><button class="btn" onclick="newTestQuestion()">Câu khác</button><div class="result" id="testResult"></div></div></section>
   
 <section id="list" class="panel">
@@ -308,6 +548,34 @@ body{color:#f8fafc}.input,.select{color:#f8fafc;background:#1f2937;border-color:
 
   <section id="blast" class="panel"><div class="blast-game"><div class="falling-word" id="fallingWord"></div></div><input class="input" id="blastInput" placeholder="Gõ nghĩa rồi Enter để bắn..." onkeydown="if(event.key==='Enter')checkBlast()"/><div class="score" id="blastScore"></div></section>
   <section id="match" class="panel"><div class="score" id="matchTimer">Thời gian: 0s</div><div class="match-grid"><div class="match-col" id="matchWords"></div><div class="match-col" id="matchMeanings"></div></div><div class="controls" style="margin-top:18px"><button class="btn primary" onclick="startMatch()">Chơi lại</button></div></section>
+
+  <section id="learnPacksStandalone" class="learn-pack-standalone">
+    <div class="learn-pack-layout">
+      <aside class="learn-pack-box">
+        <div class="learn-pack-top">
+          <div>
+            <strong>10 bộ luyện ngẫu nhiên · mỗi bộ 100 từ</strong>
+            <div class="learn-pack-subtitle">Chọn bộ ở dưới, làm từng câu, xem đúng/sai/còn lại. Có thể làm lại riêng câu sai hoặc câu đúng.</div>
+          </div>
+          <div class="learn-pack-actions">
+            <button class="btn primary" type="button" onclick="createLearnPacks(true)">Tạo 10 bộ mới</button>
+            <button class="btn" type="button" onclick="setLearnReviewMode('all')">Làm tiếp bộ này</button>
+            <button class="btn danger" type="button" onclick="setLearnReviewMode('wrong')">Làm lại câu sai</button>
+            <button class="btn" type="button" onclick="setLearnReviewMode('correct')">Làm lại câu đúng</button>
+          </div>
+        </div>
+        <div id="learnPackTabs" class="learn-pack-tabs"></div>
+        <div id="learnPackStats" class="learn-pack-stats"></div>
+      </aside>
+      <div class="learn-practice-card">
+        <div class="quiz-box">
+          <div class="question" id="learnQuestion"></div>
+          <div class="choices" id="choices"></div>
+          <div class="score" id="learnScore"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 <script>
 
@@ -453,7 +721,26 @@ function rebuildAllVocab(){
 let allVocab=[];
 rebuildAllVocab();
 let vocab=[...allVocab],current=0,learnScore=0,learnTotal=0,testCurrent=null,blastCurrent=null,blastScore=0,selectedWord=null,selectedMeaning=null,matchSeconds=0,matchInterval=null,activeMode='flashcards';
+let blastFallRaf=null,blastFallToken=0;
 let listRenderToken=0;
+
+const LEARN_PACKS_KEY='vocabLearnPacks100_v2';
+let learnPacks=[];
+let learnPackIndex=0;
+let learnReviewMode='all';
+let learnQueue=[];
+let learnQueuePos=0;
+let learnCurrentKey='';
+try{
+  learnPacks=JSON.parse(localStorage.getItem(LEARN_PACKS_KEY)||'[]')||[];
+  learnPackIndex=Number(localStorage.getItem('vocabLearnPackIndex')||0)||0;
+  learnReviewMode=localStorage.getItem('vocabLearnReviewMode')||'all';
+}catch(e){
+  learnPacks=[];
+  learnPackIndex=0;
+  learnReviewMode='all';
+}
+
 function normalize(t){return (t||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function saveStatus(){const o={};allVocab.forEach(v=>{if(v.status!=='new')o[v.word]=v.status});localStorage.setItem('vocabStatusByWord',JSON.stringify(o))}
 function initCategories(){
@@ -511,14 +798,25 @@ function refreshActiveMode(){
   if(activeMode==='match')startMatch();
 }
 function updateStats(){document.getElementById('statWords').textContent=vocab.length;document.getElementById('statKnown').textContent=vocab.filter(v=>v.status==='known').length;document.getElementById('statHard').textContent=vocab.filter(v=>v.status==='hard').length}
+function scrollToLearnPacks(){
+  const section=document.getElementById('learnPacksStandalone');
+  ensureLearnPacks();
+  renderLearnPackUI();
+  if(!learnCurrentKey) newLearnQuestion(true);
+  if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function switchMode(id,btn){
   activeMode=id;
+  if(id!=='blast') stopBlastFall();
   if(id!=='list') listRenderToken++;
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(id==='learn')newLearnQuestion();
+  if(id==='learn'){
+    newLearnQuestion();
+    setTimeout(scrollToLearnPacks,80);
+  }
   if(id==='test')newTestQuestion();
   if(id==='list')renderList();
   if(id==='blast')startBlast();
@@ -528,39 +826,229 @@ function safeItem(){if(!vocab.length){return {word:'Không có từ',pron:'',mea
 function renderFlashcard(){const item=safeItem();document.getElementById('frontText').textContent=item.word;document.getElementById('frontPron').textContent=item.pron||'';document.getElementById('frontCat').textContent=item.category||'';document.getElementById('backText').textContent=item.meaning;document.getElementById('flashProgress').textContent=vocab.length?(current+1)+' / '+vocab.length:'0 / 0';document.getElementById('flashcard').classList.remove('flipped');updateStats()}
 function flipCard(){document.getElementById('flashcard').classList.toggle('flipped')}function nextCard(e){e&&e.stopPropagation();if(vocab.length){current=(current+1)%vocab.length;renderFlashcard()}}function prevCard(e){e&&e.stopPropagation();if(vocab.length){current=(current-1+vocab.length)%vocab.length;renderFlashcard()}}function shuffleCards(e){e&&e.stopPropagation();vocab.sort(()=>Math.random()-.5);current=0;renderFlashcard()}function markKnown(e){e&&e.stopPropagation();const it=safeItem();it.status='known';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='known';saveStatus();nextCard(e)}function markHard(e){e&&e.stopPropagation();const it=safeItem();it.status='hard';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='hard';saveStatus();nextCard(e)}function speakWord(e){e&&e.stopPropagation();const u=new SpeechSynthesisUtterance(safeItem().word);u.lang='en-US';speechSynthesis.speak(u)}
 function randomItem(){return vocab[Math.floor(Math.random()*vocab.length)]||safeItem()}function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function learnWordKey(item){
+  return encodeURIComponent(String(item.category||''))+'|'+encodeURIComponent(String(item.word||''))+'|'+encodeURIComponent(String(item.meaning||''));
+}
+function learnItemByKey(key){
+  return allVocab.find(item=>learnWordKey(item)===key) || null;
+}
+function normalizeLearnPacks(){
+  if(!Array.isArray(learnPacks)) learnPacks=[];
+  learnPacks=learnPacks.filter(pack=>pack && Array.isArray(pack.wordKeys)).slice(0,10).map((pack,index)=>({
+    title:pack.title || ('Bộ '+(index+1)),
+    wordKeys:pack.wordKeys.filter(Boolean),
+    answers:(pack.answers && typeof pack.answers==='object') ? pack.answers : {}
+  }));
+  if(learnPackIndex<0 || learnPackIndex>=learnPacks.length) learnPackIndex=0;
+  if(!['all','wrong','correct'].includes(learnReviewMode)) learnReviewMode='all';
+}
+function saveLearnPacks(){
+  normalizeLearnPacks();
+  localStorage.setItem(LEARN_PACKS_KEY,JSON.stringify(learnPacks));
+  localStorage.setItem('vocabLearnPackIndex',String(learnPackIndex));
+  localStorage.setItem('vocabLearnReviewMode',learnReviewMode);
+}
+function getLearnPackSourceWords(){
+  const cat=document.getElementById('categorySelect')?.value || 'all';
+  const q=normalize(document.getElementById('searchBox')?.value || '');
+  let base=allVocab.filter(v=>(cat==='all'||v.category===cat) && v.word && v.meaning && !isMissingMeaning(v.meaning));
+  if(q){
+    let ranked=base.map(v=>({v,rank:searchRank(v,q)})).filter(x=>x.rank>0);
+    if(cat!=='all' && ranked.length===0){
+      ranked=allVocab.map(v=>({v,rank:searchRank(v,q)})).filter(x=>x.rank>0);
+    }
+    ranked.sort((a,b)=>b.rank-a.rank || String(a.v.word||'').localeCompare(String(b.v.word||'')));
+    base=ranked.map(x=>x.v).filter(v=>v.word && v.meaning && !isMissingMeaning(v.meaning));
+  }
+  return base;
+}
+function createLearnPacks(startNow=true){
+  const source=getLearnPackSourceWords();
+  const fallback=allVocab.filter(v=>v.word && v.meaning && !isMissingMeaning(v.meaning));
+  const pool=(source.length?source:fallback);
+  const fullShuffle=shuffle(pool);
+  learnPacks=[];
+  for(let i=0;i<10;i++){
+    let slice=fullShuffle.slice(i*100,i*100+100);
+    if(slice.length<100 && pool.length>=100) slice=shuffle(pool).slice(0,100);
+    if(pool.length<100) slice=shuffle(pool).slice(0,pool.length);
+    learnPacks.push({title:'Bộ '+(i+1),wordKeys:slice.map(learnWordKey),answers:{}});
+  }
+  learnPackIndex=0;
+  learnReviewMode='all';
+  resetLearnQueue();
+  saveLearnPacks();
+  renderLearnPackUI();
+  if(startNow){
+    newLearnQuestion(true);
+    const section=document.getElementById('learnPacksStandalone');
+    if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+function ensureLearnPacks(){
+  normalizeLearnPacks();
+  if(learnPacks.length!==10 || !learnPacks.some(pack=>pack.wordKeys.length)){
+    createLearnPacks(false);
+  }
+  normalizeLearnPacks();
+}
+function learnPackStats(pack){
+  const keys=(pack&&pack.wordKeys)||[];
+  const answers=(pack&&pack.answers)||{};
+  let done=0,correct=0,wrong=0;
+  keys.forEach(key=>{
+    if(answers[key]){
+      done++;
+      if(answers[key]==='correct') correct++;
+      if(answers[key]==='wrong') wrong++;
+    }
+  });
+  return {total:keys.length,done,correct,wrong,left:Math.max(0,keys.length-done)};
+}
+function modeLabel(){
+  if(learnReviewMode==='wrong') return 'Đang làm lại câu sai';
+  if(learnReviewMode==='correct') return 'Đang làm lại câu đúng';
+  return 'Đang làm các câu chưa làm';
+}
+function renderLearnPackUI(){
+  const tabs=document.getElementById('learnPackTabs');
+  const statsBox=document.getElementById('learnPackStats');
+  if(!tabs || !statsBox) return;
+  normalizeLearnPacks();
+  tabs.innerHTML=learnPacks.map((pack,index)=>{
+    const s=learnPackStats(pack);
+    return `<button type="button" class="pack-tab ${index===learnPackIndex?'active':''}" onclick="selectLearnPack(${index})">Bộ ${index+1}<small>${s.done}/${s.total} · sai ${s.wrong}</small></button>`;
+  }).join('');
+  const pack=learnPacks[learnPackIndex];
+  const s=learnPackStats(pack);
+  statsBox.innerHTML=
+    `<div class="learn-pack-stat"><b>${s.done}/${s.total}</b><span>Đã làm</span></div>`+
+    `<div class="learn-pack-stat"><b>${s.correct}</b><span>Đúng</span></div>`+
+    `<div class="learn-pack-stat"><b>${s.wrong}</b><span>Sai</span></div>`+
+    `<div class="learn-pack-stat"><b>${s.left}</b><span>Còn lại</span></div>`+
+    `<div class="learn-mode-label">Bộ ${learnPackIndex+1}/10 · ${modeLabel()}</div>`;
+}
+function selectLearnPack(index){
+  ensureLearnPacks();
+  learnPackIndex=Math.max(0,Math.min(index,learnPacks.length-1));
+  learnReviewMode='all';
+  resetLearnQueue();
+  saveLearnPacks();
+  renderLearnPackUI();
+  newLearnQuestion(true);
+}
+function setLearnReviewMode(mode){
+  learnReviewMode=['all','wrong','correct'].includes(mode)?mode:'all';
+  resetLearnQueue();
+  saveLearnPacks();
+  renderLearnPackUI();
+  newLearnQuestion(true);
+}
+function getLearnQueueKeys(){
+  ensureLearnPacks();
+  const pack=learnPacks[learnPackIndex];
+  if(!pack) return [];
+  const answers=pack.answers||{};
+  const keys=pack.wordKeys.filter(key=>learnItemByKey(key));
+  if(learnReviewMode==='wrong') return keys.filter(key=>answers[key]==='wrong');
+  if(learnReviewMode==='correct') return keys.filter(key=>answers[key]==='correct');
+  return keys.filter(key=>!answers[key]);
+}
+function resetLearnQueue(){
+  learnQueue=shuffle(getLearnQueueKeys());
+  learnQueuePos=0;
+  learnCurrentKey='';
+}
+function learnPackItems(pack){
+  return ((pack&&pack.wordKeys)||[]).map(learnItemByKey).filter(Boolean);
+}
+function updateLearnScoreText(){
+  const scoreEl=document.getElementById('learnScore');
+  if(!scoreEl) return;
+  const pack=learnPacks[learnPackIndex];
+  const s=learnPackStats(pack);
+  learnScore=s.correct;
+  learnTotal=s.done;
+  scoreEl.textContent=`Bộ ${learnPackIndex+1}/10 · Đã làm ${s.done}/${s.total} · Đúng ${s.correct} · Sai ${s.wrong}`;
+}
+function emptyLearnMessage(){
+  const pack=learnPacks[learnPackIndex];
+  const s=learnPackStats(pack);
+  if(!pack || !s.total) return 'Không có từ để tạo bộ luyện';
+  if(learnReviewMode==='wrong') return s.wrong ? 'Đã làm xong phần câu sai 🎉' : 'Chưa có câu sai để làm lại';
+  if(learnReviewMode==='correct') return s.correct ? 'Đã làm xong phần câu đúng 🎉' : 'Chưa có câu đúng để làm lại';
+  return s.left ? 'Đang chuẩn bị câu tiếp theo...' : 'Bộ này đã làm xong 🎉 Bấm “Làm lại câu sai” hoặc “Tạo 10 bộ mới”.';
+}
 function newLearnQuestion(resetScore=false){
   const c=document.getElementById('choices');
-  if(resetScore){learnScore=0;learnTotal=0;}
-  if(!vocab.length){
+  ensureLearnPacks();
+  renderLearnPackUI();
+  if(resetScore) resetLearnQueue();
+
+  if(!vocab.length && !allVocab.length){
     document.getElementById('learnQuestion').textContent='Không có từ trong chủ đề này';
     c.innerHTML='';
-    document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
+    updateLearnScoreText();
     return;
   }
 
-  const correct=randomItem();
-  // Đáp án nhiễu ưu tiên lấy trong chính chủ đề đang chọn để bài học bám sát chủ đề.
-  let wrongPool=shuffle(vocab.filter(v=>v.word!==correct.word && v.meaning!==correct.meaning));
-  if(wrongPool.length<3){
-    wrongPool=shuffle([...wrongPool,...allVocab.filter(v=>v.word!==correct.word && v.meaning!==correct.meaning && !wrongPool.some(w=>w.word===v.word))]);
+  if(!learnQueue.length || learnQueuePos>=learnQueue.length){
+    resetLearnQueue();
   }
-  const opts=shuffle([correct,...wrongPool.slice(0,3)]);
+
+  if(!learnQueue.length){
+    document.getElementById('learnQuestion').textContent=emptyLearnMessage();
+    c.innerHTML='';
+    updateLearnScoreText();
+    return;
+  }
+
+  learnCurrentKey=learnQueue[learnQueuePos];
+  const correct=learnItemByKey(learnCurrentKey);
+  if(!correct){
+    learnQueuePos++;
+    newLearnQuestion(false);
+    return;
+  }
+
+  const pack=learnPacks[learnPackIndex];
+  let optionBase=learnPackItems(pack).filter(v=>v.word!==correct.word && v.meaning!==correct.meaning);
+  if(optionBase.length<3){
+    optionBase=[...optionBase,...allVocab.filter(v=>v.word!==correct.word && v.meaning!==correct.meaning && !optionBase.some(w=>w.word===v.word))];
+  }
+  const opts=shuffle([correct,...shuffle(optionBase).slice(0,3)]);
 
   document.getElementById('learnQuestion').textContent=correct.word;
   c.innerHTML='';
+  let answered=false;
   opts.forEach(opt=>{
     const b=document.createElement('button');
     b.className='choice';
     b.textContent=opt.meaning;
+    b.dataset.correct = opt.meaning===correct.meaning ? '1' : '0';
     b.onclick=()=>{
-      learnTotal++;
-      if(opt.meaning===correct.meaning){learnScore++;b.classList.add('correct')}else b.classList.add('wrong');
-      document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
-      setTimeout(()=>newLearnQuestion(false),900);
+      if(answered) return;
+      answered=true;
+      const isCorrect=opt.meaning===correct.meaning;
+      if(!pack.answers) pack.answers={};
+      pack.answers[learnCurrentKey]=isCorrect?'correct':'wrong';
+      if(!isCorrect) b.classList.add('wrong');
+      c.querySelectorAll('.choice').forEach(btn=>{
+        btn.disabled=true;
+        if(btn.dataset.correct==='1') btn.classList.add('correct');
+      });
+      saveLearnPacks();
+      renderLearnPackUI();
+      updateLearnScoreText();
+      setTimeout(()=>{
+        learnQueuePos++;
+        if(learnQueuePos>=learnQueue.length) resetLearnQueue();
+        newLearnQuestion(false);
+      },1200);
     };
     c.appendChild(b);
   });
-  document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
+  updateLearnScoreText();
 }
 function newTestQuestion(){
   testCurrent=randomItem();
@@ -663,10 +1151,46 @@ function renderList(){
 
   requestAnimationFrame(renderChunk);
 }
+function stopBlastFall(){
+  blastFallToken++;
+  if(blastFallRaf){
+    cancelAnimationFrame(blastFallRaf);
+    blastFallRaf=null;
+  }
+}
+function runBlastFall(){
+  const w=document.getElementById('fallingWord');
+  const game=document.querySelector('.blast-game');
+  if(!w||!game) return;
+  const token=++blastFallToken;
+  const startTop=16;
+  const endTop=Math.max(startTop,(game.clientHeight||360)-w.offsetHeight-16);
+  const duration=8000;
+  let startTime=null;
+  w.style.top=startTop+'px';
+  const step=(time)=>{
+    if(token!==blastFallToken || activeMode!=='blast') return;
+    if(startTime===null) startTime=time;
+    const progress=Math.min((time-startTime)/duration,1);
+    w.style.top=(startTop+(endTop-startTop)*progress)+'px';
+    if(progress<1){
+      blastFallRaf=requestAnimationFrame(step);
+    }else{
+      blastFallRaf=null;
+      if(token===blastFallToken && activeMode==='blast'){
+        setTimeout(()=>{
+          if(token===blastFallToken && activeMode==='blast') startBlast();
+        },180);
+      }
+    }
+  };
+  blastFallRaf=requestAnimationFrame(step);
+}
 function startBlast(){
   const w=document.getElementById('fallingWord');
+  stopBlastFall();
   w.classList.remove('animate');
-  void w.offsetWidth;
+  w.style.top='16px';
   if(!vocab.length){
     blastCurrent=null;
     w.textContent='Không có từ';
@@ -674,12 +1198,24 @@ function startBlast(){
     document.getElementById('blastScore').textContent='Chọn chủ đề khác để chơi Blast';
     return;
   }
-  blastCurrent=randomItem();
+  const previousWord=blastCurrent&&blastCurrent.word;
+  const blastPool=vocab.filter(item=>item.word!==previousWord);
+  blastCurrent=(blastPool.length?blastPool:vocab)[Math.floor(Math.random()*(blastPool.length?blastPool.length:vocab.length))]||randomItem();
   w.textContent=blastCurrent.word;
-  w.classList.add('animate');
   document.getElementById('blastInput').value='';
   document.getElementById('blastScore').textContent='Điểm Blast: '+blastScore;
-}function checkBlast(){if(!blastCurrent)return;const input=normalize(document.getElementById('blastInput').value);if(input===normalize(blastCurrent.meaning)){blastScore++;startBlast()}else document.getElementById('blastScore').textContent='Sai rồi. Nghĩa đúng: '+blastCurrent.meaning}
+  requestAnimationFrame(runBlastFall);
+}
+function checkBlast(){
+  if(!blastCurrent) return;
+  const input=normalize(document.getElementById('blastInput').value);
+  if(input===normalize(blastCurrent.meaning)){
+    blastScore++;
+    startBlast();
+  }else{
+    document.getElementById('blastScore').textContent='Sai rồi. Nghĩa đúng: '+blastCurrent.meaning;
+  }
+}
 function startMatch(){
   clearInterval(matchInterval);
   matchSeconds=0;
@@ -699,7 +1235,7 @@ function startMatch(){
   shuffle(sample).forEach(item=>{const d=document.createElement('div');d.className='match-item';d.textContent=item.meaning;d.dataset.word=item.word;d.onclick=()=>selectMatch(d,'meaning');meanings.appendChild(d)});
 }
 function selectMatch(el,type){if(type==='word'){document.querySelectorAll('#matchWords .match-item').forEach(i=>i.classList.remove('selected'));selectedWord=el}else{document.querySelectorAll('#matchMeanings .match-item').forEach(i=>i.classList.remove('selected'));selectedMeaning=el}el.classList.add('selected');if(selectedWord&&selectedMeaning){if(selectedWord.dataset.word===selectedMeaning.dataset.word){selectedWord.classList.add('done');selectedMeaning.classList.add('done')}selectedWord.classList.remove('selected');selectedMeaning.classList.remove('selected');selectedWord=null;selectedMeaning=null;if(document.querySelectorAll('.match-item:not(.done)').length===0){clearInterval(matchInterval);document.getElementById('matchTimer').textContent='Hoàn thành trong '+matchSeconds+'s 🎉'}}}
-initCategories();applyFilters();renderFlashcard();
+initCategories();applyFilters();renderFlashcard();ensureLearnPacks();renderLearnPackUI();newLearnQuestion(true);
 
 
 /* AUTO ONLINE LOOKUP: tra từ bất kỳ khi kho offline không có */
