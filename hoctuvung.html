@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -202,15 +201,78 @@ let vocab=[...allVocab],current=0,learnScore=0,learnTotal=0,testCurrent=null,bla
 function normalize(t){return (t||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function saveStatus(){const o={};allVocab.forEach(v=>{if(v.status!=='new')o[v.word]=v.status});localStorage.setItem('vocabStatusByWord',JSON.stringify(o))}
 function initCategories(){const s=document.getElementById('categorySelect');s.innerHTML='<option value="all">Tất cả chủ đề</option>'+TOPICS.map(t=>'<option value="'+t.title+'">'+t.title+' ('+t.items.length+')</option>').join('');document.getElementById('statTopics').textContent=TOPICS.length;document.getElementById('totalPill').textContent=allVocab.length+' từ / '+TOPICS.length+' chủ đề'}
-function applyFilters(){const cat=document.getElementById('categorySelect').value,q=normalize(document.getElementById('searchBox').value),lim=document.getElementById('limitSelect').value;vocab=allVocab.filter(v=>(cat==='all'||v.category===cat)&&(!q||normalize(v.word+' '+v.meaning+' '+v.category).includes(q)));if(lim!=='all')vocab=vocab.slice(0,+lim);current=0;updateStats();renderFlashcard();if(activeMode==='list')renderList();}
+function applyFilters(){
+  const cat=document.getElementById('categorySelect').value,
+        q=normalize(document.getElementById('searchBox').value),
+        lim=document.getElementById('limitSelect').value;
+
+  // Bộ từ trung tâm cho toàn bộ app: chọn chủ đề nào thì mọi tính năng đều dùng đúng chủ đề đó.
+  vocab=allVocab.filter(v=>(cat==='all'||v.category===cat)&&(!q||normalize(v.word+' '+v.meaning+' '+v.category).includes(q)));
+  if(lim!=='all')vocab=vocab.slice(0,+lim);
+
+  current=0;
+  updateStats();
+  renderFlashcard();
+  refreshActiveMode();
+}
+function refreshActiveMode(){
+  if(activeMode==='learn')newLearnQuestion(true);
+  if(activeMode==='test')newTestQuestion();
+  if(activeMode==='list')renderList();
+  if(activeMode==='blast')startBlast();
+  if(activeMode==='match')startMatch();
+}
 function updateStats(){document.getElementById('statWords').textContent=vocab.length;document.getElementById('statKnown').textContent=vocab.filter(v=>v.status==='known').length;document.getElementById('statHard').textContent=vocab.filter(v=>v.status==='hard').length}
 function switchMode(id,btn){activeMode=id;document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='learn')newLearnQuestion();if(id==='test')newTestQuestion();if(id==='list')renderList();if(id==='blast')startBlast();if(id==='match')startMatch()}
 function safeItem(){if(!vocab.length){return {word:'Không có từ',pron:'',meaning:'Chọn chủ đề khác',category:'Trống'}}return vocab[current%vocab.length]}
 function renderFlashcard(){const item=safeItem();document.getElementById('frontText').textContent=item.word;document.getElementById('frontPron').textContent=item.pron||'';document.getElementById('frontCat').textContent=item.category||'';document.getElementById('backText').textContent=item.meaning;document.getElementById('flashProgress').textContent=vocab.length?(current+1)+' / '+vocab.length:'0 / 0';document.getElementById('flashcard').classList.remove('flipped');updateStats()}
 function flipCard(){document.getElementById('flashcard').classList.toggle('flipped')}function nextCard(e){e&&e.stopPropagation();if(vocab.length){current=(current+1)%vocab.length;renderFlashcard()}}function prevCard(e){e&&e.stopPropagation();if(vocab.length){current=(current-1+vocab.length)%vocab.length;renderFlashcard()}}function shuffleCards(e){e&&e.stopPropagation();vocab.sort(()=>Math.random()-.5);current=0;renderFlashcard()}function markKnown(e){e&&e.stopPropagation();const it=safeItem();it.status='known';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='known';saveStatus();nextCard(e)}function markHard(e){e&&e.stopPropagation();const it=safeItem();it.status='hard';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='hard';saveStatus();nextCard(e)}function speakWord(e){e&&e.stopPropagation();const u=new SpeechSynthesisUtterance(safeItem().word);u.lang='en-US';speechSynthesis.speak(u)}
 function randomItem(){return vocab[Math.floor(Math.random()*vocab.length)]||safeItem()}function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function newLearnQuestion(){if(!vocab.length)return;const correct=randomItem(),wrongs=shuffle(allVocab.filter(v=>v.word!==correct.word)).slice(0,3),opts=shuffle([correct,...wrongs]);document.getElementById('learnQuestion').textContent=correct.word;const c=document.getElementById('choices');c.innerHTML='';opts.forEach(opt=>{const b=document.createElement('button');b.className='choice';b.textContent=opt.meaning;b.onclick=()=>{learnTotal++;if(opt.meaning===correct.meaning){learnScore++;b.classList.add('correct')}else b.classList.add('wrong');document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;setTimeout(newLearnQuestion,900)};c.appendChild(b)});document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal}
-function newTestQuestion(){testCurrent=randomItem();document.getElementById('testQuestion').textContent=testCurrent.word;document.getElementById('testInput').value='';document.getElementById('testResult').textContent=''}function checkTest(){const input=normalize(document.getElementById('testInput').value),ans=normalize(testCurrent.meaning),r=document.getElementById('testResult');if(input===ans){r.textContent='Đúng rồi ✅';r.style.color='#16a34a';setTimeout(newTestQuestion,900)}else{r.textContent='Sai rồi ❌ Đáp án: '+testCurrent.meaning;r.style.color='#dc2626'}}
+function newLearnQuestion(resetScore=false){
+  const c=document.getElementById('choices');
+  if(resetScore){learnScore=0;learnTotal=0;}
+  if(!vocab.length){
+    document.getElementById('learnQuestion').textContent='Không có từ trong chủ đề này';
+    c.innerHTML='';
+    document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
+    return;
+  }
+
+  const correct=randomItem();
+  // Đáp án nhiễu ưu tiên lấy trong chính chủ đề đang chọn để bài học bám sát chủ đề.
+  let wrongPool=shuffle(vocab.filter(v=>v.word!==correct.word && v.meaning!==correct.meaning));
+  if(wrongPool.length<3){
+    wrongPool=shuffle([...wrongPool,...allVocab.filter(v=>v.word!==correct.word && v.meaning!==correct.meaning && !wrongPool.some(w=>w.word===v.word))]);
+  }
+  const opts=shuffle([correct,...wrongPool.slice(0,3)]);
+
+  document.getElementById('learnQuestion').textContent=correct.word;
+  c.innerHTML='';
+  opts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.textContent=opt.meaning;
+    b.onclick=()=>{
+      learnTotal++;
+      if(opt.meaning===correct.meaning){learnScore++;b.classList.add('correct')}else b.classList.add('wrong');
+      document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
+      setTimeout(()=>newLearnQuestion(false),900);
+    };
+    c.appendChild(b);
+  });
+  document.getElementById('learnScore').textContent='Điểm: '+learnScore+'/'+learnTotal;
+}
+function newTestQuestion(){
+  testCurrent=randomItem();
+  document.getElementById('testQuestion').textContent=testCurrent.word;
+  document.getElementById('testInput').value='';
+  document.getElementById('testResult').textContent=vocab.length?'':'Chọn chủ đề khác để kiểm tra';
+}
+function checkTest(){
+  if(!vocab.length)return;
+  const input=normalize(document.getElementById('testInput').value),ans=normalize(testCurrent.meaning),r=document.getElementById('testResult');
+  if(input===ans){r.textContent='Đúng rồi ✅';r.style.color='#16a34a';setTimeout(newTestQuestion,900)}else{r.textContent='Sai rồi ❌ Đáp án: '+testCurrent.meaning;r.style.color='#dc2626'}
+}
 function renderList(){
   const container = document.getElementById('wordList');
   container.className = 'word-list';
@@ -318,8 +380,41 @@ function renderList(){
   });
 }
 
-function startBlast(){blastCurrent=randomItem();const w=document.getElementById('fallingWord');w.classList.remove('animate');void w.offsetWidth;w.textContent=blastCurrent.word;w.classList.add('animate');document.getElementById('blastInput').value='';document.getElementById('blastScore').textContent='Điểm Blast: '+blastScore}function checkBlast(){const input=normalize(document.getElementById('blastInput').value);if(input===normalize(blastCurrent.meaning)){blastScore++;startBlast()}else document.getElementById('blastScore').textContent='Sai rồi. Nghĩa đúng: '+blastCurrent.meaning}
-function startMatch(){clearInterval(matchInterval);matchSeconds=0;document.getElementById('matchTimer').textContent='Thời gian: 0s';matchInterval=setInterval(()=>{matchSeconds++;document.getElementById('matchTimer').textContent='Thời gian: '+matchSeconds+'s'},1000);selectedWord=null;selectedMeaning=null;const sample=shuffle(vocab).slice(0,Math.min(6,vocab.length));const words=document.getElementById('matchWords'),meanings=document.getElementById('matchMeanings');words.innerHTML='';meanings.innerHTML='';sample.forEach(item=>{const d=document.createElement('div');d.className='match-item';d.textContent=item.word;d.dataset.word=item.word;d.onclick=()=>selectMatch(d,'word');words.appendChild(d)});shuffle(sample).forEach(item=>{const d=document.createElement('div');d.className='match-item';d.textContent=item.meaning;d.dataset.word=item.word;d.onclick=()=>selectMatch(d,'meaning');meanings.appendChild(d)})}
+function startBlast(){
+  const w=document.getElementById('fallingWord');
+  w.classList.remove('animate');
+  void w.offsetWidth;
+  if(!vocab.length){
+    blastCurrent=null;
+    w.textContent='Không có từ';
+    document.getElementById('blastInput').value='';
+    document.getElementById('blastScore').textContent='Chọn chủ đề khác để chơi Blast';
+    return;
+  }
+  blastCurrent=randomItem();
+  w.textContent=blastCurrent.word;
+  w.classList.add('animate');
+  document.getElementById('blastInput').value='';
+  document.getElementById('blastScore').textContent='Điểm Blast: '+blastScore;
+}function checkBlast(){if(!blastCurrent)return;const input=normalize(document.getElementById('blastInput').value);if(input===normalize(blastCurrent.meaning)){blastScore++;startBlast()}else document.getElementById('blastScore').textContent='Sai rồi. Nghĩa đúng: '+blastCurrent.meaning}
+function startMatch(){
+  clearInterval(matchInterval);
+  matchSeconds=0;
+  selectedWord=null;
+  selectedMeaning=null;
+  const words=document.getElementById('matchWords'),meanings=document.getElementById('matchMeanings');
+  words.innerHTML='';
+  meanings.innerHTML='';
+  if(!vocab.length){
+    document.getElementById('matchTimer').textContent='Không có từ trong chủ đề này';
+    return;
+  }
+  document.getElementById('matchTimer').textContent='Thời gian: 0s';
+  matchInterval=setInterval(()=>{matchSeconds++;document.getElementById('matchTimer').textContent='Thời gian: '+matchSeconds+'s'},1000);
+  const sample=shuffle(vocab).slice(0,Math.min(6,vocab.length));
+  sample.forEach(item=>{const d=document.createElement('div');d.className='match-item';d.textContent=item.word;d.dataset.word=item.word;d.onclick=()=>selectMatch(d,'word');words.appendChild(d)});
+  shuffle(sample).forEach(item=>{const d=document.createElement('div');d.className='match-item';d.textContent=item.meaning;d.dataset.word=item.word;d.onclick=()=>selectMatch(d,'meaning');meanings.appendChild(d)});
+}
 function selectMatch(el,type){if(type==='word'){document.querySelectorAll('#matchWords .match-item').forEach(i=>i.classList.remove('selected'));selectedWord=el}else{document.querySelectorAll('#matchMeanings .match-item').forEach(i=>i.classList.remove('selected'));selectedMeaning=el}el.classList.add('selected');if(selectedWord&&selectedMeaning){if(selectedWord.dataset.word===selectedMeaning.dataset.word){selectedWord.classList.add('done');selectedMeaning.classList.add('done')}selectedWord.classList.remove('selected');selectedMeaning.classList.remove('selected');selectedWord=null;selectedMeaning=null;if(document.querySelectorAll('.match-item:not(.done)').length===0){clearInterval(matchInterval);document.getElementById('matchTimer').textContent='Hoàn thành trong '+matchSeconds+'s 🎉'}}}
 initCategories();applyFilters();renderFlashcard();
 
