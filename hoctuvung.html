@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -203,6 +204,90 @@
 /* FIX 2026-05-02: chữ trên nền tối bị chìm khi tra từ */
 body{color:#f8fafc}.input,.select{color:#f8fafc;background:#1f2937;border-color:#334155}.input::placeholder{color:#94a3b8}.select option{background:#111827;color:#f8fafc}.mode-btn{color:#f8fafc}.mode-btn:hover,.mode-btn.active{color:#ffffff}.stat b{color:#e0f2fe}.front strong{color:#ffffff;text-shadow:0 2px 18px rgba(0,229,255,.32)}.front .pron{color:#cbd5e1}.back strong{color:#00e5ff}.back .pron{color:#cbd5e1}.progress,.score{color:#cbd5e1}.question{color:#f8fafc}.choice{color:#f8fafc}.choice.correct,.choice.wrong{color:#0f172a}.match-item{color:#f8fafc}.match-item.selected{color:#0f172a}.test-area .result{color:#f8fafc}#testInput{color:#f8fafc}.falling-word{box-shadow:0 8px 24px rgba(0,229,255,.25)}
 
+
+
+/* PERFORMANCE FIX: giảm hiệu ứng loá/glow để web chạy nhẹ hơn */
+.mode-btn,
+.panel,
+.stat,
+.word-row,
+.online-lookup-card,
+.word-row .speaker-btn,
+.falling-word{
+  box-shadow:none !important;
+}
+
+.logo,
+.front strong,
+.back strong,
+.topic-name,
+.topic-count{
+  text-shadow:none !important;
+}
+
+.topic-header{
+  background:linear-gradient(135deg,var(--topic-a,#06b6d4),var(--topic-b,#2563eb) 58%,var(--topic-c,#7c3aed)) !important;
+  box-shadow:none !important;
+  filter:none !important;
+  transform:none !important;
+  transition:border-color .12s ease, background .12s ease !important;
+}
+.topic-header::before,
+.topic-header::after{
+  content:none !important;
+  display:none !important;
+  animation:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+.topic-header:hover{
+  transform:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+.topic-dot{
+  box-shadow:none !important;
+  background:rgba(255,255,255,.86) !important;
+}
+.topic-count{
+  box-shadow:none !important;
+  background:rgba(15,23,42,.22) !important;
+}
+.topic-empty{
+  box-shadow:none !important;
+}
+.online-lookup-card{
+  background:rgba(15,23,42,.78) !important;
+}
+.icon{
+  background:#00e5ff !important;
+}
+.mode-btn:hover,
+.mode-btn.active{
+  transform:none !important;
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation:none !important;
+    transition:none !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+
+
+/* FAST LIST FIX: Khối hộp render theo lô để bấm qua không bị đơ */
+.list-loading{
+  width:100%;
+  padding:18px;
+  border-radius:16px;
+  background:#0f172a;
+  border:1px solid rgba(96,165,250,.35);
+  color:#dbeafe;
+  font-weight:900;
+  text-align:center;
+}
+
 </style>
 </head>
 <body>
@@ -368,6 +453,7 @@ function rebuildAllVocab(){
 let allVocab=[];
 rebuildAllVocab();
 let vocab=[...allVocab],current=0,learnScore=0,learnTotal=0,testCurrent=null,blastCurrent=null,blastScore=0,selectedWord=null,selectedMeaning=null,matchSeconds=0,matchInterval=null,activeMode='flashcards';
+let listRenderToken=0;
 function normalize(t){return (t||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function saveStatus(){const o={};allVocab.forEach(v=>{if(v.status!=='new')o[v.word]=v.status});localStorage.setItem('vocabStatusByWord',JSON.stringify(o))}
 function initCategories(){
@@ -425,7 +511,19 @@ function refreshActiveMode(){
   if(activeMode==='match')startMatch();
 }
 function updateStats(){document.getElementById('statWords').textContent=vocab.length;document.getElementById('statKnown').textContent=vocab.filter(v=>v.status==='known').length;document.getElementById('statHard').textContent=vocab.filter(v=>v.status==='hard').length}
-function switchMode(id,btn){activeMode=id;document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='learn')newLearnQuestion();if(id==='test')newTestQuestion();if(id==='list')renderList();if(id==='blast')startBlast();if(id==='match')startMatch()}
+function switchMode(id,btn){
+  activeMode=id;
+  if(id!=='list') listRenderToken++;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(id==='learn')newLearnQuestion();
+  if(id==='test')newTestQuestion();
+  if(id==='list')renderList();
+  if(id==='blast')startBlast();
+  if(id==='match')startMatch();
+}
 function safeItem(){if(!vocab.length){return {word:'Không có từ',pron:'',meaning:'Chọn chủ đề khác',category:'Trống'}}return vocab[current%vocab.length]}
 function renderFlashcard(){const item=safeItem();document.getElementById('frontText').textContent=item.word;document.getElementById('frontPron').textContent=item.pron||'';document.getElementById('frontCat').textContent=item.category||'';document.getElementById('backText').textContent=item.meaning;document.getElementById('flashProgress').textContent=vocab.length?(current+1)+' / '+vocab.length:'0 / 0';document.getElementById('flashcard').classList.remove('flipped');updateStats()}
 function flipCard(){document.getElementById('flashcard').classList.toggle('flipped')}function nextCard(e){e&&e.stopPropagation();if(vocab.length){current=(current+1)%vocab.length;renderFlashcard()}}function prevCard(e){e&&e.stopPropagation();if(vocab.length){current=(current-1+vocab.length)%vocab.length;renderFlashcard()}}function shuffleCards(e){e&&e.stopPropagation();vocab.sort(()=>Math.random()-.5);current=0;renderFlashcard()}function markKnown(e){e&&e.stopPropagation();const it=safeItem();it.status='known';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='known';saveStatus();nextCard(e)}function markHard(e){e&&e.stopPropagation();const it=safeItem();it.status='hard';const base=allVocab.find(v=>v.word===it.word);if(base)base.status='hard';saveStatus();nextCard(e)}function speakWord(e){e&&e.stopPropagation();const u=new SpeechSynthesisUtterance(safeItem().word);u.lang='en-US';speechSynthesis.speak(u)}
@@ -477,8 +575,29 @@ function checkTest(){
 }
 function renderList(){
   const container = document.getElementById('wordList');
+  if(!container) return;
+
+  const token = ++listRenderToken;
+  const items = vocab.slice();
   container.className = 'word-list';
-  container.innerHTML = '';
+
+  // Một listener chung thay vì tạo hàng nghìn onclick riêng cho từng từ/nút.
+  if(!container.dataset.speakBound){
+    container.dataset.speakBound = '1';
+    container.addEventListener('click', event=>{
+      const el = event.target.closest('[data-speak-word]');
+      if(!el || !container.contains(el)) return;
+      event.stopPropagation();
+      speakText(el.getAttribute('data-speak-word') || '');
+    });
+  }
+
+  if(!items.length){
+    container.innerHTML = '<div class="topic-header topic-empty">KHÔNG CÓ TỪ PHÙ HỢP</div>';
+    return;
+  }
+
+  container.innerHTML = '<div class="list-loading">Đang mở Khối hộp...</div>';
 
   const topicThemes = [
     ['#06b6d4','#2563eb','#7c3aed','rgba(56,189,248,.30)'],
@@ -491,97 +610,59 @@ function renderList(){
     ['#38bdf8','#0ea5e9','#1d4ed8','rgba(14,165,233,.30)']
   ];
 
-  if(!vocab.length){
-    const empty = document.createElement('div');
-    empty.className = 'topic-header topic-empty';
-    empty.textContent = 'KHÔNG CÓ TỪ PHÙ HỢP';
-    container.appendChild(empty);
-    return;
-  }
-
-  const countByCategory = vocab.reduce((acc,item)=>{
+  const countByCategory = items.reduce((acc,item)=>{
     const category = item.category || 'Chủ đề';
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   },{});
 
+  let index = 0;
   let currentCategory = '';
   let topicIndex = 0;
-  vocab.forEach(item=>{
-    const category = item.category || 'Chủ đề';
-    if(category !== currentCategory){
-      currentCategory = category;
-      const theme = topicThemes[topicIndex % topicThemes.length];
-      topicIndex += 1;
+  const chunkSize = window.innerWidth < 700 ? 70 : 160;
 
-      const header = document.createElement('div');
-      header.className = 'topic-header';
-      header.style.setProperty('--topic-a', theme[0]);
-      header.style.setProperty('--topic-b', theme[1]);
-      header.style.setProperty('--topic-c', theme[2]);
-      header.style.setProperty('--topic-glow', theme[3]);
+  function headerHTML(category){
+    const theme = topicThemes[topicIndex % topicThemes.length];
+    topicIndex += 1;
+    return `<div class="topic-header" style="--topic-a:${theme[0]};--topic-b:${theme[1]};--topic-c:${theme[2]};--topic-glow:${theme[3]}">`+
+      `<div class="topic-title"><span class="topic-dot"></span><span class="topic-name">${escapeHTML(category.toUpperCase())}</span></div>`+
+      `<span class="topic-count">${countByCategory[category] || 0} từ</span></div>`;
+  }
 
-      const title = document.createElement('div');
-      title.className = 'topic-title';
+  function rowHTML(item){
+    const word = item.word || '';
+    return `<div class="word-row">`+
+      `<div class="word-main"><b class="word-speak" data-speak-word="${escapeAttr(word)}">${escapeHTML(word)}</b><small>${escapeHTML(item.pron || '')}</small></div>`+
+      `<div class="word-meaning">${escapeHTML(item.meaning || '')}</div>`+
+      `<div class="word-actions"><button class="speaker-btn" type="button" title="Nghe phát âm" aria-label="Nghe phát âm ${escapeAttr(word)}" data-speak-word="${escapeAttr(word)}">🔊</button></div>`+
+      `</div>`;
+  }
 
-      const dot = document.createElement('span');
-      dot.className = 'topic-dot';
+  function renderChunk(){
+    if(token !== listRenderToken) return;
+    if(index === 0) container.innerHTML = '';
 
-      const name = document.createElement('span');
-      name.className = 'topic-name';
-      name.textContent = category.toUpperCase();
-
-      const count = document.createElement('span');
-      count.className = 'topic-count';
-      count.textContent = (countByCategory[category] || 0) + ' từ';
-
-      title.appendChild(dot);
-      title.appendChild(name);
-      header.appendChild(title);
-      header.appendChild(count);
-      container.appendChild(header);
+    let html = '';
+    let made = 0;
+    while(index < items.length && made < chunkSize){
+      const item = items[index++];
+      const category = item.category || 'Chủ đề';
+      if(category !== currentCategory){
+        currentCategory = category;
+        html += headerHTML(category);
+      }
+      html += rowHTML(item);
+      made += 1;
     }
+    container.insertAdjacentHTML('beforeend', html);
 
-    const row = document.createElement('div');
-    row.className = 'word-row';
+    if(index < items.length){
+      requestAnimationFrame(renderChunk);
+    }
+  }
 
-    const left = document.createElement('div');
-    left.className = 'word-main';
-
-    const word = document.createElement('b');
-    word.className = 'word-speak';
-    word.textContent = item.word || '';
-    word.onclick = ()=>speakText(item.word || '');
-
-    const small = document.createElement('small');
-    small.textContent = item.pron || '';
-
-    const right = document.createElement('div');
-    right.className = 'word-meaning';
-    right.textContent = item.meaning || '';
-
-    const actions = document.createElement('div');
-    actions.className = 'word-actions';
-
-    const speak = document.createElement('button');
-    speak.className = 'speaker-btn';
-    speak.type = 'button';
-    speak.title = 'Nghe phát âm';
-    speak.setAttribute('aria-label', 'Nghe phát âm ' + (item.word || ''));
-    speak.textContent = '🔊';
-    speak.onclick = (event)=>{event.stopPropagation();speakText(item.word || '')};
-
-    left.appendChild(word);
-    left.appendChild(small);
-    actions.appendChild(speak);
-
-    row.appendChild(left);
-    row.appendChild(right);
-    row.appendChild(actions);
-    container.appendChild(row);
-  });
+  requestAnimationFrame(renderChunk);
 }
-
 function startBlast(){
   const w=document.getElementById('fallingWord');
   w.classList.remove('animate');
