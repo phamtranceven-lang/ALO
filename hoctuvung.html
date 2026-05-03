@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -914,13 +915,21 @@ function initCategories(){
 function searchRank(item,q){
   if(!q) return 1;
   const w=item._sw || normalize(item.word||'');
+  const m=item._sm || normalize(item.meaning||'');
+
+  // SEARCH EXACT FIX 2026-05-03:
+  // Gõ từ nào thì chỉ hiện đúng từ đó, KHÔNG bắt chữ nằm giữa và KHÔNG bắt đầu bằng từ đó.
+  // Ví dụ: "lab" chỉ ra đúng "lab"; không ra "available", cũng không ra "laboratory".
+  const wordTokens=w.split(/[^a-z0-9]+/).filter(Boolean);
+  const meaningTokens=m.split(/[^a-z0-9a-zàáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]+/i).filter(Boolean);
+
   if(w===q) return 100;
-  if(w.startsWith(q)) return 90;
-  if(w.split(/\s+/).some(part=>part===q)) return 80;
-  if(w.includes(q)) return 70;
+  if(wordTokens.some(part=>part===q)) return 95;
+
+  // Nghĩa tiếng Việt cũng chỉ khớp đúng từ/cụm từ, không khớp tiền tố.
   if(q.length>=2){
-    const m=item._sm || normalize(item.meaning||'');
-    if(m.includes(q)) return 50;
+    if(m===q) return 60;
+    if(meaningTokens.some(part=>part===q)) return 50;
   }
   return 0;
 }
@@ -1466,7 +1475,7 @@ function hasLocalLookupResult(q){
   if(key.length<2) return true;
   const nk=normalize(key);
   return allVocab.some(v =>
-    !isMissingMeaning(v.meaning) && ((v._sw||normalize(v.word||'')).includes(nk) || (v._sm||normalize(v.meaning||'')).includes(nk))
+    !isMissingMeaning(v.meaning) && searchRank(v,nk)>0
   );
 }
 
